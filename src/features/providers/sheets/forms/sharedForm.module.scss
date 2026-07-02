@@ -178,9 +178,9 @@
   width: 100%;
   height: 36px;
   padding: 8px 12px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
   color: var(--text-primary);
   font-size: 13px;
   font-family: inherit;
@@ -192,8 +192,8 @@
 
   &:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px var(--primary-10);
+    border-color: var(--ring);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 18%, transparent);
   }
 
   &:disabled {
@@ -223,8 +223,8 @@
   width: 16px;
   height: 16px;
   border-radius: 4px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  background: var(--card);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -275,7 +275,7 @@
 
 .divider {
   border: 0;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border);
   margin: 4px 0;
 }
 
@@ -284,7 +284,7 @@
   background: var(--destructive-10);
   color: var(--destructive-color);
   padding: 10px 12px;
-  border-radius: var(--radius-md);
+  border-radius: 8px;
   font-size: 12px;
   line-height: 1.5;
 }
@@ -316,8 +316,8 @@
 }
 
 .entryCard {
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  border-radius: 8px;
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -325,7 +325,7 @@
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
-  background: var(--bg-secondary);
+  background: var(--muted);
 }
 
 .entryCardHeader {
@@ -356,7 +356,7 @@
   &:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 3px;
-    border-radius: var(--radius-sm);
+    border-radius: 6px;
   }
 }
 
@@ -427,7 +427,7 @@
   height: 28px;
   padding: 0;
   border: 1px solid transparent;
-  border-radius: var(--radius-md);
+  border-radius: 8px;
   background: transparent;
   color: var(--text-tertiary);
   cursor: pointer;
@@ -436,7 +436,7 @@
     color $transition-fast;
 
   &:hover {
-    background: var(--bg-tertiary);
+    background: var(--accent);
     color: var(--text-primary);
   }
 
@@ -482,9 +482,9 @@
   gap: 10px;
   min-width: 0;
   padding: 10px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--muted);
   cursor: pointer;
   transition:
     border-color $transition-fast,
@@ -501,13 +501,14 @@
   }
 
   &:hover {
-    border-color: var(--primary-color);
+    border-color: var(--border-hover);
+    background: var(--accent);
   }
 }
 
 .sponsorUrlOptionActive {
-  border-color: var(--primary-color);
-  background: var(--primary-10);
+  border-color: var(--border-hover);
+  background: var(--accent);
 }
 
 .sponsorUrlOptionText {
@@ -543,9 +544,9 @@
   flex-direction: column;
   gap: 4px;
   padding: 10px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--muted);
 }
 
 .sponsorProtocolName {
@@ -576,9 +577,9 @@
   flex-direction: column;
   gap: 4px;
   padding: 8px 10px;
-  border: 1px solid color-mix(in srgb, var(--success-color) 34%, var(--border-color));
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--success-color) 8%, var(--bg-primary));
+  border: 1px solid color-mix(in srgb, var(--success-color) 34%, var(--border));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--success-color) 8%, var(--card));
   color: var(--text-primary);
   font-size: 11px;
   line-height: 1.4;
@@ -614,9 +615,9 @@
   gap: 6px;
   height: 28px;
   padding: 0 12px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
   color: var(--text-primary);
   font-size: 12px;
   font-weight: 500;
@@ -626,8 +627,9 @@
     border-color $transition-fast;
 
   &:hover:not(:disabled) {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
+    border-color: var(--border-hover);
+    background: var(--accent);
+    color: var(--text-primary);
   }
 
   &:disabled {
@@ -642,7 +644,7 @@
   gap: 6px;
   height: 24px;
   padding: 0 8px;
-  border-radius: var(--radius-md);
+  border-radius: 8px;
   border: 1px solid transparent;
   background: transparent;
   color: var(--text-secondary);
@@ -654,7 +656,7 @@
     color $transition-fast;
 
   &:hover:not(:disabled) {
-    background: var(--bg-tertiary);
+    background: var(--accent);
     color: var(--text-primary);
   }
 
@@ -669,7 +671,7 @@
   background: var(--destructive-10);
   color: var(--destructive-color);
   padding: 8px 10px;
-  border-radius: var(--radius-md);
+  border-radius: 8px;
   font-size: 11px;
   line-height: 1.4;
   word-break: break-word;
@@ -706,9 +708,9 @@
   flex-direction: column;
   gap: 10px;
   padding: 12px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--muted);
 }
 
 .discoveryToolbar {
@@ -737,9 +739,9 @@
   width: 100%;
   height: 32px;
   padding: 6px 10px 6px 30px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
   color: var(--text-primary);
   font-size: 12px;
   box-sizing: border-box;
@@ -750,8 +752,8 @@
 
   &:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px var(--primary-10);
+    border-color: var(--ring);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 18%, transparent);
   }
 }
 
@@ -760,9 +762,9 @@
   text-align: center;
   font-size: 12px;
   color: var(--muted-foreground);
-  border: 1px dashed var(--border-color);
-  border-radius: var(--radius-md);
-  background: var(--bg-primary);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  background: var(--card);
 }
 
 .discoveryBatchRow {
@@ -793,9 +795,9 @@
   gap: 2px;
   max-height: 240px;
   overflow-y: auto;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
 }
 
 .discoveryItem {
@@ -804,7 +806,7 @@
   justify-content: space-between;
   gap: 8px;
   padding: 8px 10px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border);
   font-size: 12px;
   color: var(--text-primary);
 
@@ -814,7 +816,7 @@
 }
 
 .discoveryItemExisting {
-  background: var(--muted-bg);
+  background: var(--muted);
   color: var(--muted-foreground);
 }
 
@@ -841,9 +843,9 @@
   font-size: 11px;
   color: var(--muted-foreground);
   padding: 2px 8px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
 }
 
 .discoveryFooter {
@@ -859,7 +861,7 @@
   gap: 6px;
   height: 30px;
   padding: 0 14px;
-  border-radius: var(--radius-md);
+  border-radius: 8px;
   border: 1px solid transparent;
   background: var(--primary-color);
   color: var(--primary-contrast);
@@ -910,7 +912,7 @@
   background: transparent;
   color: var(--text-tertiary);
   cursor: pointer;
-  border-radius: var(--radius-sm);
+  border-radius: 6px;
   transition: color $transition-fast;
 
   &:hover:not(:disabled) {
@@ -948,7 +950,7 @@
   align-items: center;
   gap: 4px;
   padding: 4px 8px;
-  border-radius: var(--radius-md);
+  border-radius: 8px;
   border: 1px solid transparent;
   background: transparent;
   color: var(--destructive-color);
@@ -970,9 +972,9 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  border-radius: var(--radius-md);
-  border: 1px dashed var(--border-color);
-  background: var(--bg-primary);
+  border-radius: 8px;
+  border: 1px dashed var(--border);
+  background: var(--card);
   color: var(--text-secondary);
   cursor: pointer;
   font-size: 12px;
@@ -980,8 +982,9 @@
   align-self: flex-start;
 
   &:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
+    border-color: var(--border-hover);
+    background: var(--accent);
+    color: var(--text-primary);
   }
 }
 
@@ -991,7 +994,7 @@
   gap: 6px;
   height: 32px;
   padding: 0 14px;
-  border-radius: var(--radius-md);
+  border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -1011,16 +1014,16 @@
   border-color: transparent;
 
   &:hover:not(:disabled) {
-    background: var(--bg-tertiary);
+    background: var(--accent);
   }
 }
 
 .footerBtnOutline {
-  border-color: var(--border-color);
-  background: var(--bg-primary);
+  border-color: var(--border);
+  background: var(--card);
 
   &:hover:not(:disabled) {
-    background: var(--bg-tertiary);
+    background: var(--accent);
   }
 }
 
@@ -1062,8 +1065,8 @@
   min-width: 0;
   max-width: 100%;
   padding: 8px 12px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-secondary);
+  background: var(--muted);
+  border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 12px;
 }
@@ -1074,9 +1077,10 @@
   justify-content: center;
   width: 20px;
   height: 20px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  color: var(--primary-contrast);
+  border-radius: 6px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
   font-size: 11px;
   font-weight: 600;
   flex-shrink: 0;
@@ -1117,7 +1121,7 @@
   align-items: center;
   gap: 3px;
   padding: 2px 6px;
-  border-radius: 10px;
+  border-radius: 6px;
   font-size: 10px;
   font-weight: 600;
 

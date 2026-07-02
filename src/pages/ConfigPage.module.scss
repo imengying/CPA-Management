@@ -6,7 +6,7 @@
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  gap: clamp(18px, 2.4vw, 28px);
+  gap: 14px;
   margin: 0 auto;
   overflow-y: auto;
   padding-bottom: calc(
@@ -28,9 +28,10 @@
 }
 
 .pageTitle {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-primary);
+  font-size: 24px;
+  font-weight: 650;
+  line-height: 1.15;
+  color: var(--foreground);
   margin: 0;
 }
 
@@ -39,9 +40,9 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 2px;
   padding: 2px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background: color-mix(in srgb, var(--bg-primary) 72%, transparent);
+  background: var(--background);
 }
 
 .tabItem {
@@ -50,7 +51,7 @@
   padding: 0 12px;
   border-radius: 6px;
   border: 1px solid transparent;
-  color: var(--text-secondary);
+  color: var(--muted-foreground);
   font-size: 13px;
   font-weight: 650;
   line-height: 1.25;
@@ -61,7 +62,7 @@
     border-color 0.15s ease;
 
   &:hover:not(:disabled) {
-    color: var(--text-primary);
+    color: var(--foreground);
     background: color-mix(in srgb, var(--text-primary) 5%, transparent);
   }
 
@@ -72,22 +73,22 @@
 }
 
 .tabActive {
-  color: var(--bg-primary);
-  background: var(--text-primary);
-  border-color: var(--text-primary);
+  color: var(--background);
+  background: var(--foreground);
+  border-color: var(--foreground);
 }
 
 .workspaceShell {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: 14px;
   min-width: 0;
 }
 
 .content {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: 14px;
   min-height: 0;
 }
 
@@ -104,9 +105,9 @@
   gap: 8px;
   align-items: center;
   padding: 8px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background: color-mix(in srgb, var(--bg-primary) 76%, transparent);
+  background: var(--background);
 
   @include mobile {
     grid-template-columns: minmax(0, 1fr);
@@ -145,7 +146,7 @@
   padding: 0 8px;
   border-radius: 6px;
   border: 1px solid var(--border-color);
-  color: var(--text-secondary);
+  color: var(--muted-foreground);
   font-size: 12px;
   font-weight: 650;
   pointer-events: none;
@@ -318,7 +319,7 @@
   padding: 0 10px;
   border-radius: 6px;
   border: 1px solid transparent;
-  color: var(--text-primary);
+  color: var(--foreground);
   font-size: 11px;
   font-weight: 700;
   line-height: 1.2;

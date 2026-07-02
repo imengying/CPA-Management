@@ -16,18 +16,9 @@ export const CACHE_EXPIRY_MS = 30 * 1000; // 与基线保持一致，减少管�
 export const DEFAULT_API_PORT = 8317;
 export const MANAGEMENT_API_PREFIX = '/v0/management';
 export const REQUEST_TIMEOUT_MS = 30 * 1000;
-export const CPA_VERSION_HEADER_KEYS = ['x-cpa-version'];
-export const CPA_BUILD_DATE_HEADER_KEYS = ['x-cpa-build-date'];
-export const CPA_SUPPORT_PLUGIN_HEADER_KEYS = ['x-cpa-support-plugin'];
-export const VERSION_HEADER_KEYS = [
-  ...CPA_VERSION_HEADER_KEYS,
-  'x-server-version',
-];
-export const BUILD_DATE_HEADER_KEYS = [
-  ...CPA_BUILD_DATE_HEADER_KEYS,
-  'x-server-build-date',
-];
-export const SUPPORT_PLUGIN_HEADER_KEYS = CPA_SUPPORT_PLUGIN_HEADER_KEYS;
+export const VERSION_HEADER_KEYS = ['x-cpa-version'];
+export const BUILD_DATE_HEADER_KEYS = ['x-cpa-build-date'];
+export const SUPPORT_PLUGIN_HEADER_KEYS = ['x-cpa-support-plugin'];
 
 // 日志相关
 export const LOGS_TIMEOUT_MS = 60 * 1000;

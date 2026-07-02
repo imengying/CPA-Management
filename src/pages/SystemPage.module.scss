@@ -3,60 +3,63 @@
 }
 
 .pageTitle {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 $spacing-xl 0;
+  font-size: 24px;
+  font-weight: 650;
+  line-height: 1.15;
+  color: var(--foreground);
+  margin: 0 0 $spacing-lg;
 }
 
 .content {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xl;
+  gap: $spacing-lg;
 }
 
 .aboutCard {
   overflow: hidden;
+  border-color: var(--border);
 }
 
 .aboutHeader {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
+  flex-direction: row;
   gap: $spacing-md;
-  padding: $spacing-lg 0 $spacing-xl;
+  padding: 0 0 16px;
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--border);
 }
 
 .aboutLogo {
-  width: 108px;
-  height: 108px;
-  border-radius: 26px;
+  width: 52px;
+  height: 52px;
+  border-radius: $radius-lg;
   object-fit: cover;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+  box-shadow: none;
+  flex: 0 0 auto;
 }
 
 .aboutTitle {
-  width: min(100%, 920px);
-  font-size: clamp(28px, 4.2vw, 44px);
-  font-weight: 800;
-  line-height: 1.12;
-  color: var(--text-primary);
-  letter-spacing: -0.02em;
-  text-align: center;
-  text-wrap: balance;
-  white-space: normal;
+  min-width: 0;
+  font-size: 24px;
+  font-weight: 750;
+  line-height: 1.2;
+  color: var(--foreground);
+  letter-spacing: 0;
+  text-align: left;
   overflow-wrap: anywhere;
 }
 
 .aboutInfoGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: $spacing-md;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $spacing-sm;
 
-  @media (max-width: 900px) {
-    grid-template-columns: 1fr;
+  @media (max-width: 1100px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -64,40 +67,40 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-height: 120px;
-  padding: $spacing-md $spacing-lg;
-  border-radius: $radius-lg;
-  border: 1px solid var(--border-color);
-  background: color-mix(in srgb, var(--bg-secondary) 82%, transparent);
+  min-height: 96px;
+  padding: $spacing-md;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--background);
   text-align: left;
 }
 
 .tapTile {
-  border: 1px solid var(--border-color);
-  background: color-mix(in srgb, var(--bg-secondary) 82%, transparent);
+  border: 1px solid var(--border);
+  background: var(--background);
   color: inherit;
   padding: $spacing-md $spacing-lg;
   cursor: pointer;
   transition:
-    transform 0.18s ease,
+    background-color 0.18s ease,
     border-color 0.2s ease,
     box-shadow 0.2s ease;
 
   &:hover {
-    transform: translateY(-1px);
-    border-color: var(--primary-color);
-    box-shadow: 0 8px 18px rgba($primary-color, 0.18);
+    background: var(--muted);
+    border-color: var(--border);
+    box-shadow: none;
   }
 
   &:active {
-    transform: translateY(0);
+    transform: none;
   }
 }
 
 .tileLabel {
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--muted-foreground);
 }
 
 .tileHeader {
@@ -115,16 +118,16 @@
 }
 
 .tileValue {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text-primary);
+  font-size: 20px;
+  font-weight: 750;
+  color: var(--foreground);
   line-height: 1.25;
   word-break: break-word;
 }
 
 .tileSub {
   font-size: 12px;
-  color: var(--text-tertiary);
+  color: var(--muted-foreground);
   line-height: 1.4;
 }
 
@@ -280,18 +283,18 @@
   align-items: center;
   gap: $spacing-md;
   padding: $spacing-md $spacing-lg;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: $radius-lg;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 8px;
   text-decoration: none;
   color: inherit;
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: var(--bg-hover);
-    border-color: var(--primary-color);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: var(--muted);
+    border-color: var(--border);
+    transform: none;
+    box-shadow: none;
   }
 
   &:active {
@@ -305,17 +308,17 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  border-radius: $radius-md;
-  background-color: var(--primary-color);
-  color: white;
+  border-radius: 8px;
+  background-color: var(--muted);
+  color: var(--foreground);
   flex-shrink: 0;
 
   &.github {
-    background-color: #24292f;
+    background-color: var(--muted);
   }
 
   &.docs {
-    background-color: #10b981;
+    background-color: var(--muted);
   }
 }
 
@@ -330,7 +333,7 @@
   gap: $spacing-xs;
   font-size: 15px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--foreground);
   margin-bottom: 2px;
 
   svg {
@@ -341,7 +344,7 @@
 
 .linkDesc {
   font-size: 13px;
-  color: var(--text-secondary);
+  color: var(--muted-foreground);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -349,26 +352,29 @@
 
 @media (max-width: 768px) {
   .aboutLogo {
-    width: 92px;
-    height: 92px;
-    border-radius: 22px;
+    width: 44px;
+    height: 44px;
+    border-radius: $radius-md;
   }
 
   .aboutTitle {
-    width: min(100%, 24ch);
-    font-size: clamp(22px, 6.6vw, 34px);
+    font-size: 20px;
     font-weight: 700;
-    line-height: 1.18;
-    letter-spacing: -0.012em;
+    line-height: 1.25;
+    letter-spacing: 0;
+  }
+
+  .aboutInfoGrid {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 520px) {
-  .aboutTitle {
-    width: min(100%, 19ch);
-    font-size: clamp(20px, 7.2vw, 28px);
-    font-weight: 600;
-    line-height: 1.22;
-    letter-spacing: -0.006em;
+  .aboutHeader {
+    align-items: flex-start;
+  }
+
+  .quickLinks {
+    grid-template-columns: 1fr;
   }
 }

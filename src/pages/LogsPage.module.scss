@@ -28,28 +28,36 @@
 }
 
 .pageTitle {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-primary);
+  font-size: 24px;
+  font-weight: 650;
+  line-height: 1.15;
+  color: var(--foreground);
   margin: 0;
 }
 
 .tabBar {
-  display: flex;
-  gap: $spacing-xs;
+  display: inline-flex;
+  gap: 2px;
+  width: fit-content;
+  max-width: 100%;
   margin-bottom: $spacing-lg;
-  border-bottom: 1px solid var(--border-color);
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--background);
+  overflow-x: auto;
 }
 
 .tabItem {
   @include button-reset;
-  padding: 12px 20px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-secondary);
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--muted-foreground);
   background: transparent;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
   cursor: pointer;
   transition:
     color 0.15s ease,
@@ -67,8 +75,9 @@
 }
 
 .tabActive {
-  color: var(--primary-color);
-  border-bottom-color: var(--primary-color);
+  color: var(--background);
+  background: var(--foreground);
+  border-color: var(--foreground);
 }
 
 .content {
@@ -101,10 +110,10 @@
 .runtimeNotice {
   flex: 0 0 auto;
   padding: 4px 10px;
-  border: 1px solid var(--border-color);
-  border-radius: $radius-full;
-  color: var(--text-secondary);
-  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted-foreground);
+  background: var(--background);
   font-size: 12px;
   line-height: 1.3;
 }

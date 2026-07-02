@@ -4,7 +4,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: 14px;
 }
 
 .pageHeader {
@@ -14,15 +14,17 @@
 }
 
 .pageTitle {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-primary);
+  font-size: 24px;
+  font-weight: 650;
+  line-height: 1.15;
+  color: var(--foreground);
   margin: 0;
 }
 
 .description {
-  font-size: 14px;
-  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted-foreground);
   margin: 0;
 }
 
@@ -742,11 +744,26 @@
   }
 }
 
+.premiumPlanValue,
+:global([data-theme='dark']) .premiumPlanValue {
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--muted);
+  border: 1px solid var(--border);
+  box-shadow: none;
+  color: var(--text-primary);
+  text-shadow: none;
+
+  &::before {
+    content: none;
+  }
+}
+
 .fileCard {
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: $radius-lg;
-  padding: $spacing-md;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
@@ -756,9 +773,9 @@
     border-color $transition-fast;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: $shadow-md;
-    border-color: rgba(37, 99, 235, 0.2);
+    transform: none;
+    box-shadow: none;
+    border-color: var(--border-hover);
   }
 }
 
@@ -771,7 +788,7 @@
 
 .typeBadge {
   padding: 4px 10px;
-  border-radius: 12px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
@@ -781,7 +798,7 @@
 .fileName {
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--foreground);
   word-break: break-all;
   line-height: 1.4;
 }
@@ -793,15 +810,16 @@
   gap: $spacing-md;
   margin-top: $spacing-lg;
   padding-top: $spacing-md;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border);
 }
 
 .pageInfo {
   font-size: 13px;
   color: var(--text-secondary);
   padding: $spacing-xs $spacing-md;
-  background-color: var(--bg-secondary);
-  border-radius: $radius-md;
+  background-color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
 }
 
 .warningOverlay {
@@ -818,12 +836,13 @@
 }
 
 .warningModal {
-  background-color: var(--bg-primary);
-  border-radius: $radius-lg;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
   padding: $spacing-lg;
   max-width: 400px;
   text-align: center;
-  box-shadow: $shadow-lg;
+  box-shadow: none;
 
   p {
     margin: 0 0 $spacing-md 0;

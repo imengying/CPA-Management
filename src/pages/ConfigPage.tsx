@@ -53,6 +53,7 @@ export function ConfigPage() {
   const showNotification = useNotificationStore((state) => state.showNotification);
   const showConfirmation = useNotificationStore((state) => state.showConfirmation);
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
+  const supportsPlugin = useAuthStore((state) => state.supportsPlugin);
   const resolvedTheme = useThemeStore((state) => state.resolvedTheme);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
@@ -561,6 +562,7 @@ export function ConfigPage() {
               values={visualValues}
               validationErrors={visualValidationErrors}
               hasPayloadValidationErrors={visualHasPayloadValidationErrors}
+              supportsPlugin={supportsPlugin}
               disabled={disableControls || loading}
               onChange={setVisualValues}
             />

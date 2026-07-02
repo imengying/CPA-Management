@@ -28,19 +28,19 @@
 
 .title {
   margin: 0;
-  font-size: 30px;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--text-primary);
+  font-size: 24px;
+  font-weight: 650;
+  line-height: 1.15;
+  color: var(--foreground);
 }
 
 .sponsorCard {
   gap: 14px;
 
   .title {
-    font-size: 32px;
-    font-weight: 720;
-    line-height: 1.18;
+    font-size: 24px;
+    font-weight: 650;
+    line-height: 1.15;
     letter-spacing: 0;
   }
 
@@ -75,9 +75,9 @@
   gap: 6px;
   height: 34px;
   padding: 0 14px;
-  border-radius: var(--radius-md);
-  font-size: 14px;
-  font-weight: 500;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 650;
   cursor: pointer;
   transition:
     background-color $transition-fast,
@@ -99,18 +99,18 @@
 }
 
 .btnOutline {
-  border-color: var(--border-color);
-  background: var(--bg-primary);
+  border-color: var(--border);
+  background: var(--background);
 
   &:hover:not(:disabled) {
-    background: var(--bg-tertiary);
+    background: var(--muted);
     border-color: var(--border-hover);
   }
 }
 
 .btnPrimary {
-  background: var(--primary-color);
-  color: var(--primary-contrast);
+  background: var(--foreground);
+  color: var(--background);
 
   &:hover:not(:disabled) {
     background: var(--primary-hover);
@@ -132,9 +132,9 @@
   align-items: center;
   gap: 6px;
   padding: 5px 12px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--muted-bg);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--muted);
   color: var(--muted-foreground);
   font-size: 13px;
   font-weight: 500;
@@ -174,7 +174,7 @@
 @media (max-width: 768px) {
   .sponsorCard {
     .title {
-      font-size: 28px;
+      font-size: 22px;
       line-height: 1.2;
     }
   }

@@ -36,6 +36,12 @@ export const configFieldDomId = (fieldId: string) => `cfg-field-${fieldId}`;
 
 type Translate = (key: string) => string;
 
+export const PLUGIN_CONFIG_FIELD_IDS = new Set([
+  'pluginsEnabled',
+  'pluginStoreSources',
+  'pluginStoreAuth',
+]);
+
 // Compact helper: every label/hint key lives under config_management.visual.
 const L = (key: string) => `config_management.visual.${key}`;
 
@@ -471,13 +477,21 @@ const MAX_RESULTS = 8;
  * Lowercase substring search over label + qualifier + hint + YAML keys + keywords.
  * Returns the best ~8 matches, label/qualifier hits ranked above alias-only hits.
  */
-export function searchConfigFields(query: string, t: Translate): ConfigFieldSearchEntry[] {
+export function searchConfigFields(
+  query: string,
+  t: Translate,
+  options: { supportsPlugin?: boolean } = {}
+): ConfigFieldSearchEntry[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];
 
   const scored: { entry: ConfigFieldSearchEntry; score: number }[] = [];
 
   for (const entry of CONFIG_FIELD_SEARCH_INDEX) {
+    if (options.supportsPlugin === false && PLUGIN_CONFIG_FIELD_IDS.has(entry.fieldId)) {
+      continue;
+    }
+
     const label = t(entry.labelKey).toLowerCase();
     const qualifier = entry.qualifierKey ? t(entry.qualifierKey).toLowerCase() : '';
     const hint = entry.hintKey ? t(entry.hintKey).toLowerCase() : '';

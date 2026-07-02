@@ -47,6 +47,7 @@ import {
 } from './VisualConfigEditorBlocks';
 import {
   configFieldDomId,
+  PLUGIN_CONFIG_FIELD_IDS,
   searchConfigFields,
   type ConfigFieldSearchEntry,
   type VisualSectionId,
@@ -68,6 +69,7 @@ interface VisualConfigEditorProps {
   values: VisualConfigValues;
   validationErrors?: VisualConfigValidationErrors;
   hasPayloadValidationErrors?: boolean;
+  supportsPlugin?: boolean;
   disabled?: boolean;
   onChange: (values: Partial<VisualConfigValues>) => void;
 }
@@ -185,6 +187,7 @@ export function VisualConfigEditor({
   values,
   validationErrors,
   hasPayloadValidationErrors = false,
+  supportsPlugin = true,
   disabled = false,
   onChange,
 }: VisualConfigEditorProps) {
@@ -236,7 +239,10 @@ export function VisualConfigEditor({
     localStorage.setItem(EDITOR_MODE_STORAGE_KEY, next);
   }, []);
 
-  const searchResults = useMemo(() => searchConfigFields(searchQuery, t), [searchQuery, t]);
+  const searchResults = useMemo(
+    () => searchConfigFields(searchQuery, t, { supportsPlugin }),
+    [searchQuery, supportsPlugin, t]
+  );
   // The results popup is visible only when the box is open AND there's a (trimmed) query.
   const isResultsOpen = searchOpen && Boolean(searchQuery.trim());
   // Clamp the highlighted index to the current result set so a stale index (e.g. after the
@@ -265,7 +271,11 @@ export function VisualConfigEditor({
     handledJumpRef.current = jumpRequest; // handle each request once, even if deps re-fire
     const { fieldId, sectionId } = jumpRequest;
     const targetFieldId =
-      (fieldId === 'tlsCert' || fieldId === 'tlsKey') && !values.tlsEnable ? 'tlsEnable' : fieldId;
+      !supportsPlugin && PLUGIN_CONFIG_FIELD_IDS.has(fieldId)
+        ? 'antigravitySignatureCacheEnabled'
+        : (fieldId === 'tlsCert' || fieldId === 'tlsKey') && !values.tlsEnable
+          ? 'tlsEnable'
+          : fieldId;
 
     const el = document.getElementById(configFieldDomId(targetFieldId));
     if (!el) {
@@ -304,7 +314,7 @@ export function VisualConfigEditor({
       highlightTimerRef.current = null;
       highlightedElRef.current = null;
     }, 1800);
-  }, [mode, jumpRequest, values.tlsEnable]);
+  }, [mode, jumpRequest, supportsPlugin, values.tlsEnable]);
 
   // Clear the highlight timer on unmount.
   useEffect(
@@ -1488,79 +1498,83 @@ export function VisualConfigEditor({
               description={t('config_management.visual.sections.advanced.description')}
             >
               <SectionStack>
-                <Collapsible
-                  label={t('config_management.visual.sections.advanced.plugins_title')}
-                  defaultOpen={false}
-                >
-                  <SectionStack>
-                    <SectionGrid>
-                      <FieldAnchor fieldId="pluginsEnabled">
-                        <ToggleRow
-                          title={t('config_management.visual.sections.system.plugins_enabled')}
-                          description={t(
-                            'config_management.visual.sections.system.plugins_enabled_desc'
+                {supportsPlugin ? (
+                  <Collapsible
+                    label={t('config_management.visual.sections.advanced.plugins_title')}
+                    defaultOpen={false}
+                  >
+                    <SectionStack>
+                      <SectionGrid>
+                        <FieldAnchor fieldId="pluginsEnabled">
+                          <ToggleRow
+                            title={t('config_management.visual.sections.system.plugins_enabled')}
+                            description={t(
+                              'config_management.visual.sections.system.plugins_enabled_desc'
+                            )}
+                            checked={values.pluginsEnabled}
+                            disabled={disabled}
+                            onChange={(pluginsEnabled) => onChange({ pluginsEnabled })}
+                          />
+                        </FieldAnchor>
+                      </SectionGrid>
+
+                      <FieldAnchor fieldId="pluginStoreSources">
+                        <SectionSubsection
+                          title={t(
+                            'config_management.visual.sections.system.plugin_store_sources'
                           )}
-                          checked={values.pluginsEnabled}
-                          disabled={disabled}
-                          onChange={(pluginsEnabled) => onChange({ pluginsEnabled })}
-                        />
+                          description={t(
+                            'config_management.visual.sections.system.plugin_store_sources_desc'
+                          )}
+                        >
+                          <div className={styles.fieldShell}>
+                            <label className={styles.fieldLabel}>
+                              {t(
+                                'config_management.visual.sections.system.plugin_store_sources_label'
+                              )}
+                            </label>
+                            <StringListEditor
+                              value={values.pluginStoreSources}
+                              disabled={disabled}
+                              placeholder={t(
+                                'config_management.visual.sections.system.plugin_store_sources_placeholder'
+                              )}
+                              inputAriaLabel={t(
+                                'config_management.visual.sections.system.plugin_store_sources_label'
+                              )}
+                              onChange={handlePluginStoreSourcesChange}
+                            />
+                            <div className={styles.fieldHint}>
+                              {t(
+                                'config_management.visual.sections.system.plugin_store_sources_hint'
+                              )}
+                            </div>
+                          </div>
+                        </SectionSubsection>
                       </FieldAnchor>
-                    </SectionGrid>
 
-                    <FieldAnchor fieldId="pluginStoreSources">
-                      <SectionSubsection
-                        title={t('config_management.visual.sections.system.plugin_store_sources')}
-                        description={t(
-                          'config_management.visual.sections.system.plugin_store_sources_desc'
-                        )}
-                      >
-                        <div className={styles.fieldShell}>
-                          <label className={styles.fieldLabel}>
-                            {t(
-                              'config_management.visual.sections.system.plugin_store_sources_label'
-                            )}
-                          </label>
-                          <StringListEditor
-                            value={values.pluginStoreSources}
-                            disabled={disabled}
-                            placeholder={t(
-                              'config_management.visual.sections.system.plugin_store_sources_placeholder'
-                            )}
-                            inputAriaLabel={t(
-                              'config_management.visual.sections.system.plugin_store_sources_label'
-                            )}
-                            onChange={handlePluginStoreSourcesChange}
-                          />
-                          <div className={styles.fieldHint}>
-                            {t(
-                              'config_management.visual.sections.system.plugin_store_sources_hint'
-                            )}
+                      <FieldAnchor fieldId="pluginStoreAuth">
+                        <SectionSubsection
+                          title={t('config_management.visual.sections.system.plugin_store_auth')}
+                          description={t(
+                            'config_management.visual.sections.system.plugin_store_auth_desc'
+                          )}
+                        >
+                          <div className={styles.fieldShell}>
+                            <div className={styles.fieldHint}>
+                              {t('config_management.visual.sections.system.plugin_store_auth_hint')}
+                            </div>
+                            <PluginStoreAuthEditor
+                              value={values.pluginStoreAuth}
+                              disabled={disabled}
+                              onChange={handlePluginStoreAuthChange}
+                            />
                           </div>
-                        </div>
-                      </SectionSubsection>
-                    </FieldAnchor>
-
-                    <FieldAnchor fieldId="pluginStoreAuth">
-                      <SectionSubsection
-                        title={t('config_management.visual.sections.system.plugin_store_auth')}
-                        description={t(
-                          'config_management.visual.sections.system.plugin_store_auth_desc'
-                        )}
-                      >
-                        <div className={styles.fieldShell}>
-                          <div className={styles.fieldHint}>
-                            {t('config_management.visual.sections.system.plugin_store_auth_hint')}
-                          </div>
-                          <PluginStoreAuthEditor
-                            value={values.pluginStoreAuth}
-                            disabled={disabled}
-                            onChange={handlePluginStoreAuthChange}
-                          />
-                        </div>
-                      </SectionSubsection>
-                    </FieldAnchor>
-                  </SectionStack>
-                </Collapsible>
+                        </SectionSubsection>
+                      </FieldAnchor>
+                    </SectionStack>
+                  </Collapsible>
+                ) : null}
 
                 <Collapsible
                   label={t('config_management.visual.sections.advanced.signature_title')}

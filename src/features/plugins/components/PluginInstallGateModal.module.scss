@@ -12,7 +12,7 @@
   gap: 8px;
   padding: $spacing-sm 0 $spacing-md;
   text-align: center;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border);
 }
 
 .logoBox {
@@ -22,10 +22,10 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 12px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-  background: color-mix(in srgb, var(--bg-tertiary) 60%, transparent);
-  color: var(--text-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--muted);
+  color: var(--muted-foreground);
 
   img {
     width: 100%;
@@ -38,7 +38,7 @@
   margin: 0;
   font-size: 20px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--foreground);
   overflow-wrap: anywhere;
 }
 
@@ -101,7 +101,7 @@
   gap: $spacing-sm;
   margin-top: $spacing-lg;
   padding: 12px 14px;
-  border-radius: $radius-md;
+  border-radius: 8px;
   border: 1px solid color-mix(in srgb, var(--quota-medium-color, #e0aa14) 45%, var(--border-color));
   background: color-mix(in srgb, var(--quota-medium-color, #e0aa14) 16%, var(--bg-secondary));
   color: var(--text-primary);

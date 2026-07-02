@@ -7,32 +7,39 @@
   justify-content: center;
   gap: $spacing-sm;
   border: 1px solid transparent;
-  border-radius: $radius-md;
-  padding: 10px 14px;
-  font-weight: 600;
+  border-radius: 8px;
+  padding: 9px 13px;
+  min-height: 38px;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.2;
   cursor: pointer;
-  transition: all $transition-fast;
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast,
+    color $transition-fast,
+    opacity $transition-fast;
+  background: var(--background);
+  color: var(--foreground);
 
   &.btn-primary {
-    background-color: var(--primary-color);
-    color: var(--primary-contrast, #fff);
-    border-color: var(--primary-color);
+    background: var(--foreground);
+    color: var(--background);
+    border-color: var(--foreground);
 
     &:hover {
-      background-color: var(--primary-hover);
+      background: var(--primary-hover);
       border-color: var(--primary-hover);
     }
   }
 
   &.btn-secondary {
-    background-color: var(--bg-tertiary);
-    border-color: var(--border-color);
-    color: var(--text-primary);
+    background: var(--background);
+    border-color: var(--border);
+    color: var(--foreground);
 
     &:hover {
-      background-color: var(--bg-hover, var(--bg-tertiary));
+      background: var(--muted);
       border-color: var(--border-hover);
     }
   }
@@ -43,8 +50,8 @@
     color: var(--text-secondary);
 
     &:hover {
-      color: var(--text-primary);
-      background: var(--bg-tertiary);
+      color: var(--foreground);
+      background: var(--muted);
     }
   }
 
@@ -63,8 +70,9 @@
   }
 
   &.btn-sm {
-    padding: 8px 10px;
-    font-size: 14px;
+    min-height: 32px;
+    padding: 7px 10px;
+    font-size: 12px;
   }
 
   &:disabled {
@@ -74,32 +82,34 @@
 }
 
 [data-theme='dark'] {
-  .btn {
-    color: #fff;
-  }
-
   .btn.btn-secondary,
   .btn.btn-ghost {
-    color: #fff;
+    color: var(--foreground);
+  }
+
+  .btn.btn-primary {
+    color: var(--background);
   }
 }
 
 .input,
 textarea {
   width: 100%;
-  border: 1px solid var(--border-color);
-  border-radius: $radius-md;
-  padding: 10px 12px;
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
+  min-height: 38px;
+  border: 1px solid var(--input);
+  border-radius: 8px;
+  padding: 9px 11px;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 13px;
   transition:
     border-color $transition-fast,
     box-shadow $transition-fast;
 
   &:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.18);
+    border-color: var(--ring);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 20%, transparent);
   }
 }
 
@@ -110,8 +120,9 @@ textarea {
   margin-bottom: $spacing-md;
 
   label {
-    font-weight: 600;
-    color: var(--text-primary);
+    font-size: 12px;
+    font-weight: 650;
+    color: var(--foreground);
   }
 
   .hint {
@@ -121,11 +132,11 @@ textarea {
 }
 
 .card {
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: $radius-lg;
-  box-shadow: var(--shadow);
-  padding: $spacing-lg;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: none;
+  padding: 16px;
 }
 
 .card-header {
@@ -134,7 +145,7 @@ textarea {
   justify-content: space-between;
   gap: $spacing-sm;
   flex-wrap: wrap;
-  margin-bottom: $spacing-md;
+  margin-bottom: 14px;
 
   > * {
     min-width: 0;
@@ -143,9 +154,9 @@ textarea {
   .title {
     flex: 1 1 auto;
     min-width: 0;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 650;
+    color: var(--foreground);
   }
 }
 
@@ -189,8 +200,8 @@ textarea {
 
 .notification-container {
   position: fixed;
-  top: $spacing-lg;
   right: $spacing-lg;
+  bottom: $spacing-lg;
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
@@ -201,32 +212,33 @@ textarea {
 @keyframes notification-enter {
   from {
     opacity: 0;
-    transform: translateX(100%);
+    transform: translate(16px, 8px);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translate(0, 0);
   }
 }
 
 @keyframes notification-exit {
   from {
     opacity: 1;
-    transform: translateX(0);
+    transform: translate(0, 0);
   }
   to {
     opacity: 0;
-    transform: translateX(100%);
+    transform: translate(16px, 8px);
   }
 }
 
 .notification {
+  width: min(360px, calc(100vw - #{$spacing-lg * 2}));
   padding: $spacing-md;
-  border-radius: $radius-md;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border-color);
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  background: var(--popover);
+  color: var(--popover-foreground);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -411,10 +423,10 @@ textarea {
 }
 
 .modal {
-  background: var(--bg-primary);
-  border-radius: $radius-lg;
-  border: 1px solid var(--border-color);
-  box-shadow: $shadow-lg;
+  background: var(--card);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
   max-width: 100%;
   max-height: 90vh;
   overflow: hidden;
@@ -462,11 +474,11 @@ textarea {
   width: 32px;
   height: 32px;
   padding: 0;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
+  background: var(--background);
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
   cursor: pointer;
-  border-radius: $radius-full;
+  border-radius: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -481,9 +493,8 @@ textarea {
   }
 
   &:hover {
-    color: var(--text-primary);
-    background: var(--bg-tertiary);
-    transform: scale(1.1);
+    color: var(--foreground);
+    background: var(--muted);
   }
 
   &:active {
@@ -507,12 +518,12 @@ textarea {
   display: flex;
   align-items: center;
   padding: $spacing-md $spacing-lg;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border);
 
   .modal-title {
-    font-weight: 700;
-    font-size: 18px;
-    color: var(--text-primary);
+    font-weight: 650;
+    font-size: 16px;
+    color: var(--foreground);
   }
 }
 
@@ -524,11 +535,11 @@ textarea {
 
 .modal-footer {
   padding: $spacing-md $spacing-lg;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border);
   display: flex;
   justify-content: flex-end;
   gap: $spacing-sm;
-  background: var(--bg-primary);
+  background: var(--card);
 }
 
 @media (max-width: $breakpoint-mobile) {
@@ -586,10 +597,10 @@ textarea {
 }
 
 .empty-state {
-  border: 1px dashed var(--border-color);
-  border-radius: $radius-lg;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
   padding: $spacing-lg;
-  background: var(--bg-secondary);
+  background: var(--background);
   display: flex;
   justify-content: space-between;
   gap: $spacing-md;
@@ -605,8 +616,8 @@ textarea {
     width: 42px;
     height: 42px;
     flex: 0 0 42px;
-    border-radius: $radius-full;
-    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    border: 1px solid var(--border);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -674,10 +685,10 @@ textarea {
 }
 
 .item-row {
-  border: 1px solid var(--border-color);
-  border-radius: $radius-md;
+  border: 1px solid var(--border);
+  border-radius: 8px;
   padding: $spacing-md;
-  background: var(--bg-primary);
+  background: var(--card);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -739,8 +750,8 @@ textarea {
 .table {
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--border-color);
-  border-radius: $radius-md;
+  border: 1px solid var(--border);
+  border-radius: 8px;
   overflow: hidden;
 
   .table-header,
@@ -753,13 +764,13 @@ textarea {
   }
 
   .table-header {
-    background: var(--bg-secondary);
-    font-weight: 700;
-    color: var(--text-primary);
+    background: var(--muted);
+    font-weight: 650;
+    color: var(--foreground);
   }
 
   .table-row {
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--border);
   }
 
   .cell {
@@ -778,10 +789,10 @@ textarea {
 }
 
 .stat-card {
-  border: 1px solid var(--border-color);
-  border-radius: $radius-md;
+  border: 1px solid var(--border);
+  border-radius: 8px;
   padding: $spacing-md;
-  background: var(--bg-primary);
+  background: var(--card);
   display: flex;
   flex-direction: column;
   gap: $spacing-xs;
@@ -799,9 +810,9 @@ textarea {
 }
 
 .log-viewer {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: $radius-md;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 8px;
   padding: $spacing-md;
   max-height: 520px;
   overflow: auto;

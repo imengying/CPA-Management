@@ -6,7 +6,7 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: 14px;
   width: 100%;
 }
 
@@ -20,16 +20,16 @@
 
 .title {
   margin: 0;
-  color: var(--text-primary);
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1.2;
+  color: var(--foreground);
+  font-size: 24px;
+  font-weight: 650;
+  line-height: 1.15;
 }
 
 .description {
   margin: 0;
-  color: var(--text-secondary);
-  font-size: 14px;
+  color: var(--muted-foreground);
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -62,9 +62,9 @@
   align-items: center;
   gap: 10px;
   padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
-  background: color-mix(in srgb, var(--bg-secondary) 60%, transparent);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--background);
   flex-wrap: wrap;
 }
 
@@ -75,9 +75,9 @@
   align-items: center;
   gap: 6px;
   padding: 5px 12px;
-  border-radius: $radius-full;
-  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-  background: color-mix(in srgb, var(--bg-primary) 56%, transparent);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
@@ -168,7 +168,7 @@
   flex-direction: column;
   gap: 1px;
   border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
-  border-radius: $radius-lg;
+  border-radius: 8px;
   overflow: hidden;
   background: color-mix(in srgb, var(--border-color) 30%, transparent);
 }
@@ -181,11 +181,11 @@
   align-items: center;
   gap: $spacing-md;
   padding: $spacing-md $spacing-lg;
-  background: var(--bg-primary);
+  background: var(--card);
   transition: background-color $transition-fast;
 
   &:hover {
-    background: var(--bg-hover);
+    background: var(--muted);
   }
 
   @include mobile {
@@ -203,9 +203,9 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-  background: color-mix(in srgb, var(--bg-tertiary) 60%, transparent);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--muted);
   color: var(--text-secondary);
   flex-shrink: 0;
 

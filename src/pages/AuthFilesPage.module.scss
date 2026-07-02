@@ -4,7 +4,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: 14px;
   padding-bottom: calc(
     var(--auth-files-action-bar-height, 0px) + 16px + env(safe-area-inset-bottom)
   );
@@ -17,15 +17,17 @@
 }
 
 .pageTitle {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-primary);
+  font-size: 24px;
+  font-weight: 650;
+  line-height: 1.15;
+  color: var(--foreground);
   margin: 0;
 }
 
 .description {
-  font-size: 14px;
-  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted-foreground);
   margin: 0;
 }
 
@@ -91,9 +93,9 @@
   flex-direction: column;
   gap: 10px;
   padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
-  background: color-mix(in srgb, var(--bg-secondary) 60%, transparent);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--background);
 
   @include mobile {
     padding: 10px;
@@ -108,7 +110,7 @@
     color-mix(in srgb, var(--bg-secondary) 94%, var(--primary-color) 8%),
     color-mix(in srgb, var(--bg-primary) 92%, var(--primary-color) 5%)
   );
-  box-shadow: 0 10px 22px -18px color-mix(in srgb, var(--primary-color) 50%, transparent);
+  box-shadow: none;
 }
 
 .filterAllIcon {
@@ -137,13 +139,13 @@
   align-items: center;
   gap: 8px;
   padding: 7px 12px 7px 8px;
-  border-radius: 10px;
+  border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
   line-height: 1.2;
-  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
-  background: color-mix(in srgb, var(--bg-secondary) 70%, transparent);
-  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--muted-foreground);
   cursor: pointer;
   white-space: nowrap;
   transition:
@@ -153,15 +155,15 @@
 
   &:hover {
     border-color: color-mix(in srgb, var(--filter-color) 40%, var(--border-color));
-    background: color-mix(in srgb, var(--bg-secondary) 90%, transparent);
-    color: var(--text-primary);
+    background: var(--muted);
+    color: var(--foreground);
   }
 }
 
 .filterTagActive {
   border-color: color-mix(in srgb, var(--filter-color) 50%, var(--border-color));
-  background: color-mix(in srgb, var(--filter-surface) 22%, var(--bg-secondary));
-  color: var(--text-primary);
+  background: color-mix(in srgb, var(--filter-surface) 18%, var(--background));
+  color: var(--foreground);
 
   .filterTagIconWrap {
     border-color: color-mix(in srgb, var(--filter-color) 40%, transparent);
@@ -233,9 +235,9 @@
   position: relative;
   overflow: hidden;
   padding: 16px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
-  background: color-mix(in srgb, var(--bg-secondary) 56%, transparent);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--background);
 
   @include mobile {
     padding: 12px;
@@ -973,17 +975,29 @@
   }
 }
 
+.premiumPlanValue,
+:global([data-theme='dark']) .premiumPlanValue {
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--muted);
+  border: 1px solid var(--border);
+  box-shadow: none;
+  color: var(--text-primary);
+  text-shadow: none;
+
+  &::before {
+    content: none;
+  }
+}
+
 // 单个认证文件卡片
 .fileCard {
   position: relative;
   overflow: hidden;
-  background-color: color-mix(in srgb, var(--bg-primary) 85%, transparent);
-  --glass-blur: 8px;
-  backdrop-filter: var(--glass-backdrop-filter);
-  -webkit-backdrop-filter: var(--glass-backdrop-filter);
-  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
-  border-radius: 12px;
-  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   min-height: 100%;
@@ -993,9 +1007,9 @@
     border-color $transition-fast;
 
   &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.15);
-    border-color: color-mix(in srgb, var(--primary-color) 28%, var(--border-color));
+    transform: none;
+    box-shadow: none;
+    border-color: var(--border-hover);
   }
 }
 
@@ -1035,7 +1049,7 @@
 
 .fileCardCompact {
   padding: 12px;
-  border-radius: 10px;
+  border-radius: 8px;
 
   .fileCardMain {
     gap: 8px;
@@ -1167,8 +1181,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+  border-radius: 8px;
+  border: 1px solid var(--border);
 }
 
 .providerAvatarImage {
@@ -1315,7 +1329,7 @@
   overflow: hidden;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 .cardMeta {
@@ -1497,8 +1511,9 @@
   gap: 5px;
   min-width: 0;
   padding: 4px 10px;
-  border-radius: 999px;
-  border: none;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--background);
 }
 
 .statLabel {
@@ -1625,14 +1640,14 @@
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  background: var(--bg-quinary, var(--bg-primary, #fff));
-  border: 1px solid var(--border-secondary, #e5e7eb);
-  border-radius: 10px;
+  background: var(--popover);
+  border: 1px solid var(--border);
+  border-radius: 8px;
   padding: 8px 10px;
   font-size: 11px;
   line-height: 1.5;
   white-space: nowrap;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  box-shadow: var(--shadow-lg);
   z-index: $z-dropdown;
   pointer-events: none;
   color: var(--text-primary);
@@ -1644,7 +1659,7 @@
     left: 50%;
     transform: translateX(-50%);
     border: 5px solid transparent;
-    border-top-color: var(--bg-quinary, var(--bg-primary, #fff));
+    border-top-color: var(--popover);
   }
 
   &::before {
@@ -1654,7 +1669,7 @@
     left: 50%;
     transform: translateX(-50%);
     border: 6px solid transparent;
-    border-top-color: var(--border-secondary, #e5e7eb);
+    border-top-color: var(--border);
   }
 }
 
@@ -1843,7 +1858,7 @@
   gap: 8px;
   margin-top: auto;
   padding-top: 8px;
-  border-top: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+  border-top: 1px solid var(--border);
 }
 
 .cardActionsMain {
@@ -1897,7 +1912,8 @@
   gap: 3px;
   padding: 2px;
   border-radius: 8px;
-  background: color-mix(in srgb, var(--bg-tertiary) 50%, transparent);
+  background: var(--background);
+  border: 1px solid var(--border);
 }
 
 .statusToggle {
@@ -1958,7 +1974,7 @@
   flex-wrap: wrap;
   margin-top: $spacing-lg;
   padding-top: $spacing-md;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border);
 }
 
 .batchActionContainer {
@@ -1979,13 +1995,10 @@
   justify-content: space-between;
   gap: $spacing-sm;
   padding: 10px 12px;
-  border-radius: $radius-lg;
-  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
-  background: color-mix(in srgb, var(--bg-primary) 84%, transparent);
-  --glass-blur: 12px;
-  backdrop-filter: var(--glass-backdrop-filter);
-  -webkit-backdrop-filter: var(--glass-backdrop-filter);
-  box-shadow: var(--shadow-lg);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  box-shadow: none;
 }
 
 .batchActionLeft,
@@ -2029,8 +2042,9 @@
   font-size: 13px;
   color: var(--text-secondary);
   padding: $spacing-xs $spacing-md;
-  background-color: var(--bg-secondary);
-  border-radius: $radius-md;
+  background-color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
 }
 
 // OAuth 模型禁用

@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-primary);
+  background: var(--background);
   opacity: 1;
   transition: opacity 0.4s ease-out;
 
@@ -40,8 +40,8 @@
 .splash-logo {
   height: 80px;
   width: auto;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-lg;
+  border-radius: 8px;
+  box-shadow: none;
   animation: splash-logo-pulse 1.5s ease-in-out infinite;
 }
 
@@ -60,7 +60,7 @@
   font-weight: 800;
   color: var(--text-primary);
   margin: 0;
-  letter-spacing: -0.5px;
+  letter-spacing: 0;
 }
 
 .splash-subtitle {
@@ -74,7 +74,7 @@
 .splash-loader {
   width: 120px;
   height: 3px;
-  background: var(--border-color);
+  background: var(--border);
   border-radius: $radius-full;
   overflow: hidden;
   margin-top: $spacing-md;

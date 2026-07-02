@@ -4,7 +4,7 @@
 .container {
   min-height: 100vh;
   display: flex;
-  background: var(--bg-secondary);
+  background: var(--background);
 }
 
 // 左侧品牌展示区
@@ -14,7 +14,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: #000000;
+  background: var(--foreground);
   padding: $spacing-2xl;
   position: relative;
   overflow: hidden;
@@ -53,8 +53,8 @@
 .brandWord {
   font-size: 14vw;
   font-weight: 900;
-  color: rgba(255, 255, 255, 0.9);
-  letter-spacing: -0.02em;
+  color: var(--background);
+  letter-spacing: 0;
   line-height: 0.85;
   text-transform: uppercase;
   font-family:
@@ -89,7 +89,7 @@
   justify-content: center;
   align-items: center;
   padding: $spacing-2xl;
-  background: var(--bg-secondary);
+  background: var(--background);
   position: relative;
 
   @media (max-width: $breakpoint-mobile) {
@@ -112,19 +112,19 @@
 .logo {
   width: 80px;
   height: 80px;
-  border-radius: $radius-lg;
+  border-radius: 8px;
   object-fit: cover;
-  box-shadow: var(--shadow-lg);
-  border: 3px solid var(--border-color);
+  box-shadow: none;
+  border: 1px solid var(--border);
 }
 
 // 登录表单卡片
 .loginCard {
   width: 100%;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: $radius-lg;
-  box-shadow: var(--shadow-lg);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: none;
   padding: $spacing-xl;
   display: flex;
   flex-direction: column;
@@ -176,9 +176,9 @@
 
 // 连接信息框
 .connectionBox {
-  background: var(--bg-secondary);
-  border: 1px dashed var(--border-color);
-  border-radius: $radius-md;
+  background: var(--muted);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
   padding: $spacing-md;
   display: flex;
   flex-direction: column;
@@ -218,7 +218,7 @@
 .errorBox {
   background: rgba($error-color, 0.1);
   border: 1px solid rgba($error-color, 0.4);
-  border-radius: $radius-md;
+  border-radius: 8px;
   padding: $spacing-sm $spacing-md;
   color: $error-color;
   font-size: 14px;
@@ -281,8 +281,8 @@
 .splashLogo {
   height: 80px;
   width: auto;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-lg;
+  border-radius: 8px;
+  box-shadow: none;
   animation: splashLogoPulse 1.5s ease-in-out infinite;
 }
 
@@ -292,7 +292,7 @@
   font-weight: 800;
   color: var(--text-primary);
   margin: 0;
-  letter-spacing: -0.5px;
+  letter-spacing: 0;
 }
 
 // 启动动画副标题
@@ -308,7 +308,7 @@
 .splashLoader {
   width: 120px;
   height: 3px;
-  background: var(--border-color);
+  background: var(--border);
   border-radius: $radius-full;
   overflow: hidden;
   margin-top: $spacing-md;

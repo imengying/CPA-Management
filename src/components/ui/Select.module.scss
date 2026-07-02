@@ -18,11 +18,11 @@
   width: 100%;
   height: 40px;
   padding: 0 12px;
-  border: 1px solid var(--border-color);
-  border-radius: $radius-md;
-  background-color: var(--bg-primary);
-  box-shadow: var(--shadow);
-  color: var(--text-primary);
+  border: 1px solid var(--input);
+  border-radius: 8px;
+  background: var(--background);
+  box-shadow: none;
+  color: var(--foreground);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -37,15 +37,13 @@
   &:focus {
     outline: none;
     box-shadow:
-      var(--shadow),
-      0 0 0 3px rgba($primary-color, 0.18);
+      0 0 0 2px color-mix(in srgb, var(--ring) 20%, transparent);
   }
 
   &[aria-expanded='true'] {
-    border-color: var(--primary-color);
+    border-color: var(--ring);
     box-shadow:
-      var(--shadow),
-      0 0 0 3px rgba($primary-color, 0.18);
+      0 0 0 2px color-mix(in srgb, var(--ring) 20%, transparent);
   }
 }
 
@@ -79,9 +77,9 @@
 
 .dropdown {
   position: fixed;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: $radius-lg;
+  background: var(--popover);
+  border: 1px solid var(--border);
+  border-radius: 8px;
   padding: 6px;
   box-shadow: var(--shadow-lg);
   display: flex;
@@ -95,10 +93,10 @@
 
 .option {
   padding: 8px 12px;
-  border-radius: $radius-md;
+  border-radius: 6px;
   border: 1px solid transparent;
   background: transparent;
-  color: var(--text-primary);
+  color: var(--popover-foreground);
   cursor: pointer;
   text-align: left;
   font-size: 13px;
@@ -109,16 +107,16 @@
   flex-shrink: 0;
 
   &:hover {
-    background: var(--bg-secondary);
+    background: var(--muted);
   }
 }
 
 .optionActive {
-  border-color: rgba($primary-color, 0.5);
-  background: rgba($primary-color, 0.1);
+  border-color: color-mix(in srgb, var(--ring) 32%, var(--border));
+  background: color-mix(in srgb, var(--ring) 10%, transparent);
   font-weight: 600;
 }
 
 .optionHighlighted {
-  background: var(--bg-secondary);
+  background: var(--muted);
 }

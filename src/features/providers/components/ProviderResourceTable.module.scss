@@ -6,7 +6,7 @@
   table-layout: fixed;
 
   tbody tr:hover .actionsCell {
-    background: color-mix(in srgb, var(--accent-bg) 50%, transparent);
+    background: var(--accent);
   }
 }
 
@@ -18,7 +18,7 @@
 }
 
 .primaryName {
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -50,9 +50,9 @@
   display: inline-flex;
   align-items: center;
   padding: 3px 9px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--muted-bg);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--muted);
   color: var(--muted-foreground);
   font-size: 12px;
 }
@@ -69,9 +69,9 @@
   align-items: center;
   gap: 4px;
   padding: 3px 9px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--muted-bg);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--muted);
   font-size: 12px;
   line-height: 1.4;
   white-space: nowrap;
@@ -91,7 +91,7 @@
   display: inline-flex;
   align-items: center;
   padding: 3px 9px;
-  border-radius: var(--radius-md);
+  border-radius: 6px;
   border: 1px solid var(--primary-30);
   background: var(--primary-10);
   color: var(--primary-color);
@@ -106,7 +106,7 @@
   align-items: center;
   gap: 4px;
   padding: 3px 9px;
-  border-radius: var(--radius-md);
+  border-radius: 6px;
   border: 1px solid;
   font-size: 12px;
   font-weight: 500;
@@ -134,7 +134,7 @@
   align-items: center;
   gap: 4px;
   padding: 2px 7px;
-  border-radius: 999px;
+  border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
   line-height: 1.4;
@@ -178,17 +178,17 @@
   right: 0;
   width: 176px;
   min-width: 176px;
-  box-shadow: -12px 0 16px -18px rgba(15, 23, 42, 0.45);
+  box-shadow: -1px 0 0 var(--border);
 }
 
 .actionsHead {
   z-index: 3;
-  background: var(--muted-bg);
+  background: var(--muted);
 }
 
 .actionsCell {
   z-index: 2;
-  background: var(--bg-primary);
+  background: var(--card);
 }
 
 .actionsCellSelected {
@@ -217,7 +217,7 @@
   height: 30px;
   padding: 0;
   border: 1px solid transparent;
-  border-radius: var(--radius-md);
+  border-radius: 8px;
   background: transparent;
   color: var(--text-secondary);
   cursor: pointer;
@@ -226,7 +226,7 @@
     color $transition-fast;
 
   &:hover:not(:disabled) {
-    background: var(--bg-tertiary);
+    background: var(--accent);
     color: var(--text-primary);
   }
 

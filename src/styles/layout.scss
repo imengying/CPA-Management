@@ -19,7 +19,7 @@
   min-height: 100vh;
   height: 100vh;
   overflow: hidden;
-  background: linear-gradient(180deg, var(--bg-secondary), var(--bg-quinary, var(--bg-secondary)));
+  background: var(--background);
   color: var(--text-primary);
 
   &.sidebar-is-collapsed {
@@ -48,16 +48,10 @@
   z-index: $z-dropdown - 2;
   height: 141px;
   pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--bg-secondary) 88%, #0d0c0a) 0%,
-    color-mix(in srgb, var(--bg-secondary) 54%, transparent) 36%,
-    color-mix(in srgb, var(--bg-secondary) 22%, transparent) 66%,
-    transparent 100%
-  );
-  --glass-blur: 22px;
-  backdrop-filter: var(--glass-backdrop-filter);
-  -webkit-backdrop-filter: var(--glass-backdrop-filter);
+  background: color-mix(in srgb, var(--background) 88%, transparent);
+  --glass-blur: 12px;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   mask-image: linear-gradient(
     to bottom,
     #000 0%,
@@ -95,13 +89,11 @@
     width: 24px;
     height: 52px;
     padding: 0;
-    border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
-    border-radius: 14px;
-    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card);
     color: color-mix(in srgb, var(--text-secondary) 88%, transparent);
-    box-shadow:
-      4px 0 14px rgb(0 0 0 / 0.18),
-      inset 0 1px 0 rgb(255 255 255 / 0.03);
+    box-shadow: none;
     cursor: pointer;
     pointer-events: auto;
     display: inline-flex;
@@ -121,8 +113,8 @@
     }
 
     &:hover {
-      background: color-mix(in srgb, var(--bg-primary) 90%, var(--text-primary) 10%);
-      border-color: color-mix(in srgb, var(--border-hover) 86%, transparent);
+      background: var(--accent);
+      border-color: var(--border-hover);
       color: var(--text-primary);
       transform: translateY(-50%) translateX(2px);
     }
@@ -133,9 +125,7 @@
 
     &:focus-visible {
       outline: none;
-      box-shadow:
-        0 0 0 2px color-mix(in srgb, var(--primary-color) 24%, transparent),
-        4px 0 14px rgb(0 0 0 / 0.18);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 24%, transparent);
     }
   }
 
@@ -147,16 +137,14 @@
     align-items: center;
     gap: 4px;
     padding: 6px;
-    border: 1px solid color-mix(in srgb, var(--border-color) 68%, transparent);
-    border-radius: 16px;
-    background: color-mix(in srgb, var(--bg-primary) 68%, transparent);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card);
     color: var(--text-secondary);
-    box-shadow:
-      0 18px 44px rgb(0 0 0 / 0.17),
-      inset 0 1px 0 rgb(255 255 255 / 0.04);
-    --glass-blur: 16px;
-    backdrop-filter: var(--glass-backdrop-filter);
-    -webkit-backdrop-filter: var(--glass-backdrop-filter);
+    box-shadow: none;
+    --glass-blur: 8px;
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     pointer-events: auto;
   }
 
@@ -175,7 +163,7 @@
     height: var(--floating-control-size);
     min-width: var(--floating-control-size);
     padding: 0;
-    border-radius: 11px;
+    border-radius: 6px;
     background: transparent;
     color: var(--text-secondary);
     border-color: transparent;
@@ -188,14 +176,14 @@
     }
 
     &:hover {
-      background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+      background: var(--accent);
       color: var(--text-primary);
       border-color: transparent;
     }
 
     &:focus-visible {
       outline: none;
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-color) 26%, transparent);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 24%, transparent);
     }
   }
 
@@ -217,12 +205,10 @@
     top: calc(100% + 12px);
     right: 0;
     z-index: $z-dropdown + 2;
-    border: 1px solid color-mix(in srgb, var(--border-color) 74%, transparent);
-    background: color-mix(in srgb, var(--bg-primary) 88%, transparent);
-    box-shadow: 0 20px 48px rgb(0 0 0 / 0.22);
-    --glass-blur: 16px;
-    backdrop-filter: var(--glass-backdrop-filter);
-    -webkit-backdrop-filter: var(--glass-backdrop-filter);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--popover);
+    box-shadow: var(--shadow-lg);
   }
 
   .language-menu-popover {
@@ -251,13 +237,13 @@
       color $transition-fast;
 
     &:hover {
-      background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+      background: var(--accent);
     }
 
     &:focus-visible {
       outline: none;
-      background: color-mix(in srgb, var(--text-primary) 8%, transparent);
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-color) 22%, transparent);
+      background: var(--accent);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 22%, transparent);
     }
 
     &.active {
@@ -294,12 +280,12 @@
       background-color $transition-fast;
 
     &:hover {
-      background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+      background: var(--accent);
     }
 
     &:focus-visible {
       outline: none;
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-color) 22%, transparent);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 22%, transparent);
     }
 
     &.active {
@@ -401,9 +387,9 @@
   gap: $spacing-md;
   flex-shrink: 0;
   overflow-y: auto;
-  background: var(--bg-primary);
+  background: var(--sidebar-background, var(--card));
   border: 0;
-  border-right: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
+  border-right: 1px solid var(--border);
   border-radius: 0;
   box-shadow: none;
   scrollbar-width: none;
@@ -461,7 +447,7 @@
     min-height: 42px;
     padding: 4px 10px 14px;
     margin-bottom: 4px;
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+    border-bottom: 1px solid var(--border);
     color: var(--text-primary);
     flex-shrink: 0;
   }
@@ -509,7 +495,7 @@
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: color-mix(in srgb, var(--text-primary) 42%, transparent);
+    color: var(--muted-foreground);
     user-select: none;
   }
 
@@ -518,7 +504,7 @@
     height: 1px;
     width: 24px;
     margin: 4px auto;
-    background: color-mix(in srgb, var(--border-color) 70%, transparent);
+    background: var(--border);
   }
 
   .nav-drawer {
@@ -551,12 +537,12 @@
     gap: 4px;
     margin-left: 21px;
     padding-left: 10px;
-    border-left: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
+    border-left: 1px solid var(--border);
   }
 
   .nav-item {
     padding: 9px 12px;
-    border-radius: 11px;
+    border-radius: 8px;
     border: 1px solid transparent;
     color: var(--text-primary);
     font-weight: 650;
@@ -580,11 +566,9 @@
       flex-shrink: 0;
       color: currentColor;
       opacity: 0.96;
-      border-radius: 8px;
-      background:
-        linear-gradient(180deg, rgb(255 255 255 / 0.12), rgb(255 255 255 / 0)),
-        color-mix(in srgb, var(--bg-secondary) 84%, transparent);
-      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--border-primary) 82%, transparent);
+      border-radius: 7px;
+      background: var(--muted);
+      box-shadow: none;
       transition:
         background $transition-fast,
         box-shadow $transition-fast,
@@ -630,15 +614,13 @@
     }
 
     &:hover {
-      background: color-mix(in srgb, var(--text-primary) 7%, transparent);
-      border-color: color-mix(in srgb, var(--border-color) 58%, transparent);
+      background: var(--accent);
+      border-color: var(--border-hover);
       transform: translateX(1px);
 
       .nav-icon {
-        background:
-          linear-gradient(180deg, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0)),
-          color-mix(in srgb, var(--bg-primary) 88%, transparent);
-        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--border-hover) 86%, transparent);
+        background: var(--background);
+        box-shadow: none;
       }
 
       .nav-meta {
@@ -647,17 +629,15 @@
     }
 
     &.active {
-      background: color-mix(in srgb, var(--text-primary) 10%, transparent);
+      background: var(--accent);
       color: var(--text-primary);
-      border-color: color-mix(in srgb, var(--border-hover) 70%, transparent);
-      box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+      border-color: var(--border-hover);
+      box-shadow: none;
 
       .nav-icon {
         color: var(--primary-active);
-        background:
-          linear-gradient(180deg, rgb(255 255 255 / 0.18), rgb(255 255 255 / 0)),
-          color-mix(in srgb, var(--primary-color) 14%, var(--bg-primary));
-        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary-color) 24%, transparent);
+        background: color-mix(in srgb, var(--primary-color) 12%, var(--background));
+        box-shadow: none;
       }
 
       .nav-meta {
@@ -780,7 +760,7 @@
       );
       padding: 5px;
       gap: 2px;
-      border-radius: 14px;
+      border-radius: 8px;
     }
 
     .mobile-sidebar-actions {
@@ -789,7 +769,7 @@
       left: var(--shell-gutter);
       padding: 5px;
       gap: 2px;
-      border-radius: 14px;
+      border-radius: 8px;
     }
 
     .mobile-menu-btn {
@@ -856,9 +836,9 @@
     width: var(--sidebar-panel-width);
     height: auto;
     transform: translateX(calc(-100% - 24px));
-    background: var(--bg-primary);
+    background: var(--sidebar-background, var(--card));
     border: 0;
-    border-right: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
+    border-right: 1px solid var(--border);
     border-radius: 0;
     box-shadow: none;
 
