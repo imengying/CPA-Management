@@ -5,6 +5,7 @@ A single-file Web UI (React + TypeScript) for operating and troubleshooting the 
 [中文文档](README.md)
 
 **Main Project**: https://github.com/router-for-me/CLIProxyAPI  
+**WebUI Repository**: https://github.com/imengying/Cli-Proxy-API-Management-Center  
 **Example URL**: https://remote.router-for.me/  
 **Supported Version**: CLIProxyAPI 7.2.49
 

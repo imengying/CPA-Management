@@ -301,6 +301,7 @@ export function MainLayout() {
   const logout = useAuthStore((state) => state.logout);
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
   const apiBase = useAuthStore((state) => state.apiBase);
+  const supportsPlugin = useAuthStore((state) => state.supportsPlugin);
 
   const fetchConfig = useConfigStore((state) => state.fetchConfig);
   const clearCache = useConfigStore((state) => state.clearCache);
@@ -326,7 +327,7 @@ export function MainLayout() {
   const fullBrandName = 'CLI Proxy API Management Center';
   const abbrBrandName = t('title.abbr');
   const isLogsPage = location.pathname.startsWith('/logs');
-  const isPluginResourcePage = location.pathname.startsWith('/plugin-pages');
+  const isPluginResourcePage = supportsPlugin && location.pathname.startsWith('/plugin-pages');
   const showSidebarLabels = !sidebarCollapsed || sidebarOpen;
 
   // Keep floating header height available to sticky mobile elements and overlays.
@@ -431,7 +432,7 @@ export function MainLayout() {
   }, [fetchConfig]);
 
   const loadPluginResources = useCallback(async () => {
-    if (connectionStatus !== 'connected') {
+    if (connectionStatus !== 'connected' || !supportsPlugin) {
       setPluginResources([]);
       return;
     }
@@ -442,7 +443,7 @@ export function MainLayout() {
     } catch {
       setPluginResources([]);
     }
-  }, [connectionStatus]);
+  }, [connectionStatus, supportsPlugin]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -476,36 +477,36 @@ export function MainLayout() {
 
   const pluginPageNavItems: SidebarNavItem[] = pluginResourceGroups.flatMap(
     (group): SidebarNavItem[] => {
-        if (group.entries.length === 1) {
-          const resource = group.entries[0];
-          const pluginLogo = resolvePluginAssetURL(resource.pluginLogo, apiBase);
-          return [
-            {
-              path: resource.route,
-              label: resource.label,
-              meta: resource.description,
-              icon: <PluginSidebarIcon src={pluginLogo} />,
-            },
-          ];
-        }
-
-        const pluginLogo = resolvePluginAssetURL(group.entries[0]?.pluginLogo ?? '', apiBase);
+      if (group.entries.length === 1) {
+        const resource = group.entries[0];
+        const pluginLogo = resolvePluginAssetURL(resource.pluginLogo, apiBase);
         return [
           {
-            kind: 'drawer',
-            id: `plugin-pages-${group.pluginID}`,
-            label: group.pluginTitle,
-            meta: t('plugin_resource.page_count', { count: group.entries.length }),
+            path: resource.route,
+            label: resource.label,
+            meta: resource.description,
             icon: <PluginSidebarIcon src={pluginLogo} />,
-            children: group.entries.map((resource) => ({
-              path: resource.route,
-              label: resource.label,
-              meta: resource.description,
-              icon: <span className="nav-sub-dot" aria-hidden="true" />,
-            })),
           },
         ];
       }
+
+      const pluginLogo = resolvePluginAssetURL(group.entries[0]?.pluginLogo ?? '', apiBase);
+      return [
+        {
+          kind: 'drawer',
+          id: `plugin-pages-${group.pluginID}`,
+          label: group.pluginTitle,
+          meta: t('plugin_resource.page_count', { count: group.entries.length }),
+          icon: <PluginSidebarIcon src={pluginLogo} />,
+          children: group.entries.map((resource) => ({
+            path: resource.route,
+            label: resource.label,
+            meta: resource.description,
+            icon: <span className="nav-sub-dot" aria-hidden="true" />,
+          })),
+        },
+      ];
+    }
   );
 
   const navGroups: SidebarNavGroup[] = [
@@ -573,18 +574,22 @@ export function MainLayout() {
           metaKey: 'nav_meta.config_management',
           icon: sidebarIcons.config,
         },
-        {
-          path: '/plugins',
-          labelKey: 'nav.plugins',
-          metaKey: 'nav_meta.plugins',
-          icon: sidebarIcons.plugins,
-        },
-        {
-          path: '/plugin-store',
-          labelKey: 'nav.plugin_store',
-          metaKey: 'nav_meta.plugin_store',
-          icon: sidebarIcons.pluginStore,
-        },
+        ...(supportsPlugin
+          ? [
+              {
+                path: '/plugins',
+                labelKey: 'nav.plugins',
+                metaKey: 'nav_meta.plugins',
+                icon: sidebarIcons.plugins,
+              },
+              {
+                path: '/plugin-store',
+                labelKey: 'nav.plugin_store',
+                metaKey: 'nav_meta.plugin_store',
+                icon: sidebarIcons.pluginStore,
+              },
+            ]
+          : []),
         {
           path: '/system',
           labelKey: 'nav.system_info',
@@ -593,7 +598,7 @@ export function MainLayout() {
         },
       ],
     },
-    ...(pluginPageNavItems.length > 0
+    ...(supportsPlugin && pluginPageNavItems.length > 0
       ? [
           {
             id: 'plugin-pages',

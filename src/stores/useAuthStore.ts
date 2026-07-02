@@ -23,6 +23,7 @@ interface AuthStoreState extends AuthState {
   checkAuth: () => Promise<boolean>;
   restoreSession: () => Promise<boolean>;
   updateServerVersion: (version: string | null, buildDate?: string | null) => void;
+  updateSupportsPlugin: (supportsPlugin: boolean) => void;
   updateConnectionStatus: (status: ConnectionStatus, error?: string | null) => void;
 }
 
@@ -38,6 +39,7 @@ export const useAuthStore = create<AuthStoreState>()(
       rememberPassword: false,
       serverVersion: null,
       serverBuildDate: null,
+      supportsPlugin: false,
       connectionStatus: 'disconnected',
       connectionError: null,
 
@@ -66,6 +68,7 @@ export const useAuthStore = create<AuthStoreState>()(
             apiBase: resolvedBase,
             managementKey: resolvedKey,
             rememberPassword: resolvedRememberPassword,
+            supportsPlugin: false,
           });
           apiClient.setConfig({ apiBase: resolvedBase, managementKey: resolvedKey });
 
@@ -100,6 +103,7 @@ export const useAuthStore = create<AuthStoreState>()(
             connectionStatus: 'connecting',
             serverVersion: null,
             serverBuildDate: null,
+            supportsPlugin: false,
           });
           useModelsStore.getState().clearCache();
 
@@ -152,6 +156,7 @@ export const useAuthStore = create<AuthStoreState>()(
           managementKey: '',
           serverVersion: null,
           serverBuildDate: null,
+          supportsPlugin: false,
           connectionStatus: 'disconnected',
           connectionError: null,
         });
@@ -169,6 +174,7 @@ export const useAuthStore = create<AuthStoreState>()(
         try {
           // 重新配置客户端
           apiClient.setConfig({ apiBase, managementKey });
+          set({ supportsPlugin: false });
 
           // 验证连接
           await useConfigStore.getState().fetchConfig();
@@ -194,6 +200,10 @@ export const useAuthStore = create<AuthStoreState>()(
           serverVersion: version || null,
           serverBuildDate: buildDate || null,
         });
+      },
+
+      updateSupportsPlugin: (supportsPlugin) => {
+        set({ supportsPlugin });
       },
 
       // 更新连接状态
@@ -240,5 +250,10 @@ if (typeof window !== 'undefined') {
     useAuthStore
       .getState()
       .updateServerVersion(detail.version || null, detail.buildDate || null);
+  }) as EventListener);
+
+  window.addEventListener('server-plugin-support-update', ((e: CustomEvent) => {
+    const detail = e.detail || {};
+    useAuthStore.getState().updateSupportsPlugin(Boolean(detail.supportsPlugin));
   }) as EventListener);
 }

@@ -253,6 +253,7 @@ export function OAuthPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const apiBase = useAuthStore((state) => state.apiBase);
+  const supportsPlugin = useAuthStore((state) => state.supportsPlugin);
   const { showNotification } = useNotificationStore();
   const resolvedTheme = useThemeStore((state) => state.resolvedTheme);
   const [states, setStates] = useState<Record<string, ProviderState>>({});
@@ -287,6 +288,11 @@ export function OAuthPage() {
     let cancelled = false;
 
     const loadPluginProviders = async () => {
+      if (!supportsPlugin) {
+        setPluginProviders([]);
+        return;
+      }
+
       try {
         const response = await pluginsApi.list();
         if (!cancelled) {
@@ -304,7 +310,7 @@ export function OAuthPage() {
     return () => {
       cancelled = true;
     };
-  }, [apiBase]);
+  }, [apiBase, supportsPlugin]);
 
   const providerCards = useMemo<OAuthProviderCard[]>(
     () => [...PROVIDERS, ...pluginProviders],

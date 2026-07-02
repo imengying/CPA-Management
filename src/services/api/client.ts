@@ -8,6 +8,7 @@ import type { ApiClientConfig, ApiError } from '@/types';
 import {
   BUILD_DATE_HEADER_KEYS,
   REQUEST_TIMEOUT_MS,
+  SUPPORT_PLUGIN_HEADER_KEYS,
   VERSION_HEADER_KEYS,
 } from '@/utils/constants';
 import { computeApiUrl } from '@/utils/connection';
@@ -81,6 +82,14 @@ class ApiClient {
     return null;
   }
 
+  private parseSupportPluginHeader(value: string | null): boolean | null {
+    if (value === null) return null;
+    const normalized = value.trim().toLowerCase();
+    if (['1', 'true', 'yes', 'on'].includes(normalized)) return true;
+    if (['0', 'false', 'no', 'off'].includes(normalized)) return false;
+    return null;
+  }
+
   /**
    * 设置请求/响应拦截器
    */
@@ -111,12 +120,22 @@ class ApiClient {
         const headers = response.headers as Record<string, string | undefined>;
         const version = this.readHeader(headers, VERSION_HEADER_KEYS);
         const buildDate = this.readHeader(headers, BUILD_DATE_HEADER_KEYS);
+        const supportsPlugin = this.parseSupportPluginHeader(
+          this.readHeader(headers, SUPPORT_PLUGIN_HEADER_KEYS)
+        );
 
         // 触发版本更新事件（后续通过 store 处理）
         if (version || buildDate) {
           window.dispatchEvent(
             new CustomEvent('server-version-update', {
               detail: { version: version || null, buildDate: buildDate || null },
+            })
+          );
+        }
+        if (supportsPlugin !== null) {
+          window.dispatchEvent(
+            new CustomEvent('server-plugin-support-update', {
+              detail: { supportsPlugin },
             })
           );
         }
