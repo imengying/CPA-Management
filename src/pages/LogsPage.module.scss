@@ -18,7 +18,7 @@
   align-items: center;
   justify-content: space-between;
   gap: $spacing-md;
-  margin: 0 0 $spacing-lg 0;
+  margin: 0 0 14px;
 
   @include mobile {
     align-items: flex-start;
@@ -40,7 +40,7 @@
   gap: 2px;
   width: fit-content;
   max-width: 100%;
-  margin-bottom: $spacing-lg;
+  margin-bottom: 14px;
   padding: 2px;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -83,12 +83,12 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: 14px;
   flex: 1;
   min-height: 0;
 
   @include mobile {
-    gap: $spacing-md;
+    gap: 12px;
     min-height: auto;
   }
 }

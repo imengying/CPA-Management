@@ -3,7 +3,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: 14px;
   min-height: 0;
 }
 
@@ -79,7 +79,7 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: 14px;
 }
 
 .contentWithFloatingAction {

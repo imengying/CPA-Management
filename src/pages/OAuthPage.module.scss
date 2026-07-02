@@ -29,13 +29,13 @@
   font-weight: 650;
   line-height: 1.15;
   color: var(--foreground);
-  margin: 0 0 $spacing-lg;
+  margin: 0 0 14px;
 }
 
 .content {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: 14px;
 }
 
 .cardContent {

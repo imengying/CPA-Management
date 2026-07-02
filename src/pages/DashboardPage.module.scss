@@ -1,11 +1,12 @@
 @use '../styles/variables.scss' as *;
 
 .dashboard {
-  width: min(100%, 1180px);
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: 14px;
+  box-sizing: border-box;
 }
 
 .pageHeader,
@@ -20,8 +21,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: $spacing-lg;
-  padding: $spacing-lg;
+  gap: 14px;
+  padding: 14px 16px;
 }
 
 .titleBlock {
@@ -128,15 +129,15 @@
 }
 
 .section {
-  padding: $spacing-lg;
+  padding: 14px;
 }
 
 .sectionHeader {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: $spacing-md;
-  margin-bottom: $spacing-md;
+  gap: 12px;
+  margin-bottom: 12px;
   min-width: 0;
 
   h2 {
@@ -158,20 +159,20 @@
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: $spacing-md;
+  gap: 12px;
 }
 
 .statCard {
-  min-height: 156px;
+  min-height: 128px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: $spacing-lg;
+  gap: 12px;
   border: 1px solid var(--border-color);
   border-radius: $radius-lg;
   background: var(--bg-secondary);
   color: var(--text-primary);
-  padding: $spacing-md;
+  padding: 14px;
   text-decoration: none;
   transition:
     border-color $transition-fast,
@@ -198,8 +199,8 @@
 }
 
 .statIcon {
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   display: grid;
   place-items: center;
   border: 1px solid var(--border-color);
@@ -231,7 +232,7 @@
 
 .statValue {
   color: var(--text-primary);
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 800;
   line-height: 1.05;
   font-variant-numeric: tabular-nums;
@@ -258,16 +259,16 @@
 }
 
 .configItem {
-  min-height: 46px;
+  min-height: 42px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: $spacing-md;
+  gap: 12px;
   min-width: 0;
   border: 1px solid var(--border-color);
   border-radius: $radius-md;
   background: var(--bg-secondary);
-  padding: 10px 12px;
+  padding: 8px 10px;
 
   span {
     min-width: 0;
@@ -342,7 +343,7 @@
   display: inline-flex;
   align-items: center;
   gap: $spacing-xs;
-  margin-top: $spacing-md;
+  margin-top: 12px;
   border: 1px solid var(--border-color);
   border-radius: $radius-md;
   background: var(--bg-secondary);
@@ -369,7 +370,7 @@
 
 @media (max-width: $breakpoint-mobile) {
   .dashboard {
-    gap: $spacing-md;
+    gap: 12px;
   }
 
   .pageHeader {
@@ -378,7 +379,7 @@
 
   .pageHeader,
   .section {
-    padding: $spacing-md;
+    padding: 12px;
   }
 
   .connectionBlock {
@@ -403,5 +404,4 @@
   .pageTitle {
     font-size: 24px;
   }
-
 }

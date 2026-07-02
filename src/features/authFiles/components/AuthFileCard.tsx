@@ -96,13 +96,15 @@ export function AuthFileCard(props: AuthFileCardProps) {
   const typeLabel = getTypeLabel(t, providerKey);
   const providerIcon = getAuthFileIcon(providerKey, resolvedTheme);
 
-  const quotaType =
-    quotaFilterType && resolveQuotaType(file) === quotaFilterType ? quotaFilterType : null;
+  const resolvedQuotaType = resolveQuotaType(file);
+  const quotaType = resolvedQuotaType;
+  const useQuotaManagedStyle = Boolean(quotaFilterType && resolvedQuotaType === quotaFilterType);
 
-  const showQuotaLayout = Boolean(quotaType) && !isRuntimeOnly && !compact;
+  const showQuotaLayout = Boolean(resolvedQuotaType) && !isRuntimeOnly && !compact;
 
-  const providerCardClass =
-    quotaType === 'antigravity'
+  const providerCardClass = !useQuotaManagedStyle
+    ? ''
+    : quotaType === 'antigravity'
       ? styles.antigravityCard
       : quotaType === 'claude'
         ? styles.claudeCard

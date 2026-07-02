@@ -85,7 +85,7 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
-  margin-bottom: $spacing-lg;
+  margin-bottom: 0;
 }
 
 .filterRail {
@@ -2168,8 +2168,8 @@
 
 // OAuth 模型别名 - 映射概览
 .aliasChartSection {
-  margin-bottom: $spacing-lg;
-  padding-bottom: $spacing-lg;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
   border-bottom: 1px solid var(--border-color);
 }
 
