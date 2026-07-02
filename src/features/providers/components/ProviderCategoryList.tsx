@@ -81,11 +81,9 @@ export function ProviderCategoryList({ groups, activeBrand, onSelect }: Provider
   );
 
   return (
-    <div className={styles.stack}>
-      <aside className={styles.aside}>
-        <p className={styles.eyebrow}>{t('providersPage.categories.title')}</p>
-        {renderGroups(groups)}
-      </aside>
-    </div>
+    <section className={styles.providerBar} aria-label={t('providersPage.categories.title')}>
+      <p className={styles.eyebrow}>{t('providersPage.categories.title')}</p>
+      {renderGroups(groups)}
+    </section>
   );
 }

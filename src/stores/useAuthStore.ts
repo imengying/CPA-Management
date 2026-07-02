@@ -48,28 +48,23 @@ export const useAuthStore = create<AuthStoreState>()(
         if (restoreSessionPromise) return restoreSessionPromise;
 
         restoreSessionPromise = (async () => {
-          const wasLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-
           const { apiBase, managementKey, rememberPassword } = get();
           const resolvedBase = normalizeApiBase(apiBase || detectApiBaseFromLocation());
           const resolvedKey = managementKey || '';
-          const resolvedRememberPassword =
-            rememberPassword || Boolean(managementKey);
 
           set({
             apiBase: resolvedBase,
             managementKey: resolvedKey,
-            rememberPassword: resolvedRememberPassword,
             supportsPlugin: false,
           });
           apiClient.setConfig({ apiBase: resolvedBase, managementKey: resolvedKey });
 
-          if (wasLoggedIn && resolvedBase && resolvedKey) {
+          if (rememberPassword && resolvedBase && resolvedKey) {
             try {
               await get().login({
                 apiBase: resolvedBase,
                 managementKey: resolvedKey,
-                rememberPassword: resolvedRememberPassword,
+                rememberPassword,
               });
               return true;
             } catch (error) {
@@ -117,11 +112,6 @@ export const useAuthStore = create<AuthStoreState>()(
             connectionStatus: 'connected',
             connectionError: null,
           });
-          if (rememberPassword) {
-            localStorage.setItem('isLoggedIn', 'true');
-          } else {
-            localStorage.removeItem('isLoggedIn');
-          }
         } catch (error: unknown) {
           const message =
             error instanceof Error
@@ -152,7 +142,6 @@ export const useAuthStore = create<AuthStoreState>()(
           connectionStatus: 'disconnected',
           connectionError: null,
         });
-        localStorage.removeItem('isLoggedIn');
       },
 
       // 检查认证状态

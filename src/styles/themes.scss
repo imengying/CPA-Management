@@ -4,57 +4,57 @@
 
 // 浅色主题（默认）
 :root {
-  // 极简暖灰：浅色模式
-  --bg-secondary: #faf9f5; // 页面背景（纸感）
-  --bg-primary: #f0eee8; // 容器/卡片背景
-  --bg-tertiary: #e9e6df; // hover/次级背景
+  // CPA-Manager-Plus style neutral light.
+  --bg-secondary: #f8fafc;
+  --bg-primary: #ffffff;
+  --bg-tertiary: #f1f5f9;
   --bg-hover: var(--bg-tertiary);
-  --bg-quinary: #f6f4ee;
-  --bg-error-light: rgba(198, 87, 70, 0.1);
-  --floating-surface: #fffdf9;
-  --floating-border: #d8d3ca;
-  --floating-shadow: 0 12px 26px rgba(0, 0, 0, 0.14);
+  --bg-quinary: #f8fafc;
+  --bg-error-light: rgba(220, 38, 38, 0.08);
+  --floating-surface: #ffffff;
+  --floating-border: #e2e8f0;
+  --floating-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
 
-  --text-primary: #2d2a26;
-  --text-secondary: #6d6760;
-  --text-tertiary: #a29c95;
-  --text-quaternary: #c0bab3;
+  --text-primary: #18181b;
+  --text-secondary: #475569;
+  --text-tertiary: #64748b;
+  --text-quaternary: #94a3b8;
   --text-muted: var(--text-tertiary);
 
-  --border-color: #e3e1db; // 边框/分割线
+  --border-color: #e2e8f0;
   --border-secondary: var(--border-color);
-  --border-primary: #d5d2cb;
-  --border-hover: #cecac4;
+  --border-primary: #cbd5e1;
+  --border-hover: #cbd5e1;
 
-  --primary-color: #8b8680; // 行动色（主色）
-  --primary-hover: #7f7a74;
-  --primary-active: #726d67;
+  --primary-color: #18181b;
+  --primary-hover: #27272a;
+  --primary-active: #3f3f46;
   --primary-contrast: #ffffff;
 
-  --success-color: #10b981;
-  --quota-medium-color: #e0aa14;
-  --warning-color: #c65746; // 错误/警告色
-  --error-color: #c65746;
+  --success-color: #16a34a;
+  --quota-medium-color: #d97706;
+  --warning-color: #d97706;
+  --error-color: #dc2626;
   --danger-color: var(--error-color);
   --info-color: var(--primary-color);
 
-  --warning-bg: rgba(198, 87, 70, 0.12);
-  --warning-border: rgba(198, 87, 70, 0.35);
+  --warning-bg: rgba(217, 119, 6, 0.1);
+  --warning-border: rgba(217, 119, 6, 0.3);
   --warning-text: var(--warning-color);
 
-  --success-badge-bg: #d1fae5;
-  --success-badge-text: #065f46;
-  --success-badge-border: #6ee7b7;
+  --success-badge-bg: #dcfce7;
+  --success-badge-text: #166534;
+  --success-badge-border: #86efac;
 
-  --failure-badge-bg: rgba(198, 87, 70, 0.14);
-  --failure-badge-text: #8a3a30;
-  --failure-badge-border: rgba(198, 87, 70, 0.35);
+  --failure-badge-bg: #fee2e2;
+  --failure-badge-text: #991b1b;
+  --failure-badge-border: #fecaca;
 
-  --count-badge-bg: rgba(139, 134, 128, 0.18);
-  --count-badge-text: var(--primary-active);
+  --count-badge-bg: #f1f5f9;
+  --count-badge-text: #334155;
 
-  --shadow: 0 1px 2px 0 rgb(0 0 0 / 0.08);
-  --shadow-lg: 0 10px 18px -3px rgb(0 0 0 / 0.1);
+  --shadow: 0 1px 2px 0 rgb(15 23 42 / 0.08);
+  --shadow-lg: 0 12px 20px -4px rgb(15 23 42 / 0.12);
 
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -118,131 +118,58 @@
   --sidebar-ring: var(--primary-color);
 }
 
-// 纯白主题
-[data-theme='white'] {
-  --bg-secondary: #ffffff;
-  --bg-primary: #ffffff;
-  --bg-tertiary: #f6f6f6;
-  --bg-hover: var(--bg-tertiary);
-  --bg-quinary: #ffffff;
-  --bg-error-light: rgba(198, 87, 70, 0.08);
-  --floating-surface: #ffffff;
-  --floating-border: #d9d9d9;
-  --floating-shadow: 0 12px 26px rgba(0, 0, 0, 0.12);
-
-  --text-primary: #2d2a26;
-  --text-secondary: #6d6760;
-  --text-tertiary: #a29c95;
-  --text-quaternary: #c0bab3;
-  --text-muted: var(--text-tertiary);
-
-  --border-color: #e5e5e5;
-  --border-secondary: var(--border-color);
-  --border-primary: #d9d9d9;
-  --border-hover: #cccccc;
-
-  --primary-color: #8b8680;
-  --primary-hover: #7f7a74;
-  --primary-active: #726d67;
-  --primary-contrast: #ffffff;
-
-  --success-color: #10b981;
-  --quota-medium-color: #e0aa14;
-  --warning-color: #c65746;
-  --error-color: #c65746;
-  --danger-color: var(--error-color);
-  --info-color: var(--primary-color);
-
-  --warning-bg: rgba(198, 87, 70, 0.12);
-  --warning-border: rgba(198, 87, 70, 0.35);
-  --warning-text: var(--warning-color);
-
-  --success-badge-bg: #d1fae5;
-  --success-badge-text: #065f46;
-  --success-badge-border: #6ee7b7;
-
-  --failure-badge-bg: rgba(198, 87, 70, 0.14);
-  --failure-badge-text: #8a3a30;
-  --failure-badge-border: rgba(198, 87, 70, 0.35);
-
-  --count-badge-bg: rgba(139, 134, 128, 0.18);
-  --count-badge-text: var(--primary-active);
-
-  --shadow: 0 1px 2px 0 rgb(0 0 0 / 0.08);
-  --shadow-lg: 0 10px 18px -3px rgb(0 0 0 / 0.1);
-
-  --radius-md: 8px;
-  --accent-tertiary: var(--bg-tertiary);
-
-  // Workbench tokens (Home parity)
-  --primary-8: color-mix(in srgb, var(--primary-color) 8%, transparent);
-  --primary-10: color-mix(in srgb, var(--primary-color) 10%, transparent);
-  --primary-30: color-mix(in srgb, var(--primary-color) 30%, transparent);
-  --amber-color: #d97706;
-  --amber-text: #92400e;
-  --amber-10: color-mix(in srgb, var(--amber-color) 10%, transparent);
-  --amber-30: color-mix(in srgb, var(--amber-color) 30%, transparent);
-  --destructive-color: var(--error-color);
-  --destructive-10: color-mix(in srgb, var(--destructive-color) 10%, transparent);
-  --destructive-30: color-mix(in srgb, var(--destructive-color) 30%, transparent);
-  --muted-bg: var(--bg-tertiary);
-  --muted-foreground: var(--text-secondary);
-  --accent-bg: var(--bg-tertiary);
-}
-
-// 深色主题（#191919）
+// 深色主题
 [data-theme='dark'] {
-  // CPAPro neutral dark: cold black content with one-layer-up panels.
-  --bg-secondary: oklch(0.145 0 0);
-  --bg-primary: oklch(0.205 0 0);
-  --bg-tertiary: oklch(0.269 0 0);
-  --bg-hover: oklch(0.32 0 0);
-  --bg-quinary: oklch(0.18 0 0);
-  --bg-error-light: rgba(198, 87, 70, 0.18);
-  --floating-surface: oklch(0.205 0 0);
-  --floating-border: oklch(1 0 0 / 10%);
-  --floating-shadow: 0 14px 30px rgba(0, 0, 0, 0.4);
+  --bg-secondary: #09090b;
+  --bg-primary: #18181b;
+  --bg-tertiary: #27272a;
+  --bg-hover: #3f3f46;
+  --bg-quinary: #111113;
+  --bg-error-light: rgba(248, 113, 113, 0.16);
+  --floating-surface: #18181b;
+  --floating-border: rgba(244, 244, 245, 0.1);
+  --floating-shadow: 0 18px 36px rgba(0, 0, 0, 0.45);
 
-  --text-primary: oklch(0.985 0 0);
-  --text-secondary: oklch(0.708 0 0);
-  --text-tertiary: oklch(0.556 0 0);
-  --text-quaternary: oklch(0.439 0 0);
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
+  --text-quaternary: #52525b;
   --text-muted: var(--text-tertiary);
 
-  --border-color: oklch(1 0 0 / 10%);
+  --border-color: rgba(244, 244, 245, 0.1);
   --border-secondary: var(--border-color);
-  --border-primary: oklch(1 0 0 / 16%);
-  --border-hover: oklch(1 0 0 / 22%);
+  --border-primary: rgba(244, 244, 245, 0.16);
+  --border-hover: rgba(244, 244, 245, 0.22);
 
-  --primary-color: oklch(0.922 0 0);
-  --primary-hover: oklch(0.86 0 0);
-  --primary-active: oklch(0.78 0 0);
-  --primary-contrast: oklch(0.205 0 0);
+  --primary-color: #fafafa;
+  --primary-hover: #e4e4e7;
+  --primary-active: #d4d4d8;
+  --primary-contrast: #18181b;
 
-  --success-color: #10b981;
-  --quota-medium-color: #ffd862;
-  --warning-color: #c65746;
-  --error-color: #c65746;
+  --success-color: #22c55e;
+  --quota-medium-color: #f59e0b;
+  --warning-color: #f59e0b;
+  --error-color: #f87171;
   --danger-color: var(--error-color);
   --info-color: var(--primary-color);
 
-  --warning-bg: rgba(198, 87, 70, 0.22);
-  --warning-border: rgba(198, 87, 70, 0.45);
-  --warning-text: #f1b0a6;
+  --warning-bg: rgba(245, 158, 11, 0.16);
+  --warning-border: rgba(245, 158, 11, 0.38);
+  --warning-text: #fbbf24;
 
   --success-badge-bg: rgba(6, 78, 59, 0.3);
-  --success-badge-text: #6ee7b7;
-  --success-badge-border: #059669;
+  --success-badge-text: #86efac;
+  --success-badge-border: rgba(34, 197, 94, 0.5);
 
-  --failure-badge-bg: rgba(198, 87, 70, 0.24);
-  --failure-badge-text: #f1b0a6;
-  --failure-badge-border: rgba(198, 87, 70, 0.5);
+  --failure-badge-bg: rgba(127, 29, 29, 0.34);
+  --failure-badge-text: #fca5a5;
+  --failure-badge-border: rgba(248, 113, 113, 0.5);
 
-  --count-badge-bg: rgba(139, 134, 128, 0.28);
-  --count-badge-text: var(--primary-active);
+  --count-badge-bg: rgba(244, 244, 245, 0.08);
+  --count-badge-text: #d4d4d8;
 
-  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.35);
+  --shadow-lg: 0 14px 24px -4px rgb(0 0 0 / 0.38);
 
   --radius-md: 8px;
   --accent-tertiary: var(--bg-tertiary);

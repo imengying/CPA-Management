@@ -2,103 +2,43 @@
 @use '../../../styles/variables' as *;
 
 .panel {
-  background: var(--card);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  box-shadow: none;
-  padding: 16px;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  background: var(--card);
 }
 
-.header {
+.toolbarActions {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.headerMain {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-  }
-}
-
-.headerToolbarRow {
-  display: flex;
-  justify-content: flex-end;
   align-items: center;
+  justify-content: flex-end;
   flex-wrap: wrap;
   gap: 8px;
-}
-
-.titleArea {
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.titleRow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo {
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
-.logoThemeDark {
-  display: none;
-
-  [data-theme='dark'] & {
-    display: block;
-  }
-}
-
-.logoThemeLight {
-  [data-theme='dark'] & {
-    display: none;
-  }
-}
-
-.logoInvertOnDark {
-  [data-theme='dark'] & {
-    filter: invert(1) hue-rotate(180deg);
-  }
-}
-
-.title {
-  font-size: 20px;
-  font-weight: 650;
-  color: var(--foreground);
-  margin: 0;
-  letter-spacing: 0;
 }
 
 .searchWrap {
   position: relative;
-  min-width: 0;
-
-  @media (min-width: 768px) {
-    width: 280px;
-  }
+  flex: 1 1 280px;
+  min-width: 220px;
+  max-width: 420px;
 }
 
 .searchInput {
   width: 100%;
-  height: 38px;
+  height: 34px;
   padding: 0 12px 0 38px;
   border-radius: 8px;
   border: 1px solid var(--input);
@@ -128,12 +68,76 @@
   display: inline-flex;
 }
 
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 13px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast,
+    color $transition-fast;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+}
+
+.actionButtonOutline {
+  border-color: var(--border);
+  background: var(--background);
+
+  &:hover:not(:disabled) {
+    background: var(--muted);
+    border-color: var(--border-hover);
+  }
+}
+
+.actionButtonPrimary {
+  background: var(--foreground);
+  color: var(--background);
+
+  &:hover:not(:disabled) {
+    background: var(--primary-hover);
+  }
+
+  &:active:not(:disabled) {
+    background: var(--primary-active);
+  }
+}
+
+.buttonIcon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.spin {
+  display: inline-flex;
+  animation: provider-panel-spin 0.9s linear infinite;
+}
+
 .empty {
   border: 1px dashed var(--border);
   border-radius: 8px;
   padding: 32px;
   text-align: center;
   color: var(--muted-foreground);
+  background: var(--card);
   font-size: 14px;
 }
 
@@ -177,20 +181,30 @@
   }
 }
 
-.emptyActionButtonEmphasis {
-  color: var(--amber-text);
-  border-color: color-mix(in srgb, var(--amber-color) 48%, var(--border-color));
-  background: color-mix(in srgb, var(--amber-color) 14%, var(--bg-primary));
-  font-weight: 600;
-  box-shadow: 0 1px 0 color-mix(in srgb, var(--amber-color) 18%, transparent);
-
-  &:hover {
-    border-color: color-mix(in srgb, var(--amber-color) 72%, var(--border-color));
-    background: color-mix(in srgb, var(--amber-color) 20%, var(--bg-primary));
-    box-shadow: 0 4px 12px color-mix(in srgb, var(--amber-color) 18%, transparent);
+@keyframes provider-panel-spin {
+  from {
+    transform: rotate(0deg);
   }
 
-  &:focus-visible {
-    outline-color: var(--amber-color);
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 900px) {
+  .toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .searchWrap {
+    flex-basis: auto;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .toolbarActions {
+    justify-content: flex-start;
   }
 }

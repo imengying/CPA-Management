@@ -9,14 +9,12 @@ export const isSupportedLanguage = (value: string): value is Language =>
 const parseStoredLanguage = (value: string): Language | null => {
   try {
     const parsed = JSON.parse(value);
-    const candidate = parsed?.state?.language ?? parsed?.language ?? parsed;
+    const candidate = parsed?.state?.language;
     if (typeof candidate === 'string' && isSupportedLanguage(candidate)) {
       return candidate;
     }
   } catch {
-    if (isSupportedLanguage(value)) {
-      return value;
-    }
+    return null;
   }
   return null;
 };

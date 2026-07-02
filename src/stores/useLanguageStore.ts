@@ -39,17 +39,6 @@ export const useLanguageStore = create<LanguageState>()(
     }),
     {
       name: STORAGE_KEY_LANGUAGE,
-      merge: (persistedState, currentState) => {
-        const nextLanguage = (persistedState as Partial<LanguageState>)?.language;
-        if (typeof nextLanguage === 'string' && isSupportedLanguage(nextLanguage)) {
-          return {
-            ...currentState,
-            ...(persistedState as Partial<LanguageState>),
-            language: nextLanguage,
-          };
-        }
-        return currentState;
-      },
     }
   )
 );

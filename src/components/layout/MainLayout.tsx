@@ -203,12 +203,6 @@ const headerIcons = {
       <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" />
     </svg>
   ),
-  whiteTheme: (
-    <svg {...headerIconProps}>
-      <circle cx="12" cy="12" r="7" />
-      <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" />
-    </svg>
-  ),
   autoTheme: (
     <svg {...headerIconProps}>
       <defs>
@@ -259,44 +253,33 @@ const THEME_CARDS: Array<{
     key: 'auto',
     labelKey: 'theme.auto',
     colors: {
-      bg: 'linear-gradient(135deg, #ffffff 0 50%, #111111 50% 100%)',
-      card: 'linear-gradient(135deg, #ffffff 0 50%, #1a1a1a 50% 100%)',
-      border: '#bdbdbd',
-      text: '#2d2a26',
-      textMuted: 'linear-gradient(135deg, #c9c9c9 0 50%, #5a5a5a 50% 100%)',
-    },
-  },
-  {
-    key: 'white',
-    labelKey: 'theme.white',
-    colors: {
-      bg: '#ffffff',
-      card: '#ffffff',
-      border: '#e5e5e5',
-      text: '#2d2a26',
-      textMuted: '#a29c95',
+      bg: 'linear-gradient(135deg, #f8fafc 0 50%, #09090b 50% 100%)',
+      card: 'linear-gradient(135deg, #ffffff 0 50%, #18181b 50% 100%)',
+      border: '#a1a1aa',
+      text: '#18181b',
+      textMuted: 'linear-gradient(135deg, #94a3b8 0 50%, #71717a 50% 100%)',
     },
   },
   {
     key: 'light',
     labelKey: 'theme.light',
     colors: {
-      bg: '#faf9f5',
-      card: '#f0eee8',
-      border: '#e3e1db',
-      text: '#2d2a26',
-      textMuted: '#a29c95',
+      bg: '#f8fafc',
+      card: '#ffffff',
+      border: '#e2e8f0',
+      text: '#18181b',
+      textMuted: '#64748b',
     },
   },
   {
     key: 'dark',
     labelKey: 'theme.dark',
     colors: {
-      bg: '#151412',
-      card: '#1d1b18',
-      border: '#3a3530',
-      text: '#f6f4f1',
-      textMuted: '#9c958d',
+      bg: '#09090b',
+      card: '#18181b',
+      border: '#27272a',
+      text: '#fafafa',
+      textMuted: '#a1a1aa',
     },
   },
 ];

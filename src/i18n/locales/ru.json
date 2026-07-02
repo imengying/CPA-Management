@@ -1389,10 +1389,9 @@
   },
   "theme": {
     "switch": "Тема",
-    "light": "Шерстяная бумага",
-    "white": "Чисто-белая",
+    "light": "Светлая",
     "dark": "Тёмная",
-    "switch_to_light": "Переключиться на тему «Шерстяная бумага»",
+    "switch_to_light": "Переключиться на светлую тему",
     "switch_to_dark": "Переключиться на тёмную тему",
     "auto": "Следовать системе"
   },
@@ -1409,9 +1408,6 @@
   "providersPage": {
     "header": {
       "title": "AI Провайдеры",
-      "activeResources": "{{active}}/{{total}} активных",
-      "providerFamilies": "{{count}} семейств",
-      "updatedAt": "Обновлено {{time}}",
       "issueCount": "{{count}} проблем"
     },
     "actions": {

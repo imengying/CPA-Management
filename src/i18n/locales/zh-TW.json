@@ -1437,10 +1437,9 @@
   },
   "theme": {
     "switch": "主題",
-    "light": "羊毛紙",
-    "white": "純白",
+    "light": "淺色",
     "dark": "深色",
-    "switch_to_light": "切換到羊毛紙模式",
+    "switch_to_light": "切換到淺色模式",
     "switch_to_dark": "切換到深色模式",
     "auto": "跟隨系統"
   },
@@ -1457,9 +1456,6 @@
   "providersPage": {
     "header": {
       "title": "AI 提供商",
-      "activeResources": "{{active}}/{{total}} 個活躍資源",
-      "providerFamilies": "{{count}} 個提供商家族",
-      "updatedAt": "更新於 {{time}}",
       "issueCount": "{{count}} 個問題"
     },
     "actions": {

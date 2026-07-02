@@ -11,7 +11,6 @@ import {
   type ProviderRecentUsageMap,
 } from '@/components/providers/utils';
 import type { OpenAIProviderConfig } from '@/types';
-import { ProviderHeaderCard } from './components/ProviderHeaderCard';
 import { ProviderCategoryList } from './components/ProviderCategoryList';
 import { ProviderResourcePanel } from './components/ProviderResourcePanel';
 import type { ProviderPanelControls } from './components/ProviderResourcePanel';
@@ -39,19 +38,6 @@ interface SheetState {
 interface ProvidersWorkbenchPageProps {
   fixedBrand?: ProviderBrand;
 }
-
-const formatDateTime = (iso: string, locale?: string) => {
-  try {
-    const date = new Date(iso);
-    if (Number.isNaN(date.getTime())) return iso;
-    return new Intl.DateTimeFormat(locale, {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    }).format(date);
-  } catch {
-    return iso;
-  }
-};
 
 const matchesFilter = (r: ProviderResource, normalized: string): boolean => {
   if (!normalized) return true;
@@ -93,7 +79,7 @@ const getResourceRecentSuccess = (
 };
 
 export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPageProps = {}) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const connectionStatus = useAuthStore((s) => s.connectionStatus);
   const { showNotification, showConfirmation } = useNotificationStore();
 
@@ -246,30 +232,6 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
     updateActiveFilterState,
   ]);
 
-  const totalResources = useMemo(
-    () =>
-      groups.reduce((sum, g) => sum + g.resources.filter((r) => !r.flags.isPlaceholder).length, 0),
-    [groups]
-  );
-
-  const totalActive = useMemo(
-    () =>
-      groups.reduce(
-        (sum, g) => sum + g.resources.filter((r) => !r.disabled && !r.flags.isPlaceholder).length,
-        0
-      ),
-    [groups]
-  );
-
-  const providerFamilies = useMemo(
-    () => groups.filter((g) => g.resources.some((r) => !r.flags.isPlaceholder)).length,
-    [groups]
-  );
-
-  const updatedAtLabel = workbench.snapshot
-    ? formatDateTime(workbench.snapshot.fetchedAt, i18n.language)
-    : t('providersPage.modelCatalog.notLoaded');
-
   const openCreate = useCallback(() => {
     const brand = activeBrand;
     setSheetState({ open: true, brand, mode: 'create', resource: null });
@@ -296,6 +258,24 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
   const closeSheet = useCallback(() => {
     setSheetState((s) => ({ ...s, open: false }));
   }, []);
+
+  const handleSelectBrand = useCallback(
+    (brand: ProviderBrand) => {
+      const isSwitching = sheetState.open && sheetState.brand !== brand;
+      const proceed =
+        isSwitching && sheetRef.current
+          ? sheetRef.current.confirmDiscardIfDirty()
+          : Promise.resolve(true);
+      void proceed.then((ok) => {
+        if (!ok) return;
+        setActiveBrand(brand);
+        if (isSwitching) {
+          closeSheet();
+        }
+      });
+    },
+    [closeSheet, setActiveBrand, sheetState.brand, sheetState.open]
+  );
 
   const handleDelete = useCallback(
     (resource: ProviderResource) => {
@@ -349,11 +329,9 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
   if (!workbench.snapshot && workbench.isPending) {
     return (
       <div className={styles.page}>
-        <Skeleton height={120} />
-        <div className={styles.layout}>
-          <Skeleton height={420} />
-          <Skeleton height={420} />
-        </div>
+        <Skeleton height={82} />
+        <Skeleton height={58} />
+        <Skeleton height={420} />
       </div>
     );
   }
@@ -361,73 +339,45 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
   if (!activeGroup) {
     return (
       <div className={styles.page}>
-        <ProviderHeaderCard
-          totalActive={0}
-          totalResources={0}
-          providerFamilies={0}
-          updatedAtLabel={updatedAtLabel}
-          isFetching={workbench.isFetching}
-          onRefresh={() => void handleRefresh()}
-          onNew={() => {}}
-          isNewDisabled
-          showNewAction={!fixedBrand && activeBrand !== 'ampcode'}
-        />
+        {!fixedBrand && groups.length > 0 ? (
+          <ProviderCategoryList
+            groups={groups}
+            activeBrand={activeBrand}
+            onSelect={handleSelectBrand}
+          />
+        ) : null}
       </div>
     );
   }
 
   return (
     <div className={styles.page}>
-      <ProviderHeaderCard
-        totalActive={totalActive}
-        totalResources={totalResources}
-        providerFamilies={providerFamilies}
-        updatedAtLabel={updatedAtLabel}
-        isFetching={workbench.isFetching}
-        isNewDisabled={disableMutations}
-        showNewAction={!fixedBrand && activeBrand !== 'ampcode'}
-        newLabel={t('providersPage.actions.new')}
-        onRefresh={() => void handleRefresh()}
-        onNew={openCreate}
-      />
-
-      <div className={`${styles.layout} ${fixedBrand ? styles.layoutSingle : ''}`.trim()}>
-        {!fixedBrand ? (
-          <ProviderCategoryList
-            groups={groups}
-            activeBrand={activeGroup.id}
-            onSelect={(brand) => {
-              const isSwitching = sheetState.open && sheetState.brand !== brand;
-              const proceed =
-                isSwitching && sheetRef.current
-                  ? sheetRef.current.confirmDiscardIfDirty()
-                  : Promise.resolve(true);
-              void proceed.then((ok) => {
-                if (!ok) return;
-                setActiveBrand(brand);
-                if (isSwitching) {
-                  closeSheet();
-                }
-              });
-            }}
-          />
-        ) : null}
-        <ProviderResourcePanel
-          group={activeGroup}
-          filter={filter}
-          onFilterChange={(value) => updateActiveFilterState({ filter: value })}
-          filteredResources={visibleResources}
-          selectedId={sheetState.open ? (sheetState.resource?.id ?? null) : null}
-          disableMutations={disableMutations}
-          usageByProvider={usageByProvider}
-          toolbarControls={toolbarControls}
-          onView={openView}
-          onEdit={openEdit}
-          onDelete={handleDelete}
-          onToggleDisabled={handleToggleDisabled}
-          onCreate={openCreate}
+      {!fixedBrand ? (
+        <ProviderCategoryList
+          groups={groups}
+          activeBrand={activeGroup.id}
+          onSelect={handleSelectBrand}
         />
-      </div>
+      ) : null}
+
+      <ProviderResourcePanel
+        group={activeGroup}
+        filter={filter}
+        onFilterChange={(value) => updateActiveFilterState({ filter: value })}
+        filteredResources={visibleResources}
+        selectedId={sheetState.open ? (sheetState.resource?.id ?? null) : null}
+        isFetching={workbench.isFetching}
+        disableMutations={disableMutations}
+        showCreateAction={!fixedBrand && activeBrand !== 'ampcode'}
+        usageByProvider={usageByProvider}
+        toolbarControls={toolbarControls}
+        onRefresh={() => void handleRefresh()}
+        onView={openView}
+        onEdit={openEdit}
+        onDelete={handleDelete}
+        onToggleDisabled={handleToggleDisabled}
+        onCreate={openCreate}
+      />
 
       {!fixedBrand ? (
         <ProviderSheet

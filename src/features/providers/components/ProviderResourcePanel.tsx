@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { IconPlus, IconSearch } from '@/components/ui/icons';
+import { IconLoader2, IconPlus, IconRefreshCw, IconSearch } from '@/components/ui/icons';
 import type { ProviderRecentUsageMap } from '@/components/providers/utils';
-import { PROVIDER_LOGOS } from '../brandLogos';
 import type { ProviderGroup, ProviderResource } from '../types';
 import { ProviderResourceTable } from './ProviderResourceTable';
 import { ProviderResourceToolbar } from './ProviderResourceToolbar';
@@ -24,9 +23,12 @@ interface ProviderResourcePanelProps {
   onFilterChange: (value: string) => void;
   filteredResources: ProviderResource[];
   selectedId: string | null;
+  isFetching?: boolean;
   disableMutations?: boolean;
+  showCreateAction?: boolean;
   usageByProvider?: ProviderRecentUsageMap;
   toolbarControls?: ProviderPanelControls;
+  onRefresh: () => void;
   onView: (resource: ProviderResource) => void;
   onEdit: (resource: ProviderResource) => void;
   onDelete: (resource: ProviderResource) => void;
@@ -40,9 +42,12 @@ export function ProviderResourcePanel({
   onFilterChange,
   filteredResources,
   selectedId,
+  isFetching = false,
   disableMutations,
+  showCreateAction = true,
   usageByProvider,
   toolbarControls,
+  onRefresh,
   onView,
   onEdit,
   onDelete,
@@ -50,60 +55,32 @@ export function ProviderResourcePanel({
   onCreate,
 }: ProviderResourcePanelProps) {
   const { t } = useTranslation();
-  const logo = PROVIDER_LOGOS[group.id];
-  const providerTitle = t(`providersPage.providerNames.${group.id}`);
   const hasProviderInfo = group.resources.some((r) => !r.flags.isPlaceholder);
   const showAmpcodeConfigure = group.id === 'ampcode' && !hasProviderInfo;
   let emptyText = t('providersPage.table.empty');
   if (showAmpcodeConfigure) {
     emptyText = t('providersPage.ampcode.empty');
   }
-  const logoClassName = [
-    styles.logo,
-    logo?.darkSrc ? styles.logoThemeLight : '',
-    logo?.invertOnDark ? styles.logoInvertOnDark : '',
-  ]
-    .filter(Boolean)
-    .join(' ');
-  const darkLogoClassName = [styles.logo, styles.logoThemeDark].filter(Boolean).join(' ');
-
   const realResources = filteredResources.filter((r) => !r.flags.isPlaceholder);
-  const titleContent = (
-    <>
-      {logo ? (
-        <>
-          <img src={logo.src} alt="" aria-hidden="true" className={logoClassName} />
-          {logo.darkSrc ? (
-            <img src={logo.darkSrc} alt="" aria-hidden="true" className={darkLogoClassName} />
-          ) : null}
-        </>
-      ) : null}
-      <h2 className={styles.title}>{providerTitle}</h2>
-    </>
-  );
 
   return (
     <section className={styles.panel}>
-      <div className={styles.header}>
-        <div className={styles.headerMain}>
-          <div className={styles.titleArea}>
-            <div className={styles.titleRow}>{titleContent}</div>
-          </div>
-          <div className={styles.searchWrap}>
-            <span className={styles.searchIcon} aria-hidden="true">
-              <IconSearch size={16} />
-            </span>
-            <input
-              type="search"
-              className={styles.searchInput}
-              value={filter}
-              onChange={(event) => onFilterChange(event.target.value)}
-              placeholder={t('providersPage.table.filterPlaceholder')}
-            />
-          </div>
+      <div className={styles.toolbar}>
+        <div className={styles.searchWrap}>
+          <span className={styles.searchIcon} aria-hidden="true">
+            <IconSearch size={16} />
+          </span>
+          <input
+            type="search"
+            className={styles.searchInput}
+            value={filter}
+            onChange={(event) => onFilterChange(event.target.value)}
+            placeholder={t('providersPage.table.filterPlaceholder')}
+          />
         </div>
-        {toolbarControls ? (
-          <div className={styles.headerToolbarRow}>
+
+        <div className={styles.toolbarActions}>
+          {toolbarControls ? (
             <ProviderResourceToolbar
               key={group.id}
               sortBy={toolbarControls.sortBy}
@@ -114,8 +91,35 @@ export function ProviderResourcePanel({
               selectedModels={toolbarControls.selectedModels}
               onSelectedModelsChange={toolbarControls.onSelectedModelsChange}
             />
-          </div>
-        ) : null}
+          ) : null}
+          <button
+            type="button"
+            className={`${styles.actionButton} ${styles.actionButtonOutline}`}
+            onClick={onRefresh}
+            disabled={isFetching}
+            aria-label={
+              isFetching ? t('providersPage.actions.syncing') : t('providersPage.actions.refresh')
+            }
+          >
+            <span className={`${styles.buttonIcon} ${isFetching ? styles.spin : ''}`.trim()}>
+              {isFetching ? <IconLoader2 size={16} /> : <IconRefreshCw size={16} />}
+            </span>
+            <span>
+              {isFetching ? t('providersPage.actions.syncing') : t('providersPage.actions.refresh')}
+            </span>
+          </button>
+          {showCreateAction ? (
+            <button
+              type="button"
+              className={`${styles.actionButton} ${styles.actionButtonPrimary}`}
+              onClick={onCreate}
+              disabled={disableMutations}
+            >
+              <IconPlus size={16} />
+              <span>{t('providersPage.actions.new')}</span>
+            </button>
+          ) : null}
+        </div>
       </div>
 
       {realResources.length === 0 ? (

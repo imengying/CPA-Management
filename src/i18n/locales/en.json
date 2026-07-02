@@ -1411,10 +1411,9 @@
   },
   "theme": {
     "switch": "Theme",
-    "light": "Wool Paper",
-    "white": "Pure White",
+    "light": "Light",
     "dark": "Dark",
-    "switch_to_light": "Switch to wool paper mode",
+    "switch_to_light": "Switch to light mode",
     "switch_to_dark": "Switch to dark mode",
     "auto": "Follow system"
   },
@@ -1431,9 +1430,6 @@
   "providersPage": {
     "header": {
       "title": "AI Providers",
-      "activeResources": "{{active}}/{{total}} active resources",
-      "providerFamilies": "{{count}} provider families",
-      "updatedAt": "Updated {{time}}",
       "issueCount": "{{count}} issues"
     },
     "actions": {
