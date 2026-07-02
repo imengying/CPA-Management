@@ -225,11 +225,11 @@ export function DashboardPage() {
           </div>
         </div>
         <div className={styles.statsGrid}>
-          {quickStats.map((stat, index) => (
+          {quickStats.map((stat) => (
             <Link
               key={stat.path}
               to={stat.path}
-              className={`${styles.statCard} ${index === 0 ? styles.primaryStat : ''}`}
+              className={styles.statCard}
             >
               <div className={styles.statTop}>
                 <span className={styles.statIcon}>{stat.icon}</span>

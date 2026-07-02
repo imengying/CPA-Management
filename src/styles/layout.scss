@@ -592,10 +592,10 @@
   z-index: 2;
   flex: 1 0 auto;
   min-height: 100%;
-  padding: 28px clamp(20px, 3vw, 48px) 40px;
+  padding: 18px clamp(14px, 2vw, 28px) 28px;
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: 14px;
   overflow-x: hidden;
 
   &.main-content-logs {
@@ -785,7 +785,7 @@
   }
 
   .main-content {
-    padding: 18px $spacing-md $spacing-lg;
+    padding: 14px 12px 20px;
 
     &.main-content-plugin-resource {
       min-height: 0;

@@ -4,7 +4,7 @@
 .root {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
@@ -78,8 +78,9 @@
   position: absolute;
   top: calc(100% + 6px);
   right: 0;
-  min-width: 220px;
-  max-width: 320px;
+  width: max-content;
+  min-width: 172px;
+  max-width: min(280px, calc(100vw - 32px));
   z-index: $z-dropdown;
   background: var(--popover);
   border: 1px solid var(--border);
@@ -132,12 +133,15 @@
   padding: 0;
   max-height: 220px;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
 .filterItem {
+  width: max-content;
+  max-width: 100%;
   padding: 4px 6px;
   border-radius: 6px;
 
@@ -147,7 +151,11 @@
 }
 
 .filterItemLabel {
+  display: inline-block;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-family: $font-mono;
   font-size: 13px;
-  word-break: break-all;
 }

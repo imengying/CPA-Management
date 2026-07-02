@@ -163,8 +163,13 @@ export function AuthFileQuotaSection(props: AuthFileQuotaSectionProps) {
   };
 
   const quotaStatus = quota?.status ?? 'idle';
+  const quotaLoading = quotaStatus === 'loading';
+  const refreshActionLabel = quotaLoading
+    ? t('auth_files.quota_refresh_single')
+    : t(`${config.i18nPrefix}.idle`);
   const canRefreshQuota = !disableControls && !file.disabled && !resettingQuota;
-  const canUseResetQuota = canRefreshQuota && quotaStatus !== 'loading';
+  const canUseRefreshQuota = canRefreshQuota && !quotaLoading;
+  const canUseResetQuota = canRefreshQuota && !quotaLoading;
   const showResetQuotaAction = quota !== undefined && Boolean(config.canResetQuota?.(quota));
   const resetQuotaAction =
     config.resetQuota && showResetQuotaAction ? (
@@ -216,8 +221,23 @@ export function AuthFileQuotaSection(props: AuthFileQuotaSectionProps) {
       ) : (
         <div className={styles.quotaMessage}>{t(`${config.i18nPrefix}.idle`)}</div>
       )}
-      {quotaStatus !== 'idle' && resetQuotaAction && (
-        <div className={styles.quotaCardActions}>{resetQuotaAction}</div>
+      {quotaStatus !== 'idle' && (
+        <div className={styles.quotaCardActions}>
+          {resetQuotaAction}
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            className={styles.quotaRefreshButton}
+            onClick={() => void refreshQuotaForFile()}
+            disabled={!canUseRefreshQuota}
+            loading={quotaLoading}
+            title={t('auth_files.quota_refresh_hint')}
+          >
+            {!quotaLoading && <IconRefreshCw size={14} />}
+            {refreshActionLabel}
+          </Button>
+        </div>
       )}
     </div>
   );

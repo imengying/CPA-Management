@@ -93,6 +93,9 @@ export function QuotaCard<TState extends QuotaStatusState>({
 
   const quotaStatus = quota?.status ?? 'idle';
   const quotaLoading = quotaStatus === 'loading';
+  const refreshActionLabel = quotaLoading
+    ? t('auth_files.quota_refresh_single')
+    : t(`${i18nPrefix}.idle`);
   const quotaErrorMessage = resolveQuotaErrorMessage(
     t,
     quota?.errorStatus,
@@ -170,7 +173,7 @@ export function QuotaCard<TState extends QuotaStatusState>({
               title={t('auth_files.quota_refresh_hint')}
             >
               {!quotaLoading && <IconRefreshCw size={14} />}
-              {t('auth_files.quota_refresh_single')}
+              {refreshActionLabel}
             </Button>
           )}
         </div>

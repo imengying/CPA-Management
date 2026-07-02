@@ -1,4 +1,7 @@
 .root {
+  --toggle-checked-bg: #2563eb;
+  --toggle-checked-bg-hover: #1d4ed8;
+
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -45,7 +48,15 @@
 }
 
 .root input:checked + .track {
-  background: var(--primary-color);
+  background: var(--toggle-checked-bg);
+}
+
+.root:hover input:checked:not(:disabled) + .track {
+  background: var(--toggle-checked-bg-hover);
+}
+
+.root input:focus-visible + .track {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--toggle-checked-bg) 32%, transparent);
 }
 
 .root input:checked + .track .thumb {
