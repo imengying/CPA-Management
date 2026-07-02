@@ -1,0 +1,427 @@
+@use '../styles/variables.scss' as *;
+
+.dashboard {
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.pageHeader,
+.section {
+  border: 1px solid var(--border-color);
+  border-radius: $radius-lg;
+  background: var(--bg-primary);
+  box-shadow: var(--shadow);
+}
+
+.pageHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: $spacing-lg;
+  padding: $spacing-lg;
+}
+
+.titleBlock {
+  min-width: 0;
+}
+
+.eyebrow {
+  display: inline-flex;
+  min-height: 20px;
+  align-items: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.pageTitle {
+  margin: 2px 0 4px;
+  color: var(--text-primary);
+  font-size: 28px;
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.pageSubtitle {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.headerMeta {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.timeCard,
+.statusBadge {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+  background: var(--bg-secondary);
+  padding: 8px 10px;
+  color: var(--text-secondary);
+}
+
+.timeCard {
+  > span {
+    width: 16px;
+    color: var(--text-tertiary);
+    text-align: center;
+  }
+
+  div {
+    display: grid;
+    gap: 1px;
+  }
+}
+
+.time {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.date {
+  color: var(--text-secondary);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.statusBadge {
+  font-size: 13px;
+  font-weight: 650;
+
+  &.connected {
+    color: var(--success-color);
+    border-color: color-mix(in srgb, var(--success-color) 34%, var(--border-color));
+    background: color-mix(in srgb, var(--success-color) 10%, var(--bg-secondary));
+  }
+
+  &.connecting {
+    color: var(--quota-medium-color);
+    border-color: color-mix(in srgb, var(--quota-medium-color) 34%, var(--border-color));
+    background: color-mix(in srgb, var(--quota-medium-color) 10%, var(--bg-secondary));
+  }
+
+  &.disconnected {
+    color: var(--error-color);
+    border-color: color-mix(in srgb, var(--error-color) 34%, var(--border-color));
+    background: color-mix(in srgb, var(--error-color) 10%, var(--bg-secondary));
+  }
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  flex: 0 0 auto;
+
+  &.connected {
+    background: var(--success-color);
+  }
+
+  &.connecting {
+    background: var(--quota-medium-color);
+  }
+
+  &.disconnected {
+    background: var(--error-color);
+  }
+}
+
+.buildDate {
+  color: var(--text-tertiary);
+  font-size: 12px;
+}
+
+.section {
+  padding: $spacing-lg;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+  min-width: 0;
+
+  h2 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 750;
+    line-height: 1.3;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: var(--text-secondary);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+  }
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: $spacing-md;
+}
+
+.statCard {
+  min-height: 156px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: $spacing-lg;
+  border: 1px solid var(--border-color);
+  border-radius: $radius-lg;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: $spacing-md;
+  text-decoration: none;
+  transition:
+    border-color $transition-fast,
+    background-color $transition-fast,
+    transform $transition-fast;
+
+  &:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-tertiary);
+    transform: translateY(-1px);
+
+    .statArrow {
+      color: var(--text-primary);
+      opacity: 1;
+    }
+  }
+}
+
+.primaryStat {
+  background: color-mix(in srgb, var(--primary-color) 8%, var(--bg-secondary));
+}
+
+.statTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-sm;
+}
+
+.statIcon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.statArrow {
+  color: var(--text-tertiary);
+  font-size: 18px;
+  line-height: 1;
+  opacity: 0.72;
+  transition:
+    color $transition-fast,
+    opacity $transition-fast;
+}
+
+.statBody {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.statValue {
+  color: var(--text-primary);
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.statLabel {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.statSublabel {
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.configGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $spacing-sm;
+}
+
+.configItem {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-md;
+  min-width: 0;
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+  background: var(--bg-secondary);
+  padding: 10px 12px;
+
+  span {
+    min-width: 0;
+    color: var(--text-secondary);
+    font-size: 13px;
+  }
+
+  strong {
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  code {
+    color: var(--text-primary);
+    font-family: $font-mono;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+    text-align: right;
+  }
+}
+
+.configItemWide {
+  grid-column: 1 / -1;
+}
+
+.badgeOn {
+  color: var(--success-color) !important;
+}
+
+.badgeOff {
+  color: var(--text-secondary) !important;
+}
+
+.configBadge {
+  display: inline-flex;
+  min-height: 22px;
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: $radius-full;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.configBadgeRoundRobin {
+  color: var(--primary-color) !important;
+  border-color: color-mix(in srgb, var(--primary-color) 36%, var(--border-color));
+  background: color-mix(in srgb, var(--primary-color) 10%, transparent);
+}
+
+.configBadgeFillFirst {
+  color: var(--success-color) !important;
+  border-color: color-mix(in srgb, var(--success-color) 36%, var(--border-color));
+  background: color-mix(in srgb, var(--success-color) 10%, transparent);
+}
+
+.configBadgeUnknown {
+  color: var(--text-secondary) !important;
+  background: var(--bg-primary);
+}
+
+.viewMoreLink {
+  width: fit-content;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin-top: $spacing-md;
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 650;
+  text-decoration: none;
+  transition:
+    border-color $transition-fast,
+    background-color $transition-fast;
+
+  &:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-tertiary);
+  }
+}
+
+@media (max-width: 1100px) {
+  .configGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .dashboard {
+    gap: $spacing-md;
+  }
+
+  .pageHeader {
+    grid-template-columns: 1fr;
+  }
+
+  .pageHeader,
+  .section {
+    padding: $spacing-md;
+  }
+
+  .headerMeta {
+    justify-content: flex-start;
+  }
+
+  .statsGrid,
+  .configGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .pageTitle {
+    font-size: 24px;
+  }
+
+  .timeCard {
+    width: 100%;
+  }
+}
