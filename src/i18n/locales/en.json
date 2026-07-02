@@ -120,7 +120,7 @@
     "plugin_store": "Plugin Store",
     "config_management": "Config Panel",
     "logs": "Logs Viewer",
-    "system_info": "Management Center Info"
+    "system_info": "System Info"
   },
   "nav_groups": {
     "operate": "Operate",
@@ -1322,7 +1322,7 @@
     "empty_src_desc": "This plugin menu does not provide an embeddable page URL."
   },
   "system_info": {
-    "title": "Management Center Info",
+    "title": "System Info",
     "about_title": "CLI Proxy API Management Center",
     "last_update_label": "Last Update:",
     "cache_data": "Cache Data",

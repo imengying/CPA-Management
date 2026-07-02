@@ -120,7 +120,7 @@
     "plugin_store": "插件商店",
     "config_management": "配置面板",
     "logs": "日志查看",
-    "system_info": "中心信息"
+    "system_info": "系统信息"
   },
   "nav_groups": {
     "operate": "运行",
@@ -1322,7 +1322,7 @@
     "empty_src_desc": "该插件菜单未提供可嵌入的页面地址。"
   },
   "system_info": {
-    "title": "管理中心信息",
+    "title": "系统信息",
     "about_title": "CLI Proxy API Management Center",
     "last_update_label": "最后更新:",
     "cache_data": "缓存数据",
@@ -1448,7 +1448,7 @@
   "footer": {
     "api_version": "CLI Proxy API 版本",
     "build_date": "构建时间",
-    "version": "管理中心版本",
+    "version": "管理面板版本",
     "author": "作者"
   },
   "providersPage": {
