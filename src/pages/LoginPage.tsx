@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
@@ -106,6 +106,12 @@ export function LoginPage() {
   const [error, setError] = useState('');
 
   const detectedBase = useMemo(() => detectApiBaseFromLocation(), []);
+  const initialLoginStateRef = useRef({
+    apiBase: storedBase || detectedBase,
+    managementKey: storedKey || '',
+    rememberPassword: storedRememberPassword || Boolean(storedKey),
+    redirectPath: (location.state as RedirectState | null)?.from?.pathname || '/',
+  });
   const languageOptions = useMemo(
     () =>
       LANGUAGE_ORDER.map((lang) => ({
@@ -125,30 +131,43 @@ export function LoginPage() {
   );
 
   useEffect(() => {
+    let cancelled = false;
+    let redirectTimer: number | null = null;
+
     const init = async () => {
       try {
         const autoLoggedIn = await restoreSession();
+        if (cancelled) return;
+
         if (autoLoggedIn) {
           setAutoLoginSuccess(true);
           // 延迟跳转，让用户看到成功动画
-          setTimeout(() => {
-            const redirect = (location.state as RedirectState | null)?.from?.pathname || '/';
-            navigate(redirect, { replace: true });
+          redirectTimer = window.setTimeout(() => {
+            if (cancelled) return;
+            navigate(initialLoginStateRef.current.redirectPath, { replace: true });
           }, 1500);
         } else {
-          setApiBase(storedBase || detectedBase);
-          setManagementKey(storedKey || '');
-          setRememberPassword(storedRememberPassword || Boolean(storedKey));
+          setApiBase(initialLoginStateRef.current.apiBase);
+          setManagementKey(initialLoginStateRef.current.managementKey);
+          setRememberPassword(initialLoginStateRef.current.rememberPassword);
         }
       } finally {
         // 自动登录成功时 showSplash 仍由 autoLoginSuccess 维持，可无条件结束 loading
-        setAutoLoading(false);
+        if (!cancelled) {
+          setAutoLoading(false);
+        }
       }
     };
 
-    init();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    void init();
+
+    return () => {
+      cancelled = true;
+      if (redirectTimer !== null) {
+        window.clearTimeout(redirectTimer);
+      }
+    };
+  }, [navigate, restoreSession]);
 
   const handleSubmit = useCallback(async () => {
     if (!managementKey.trim()) {

@@ -2369,7 +2369,7 @@
   color: var(--text-tertiary);
   background-color: var(--bg-tertiary);
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: $radius-full;
   flex-shrink: 0;
   margin-left: auto;
 }

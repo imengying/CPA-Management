@@ -415,7 +415,7 @@
 }
 
 .fieldHighlightActive {
-  border-radius: 10px;
+  border-radius: $radius-md;
   animation: cfgFieldHighlight 1.8s ease-out;
 }
 

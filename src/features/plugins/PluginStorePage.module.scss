@@ -645,7 +645,7 @@
 .skeletonAvatar {
   width: 40px;
   height: 40px;
-  border-radius: 10px;
+  border-radius: $radius-md;
   background: linear-gradient(
     90deg,
     color-mix(in srgb, var(--bg-secondary) 86%, transparent) 25%,

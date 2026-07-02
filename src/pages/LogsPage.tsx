@@ -1,4 +1,4 @@
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
+import { useDeferredValue, useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/Card';
@@ -417,20 +417,31 @@ export function LogsPage() {
     );
   };
 
+  const reloadLogsEvent = useEffectEvent(() => {
+    resetLogPosition();
+    setFileLoggingRequired(false);
+    void loadLogs(false);
+  });
+
+  const loadIncrementalLogsEvent = useEffectEvent(() => {
+    void loadLogs(true);
+  });
+
+  const loadErrorLogsEvent = useEffectEvent(() => {
+    void loadErrorLogs();
+  });
+
   useEffect(() => {
     if (connectionStatus === 'connected') {
       let cancelled = false;
       queueMicrotask(() => {
         if (cancelled) return;
-        resetLogPosition();
-        setFileLoggingRequired(false);
-        loadLogs(false);
+        reloadLogsEvent();
       });
       return () => {
         cancelled = true;
       };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionStatus, loggingToFileEnabled]);
 
   useEffect(() => {
@@ -439,12 +450,11 @@ export function LogsPage() {
     let cancelled = false;
     queueMicrotask(() => {
       if (cancelled) return;
-      void loadErrorLogs();
+      loadErrorLogsEvent();
     });
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, connectionStatus, requestLogEnabled]);
 
   useEffect(() => {
@@ -452,10 +462,9 @@ export function LogsPage() {
       return;
     }
     const id = window.setInterval(() => {
-      loadLogs(true);
+      loadIncrementalLogsEvent();
     }, 8000);
     return () => window.clearInterval(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoRefresh, connectionStatus, showFileLoggingRequired]);
 
   const visibleLines = useMemo(
