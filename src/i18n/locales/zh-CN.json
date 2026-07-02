@@ -195,9 +195,7 @@
     "routing_strategy_fill_first": "fill-first (优先填充)"
   },
   "auth_files": {
-    "title": "认证文件管理",
     "title_section": "认证文件",
-    "description": "这里集中管理 CLI Proxy 支持的所有 JSON 认证文件（如 Qwen、Gemini、Vertex 等），上传后即可在运行时启用相应的 AI 服务。",
     "upload_button": "上传文件",
     "delete_all_button": "删除全部",
     "empty_title": "暂无认证文件",
@@ -740,12 +738,8 @@
     "newest": "最新"
   },
   "logs": {
-    "title": "日志查看",
-    "runtime_cpa": "当前运行端：CPA",
     "refresh_button": "刷新日志",
     "clear_button": "清空日志",
-    "fullscreen_button": "全屏显示",
-    "exit_fullscreen_button": "退出全屏",
     "download_button": "下载日志",
     "error_log_button": "选择错误日志",
     "error_logs_modal_title": "错误请求日志",
@@ -1473,7 +1467,7 @@
       },
       "websocketsTag": "WebSockets",
       "cloakTag": "Cloak",
-      "empty": "尚未添加配置,点击右上角新建。",
+      "empty": "尚未添加配置,点击{{action}}开始。",
       "filterPlaceholder": "搜索密钥、地址、前缀…",
       "description": "在 {{route}} 下管理资源",
       "providerIssue": "此提供商存在问题"

@@ -194,9 +194,7 @@
     "routing_strategy_fill_first": "fill-first (приоритет)"
   },
   "auth_files": {
-    "title": "Управление файлами авторизации",
     "title_section": "Файлы авторизации",
-    "description": "Управляйте всеми JSON-файлами авторизации CLI Proxy (например, Qwen, Gemini, Vertex). Загрузка учётных данных сразу включает соответствующую интеграцию AI.",
     "upload_button": "Загрузить файл",
     "delete_all_button": "Удалить всё",
     "empty_title": "Файлы авторизации отсутствуют",
@@ -728,12 +726,8 @@
     "newest": "Новые"
   },
   "logs": {
-    "title": "Просмотр журналов",
-    "runtime_cpa": "Текущий режим: CPA",
     "refresh_button": "Обновить журналы",
     "clear_button": "Очистить журналы",
-    "fullscreen_button": "На весь экран",
-    "exit_fullscreen_button": "Выйти из полноэкранного режима",
     "download_button": "Скачать журналы",
     "error_log_button": "Выбрать журнал ошибок",
     "error_logs_modal_title": "Журналы ошибок запросов",
@@ -1451,7 +1445,7 @@
       },
       "websocketsTag": "WebSockets",
       "cloakTag": "Cloak",
-      "empty": "Нет ресурсов, нажмите \"Создать\".",
+      "empty": "Ресурсов пока нет. Нажмите \"{{action}}\", чтобы начать.",
       "filterPlaceholder": "Поиск по ключам, URL, префиксам…",
       "description": "Управление ресурсами {{route}}",
       "providerIssue": "Проблема с провайдером"

@@ -694,11 +694,6 @@ export function AuthFilesPage() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>{t('auth_files.title')}</h1>
-        <p className={styles.description}>{t('auth_files.description')}</p>
-      </div>
-
       <Card
         title={titleNode}
         extra={
@@ -814,9 +809,7 @@ export function AuthFilesPage() {
                     />
                     <ToggleSwitch
                       checked={disabledOnly}
-                      onChange={(value) =>
-                        handleStatusFilterModeChange(value ? 'disabled' : 'all')
-                      }
+                      onChange={(value) => handleStatusFilterModeChange(value ? 'disabled' : 'all')}
                       ariaLabel={t('auth_files.disabled_filter_only')}
                       label={
                         <span className={styles.filterToggleLabel}>

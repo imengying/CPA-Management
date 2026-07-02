@@ -195,9 +195,7 @@
     "routing_strategy_fill_first": "fill-first (prioritize)"
   },
   "auth_files": {
-    "title": "Auth Files Management",
     "title_section": "Auth Files",
-    "description": "Manage all CLI Proxy JSON auth files here (e.g. Qwen, Gemini, Vertex). Uploading a credential immediately enables the corresponding AI integration.",
     "upload_button": "Upload File",
     "delete_all_button": "Delete All",
     "empty_title": "No Auth Files",
@@ -740,12 +738,8 @@
     "newest": "Latest"
   },
   "logs": {
-    "title": "Logs Viewer",
-    "runtime_cpa": "Current runtime: CPA",
     "refresh_button": "Refresh Logs",
     "clear_button": "Clear Logs",
-    "fullscreen_button": "Full Screen",
-    "exit_fullscreen_button": "Exit Full Screen",
     "download_button": "Download Logs",
     "error_log_button": "Select Error Log",
     "error_logs_modal_title": "Error Request Logs",
@@ -1473,7 +1467,7 @@
       },
       "websocketsTag": "WebSockets",
       "cloakTag": "Cloak",
-      "empty": "No resources yet, click \"New\" to add.",
+      "empty": "No resources yet. Click {{action}} to get started.",
       "filterPlaceholder": "Search keys, URLs, prefixes…",
       "description": "Manage resources under {{route}}",
       "providerIssue": "This provider has an issue"

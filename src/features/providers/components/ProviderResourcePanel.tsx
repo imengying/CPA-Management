@@ -57,10 +57,10 @@ export function ProviderResourcePanel({
   const { t } = useTranslation();
   const hasProviderInfo = group.resources.some((r) => !r.flags.isPlaceholder);
   const showAmpcodeConfigure = group.id === 'ampcode' && !hasProviderInfo;
-  let emptyText = t('providersPage.table.empty');
-  if (showAmpcodeConfigure) {
-    emptyText = t('providersPage.ampcode.empty');
-  }
+  const createActionLabel = showAmpcodeConfigure
+    ? t('providersPage.actions.configure')
+    : t('providersPage.actions.new');
+  const emptyText = t('providersPage.table.empty', { action: createActionLabel });
   const realResources = filteredResources.filter((r) => !r.flags.isPlaceholder);
 
   return (
@@ -128,11 +128,7 @@ export function ProviderResourcePanel({
           <div className={styles.emptyAction}>
             <button type="button" className={styles.emptyActionButton} onClick={onCreate}>
               <IconPlus size={16} />
-              <span>
-                {showAmpcodeConfigure
-                  ? t('providersPage.actions.configure')
-                  : t('providersPage.actions.new')}
-              </span>
+              <span>{createActionLabel}</span>
             </button>
           </div>
         </div>

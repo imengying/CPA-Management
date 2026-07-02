@@ -3,12 +3,8 @@
  */
 
 import { apiClient } from './client';
-import {
-  normalizeAmpcodeConfig,
-  normalizeAmpcodeModelMappings,
-  normalizeAmpcodeUpstreamApiKeys,
-} from './transformers';
-import type { AmpcodeConfig, AmpcodeModelMapping, AmpcodeUpstreamApiKeyMapping } from '@/types';
+import { normalizeAmpcodeModelMappings, normalizeAmpcodeUpstreamApiKeys } from './transformers';
+import type { AmpcodeModelMapping, AmpcodeUpstreamApiKeyMapping } from '@/types';
 
 const serializeUpstreamApiKeyMappings = (mappings: AmpcodeUpstreamApiKeyMapping[]) =>
   mappings.map((mapping) => ({
@@ -17,11 +13,6 @@ const serializeUpstreamApiKeyMappings = (mappings: AmpcodeUpstreamApiKeyMapping[
   }));
 
 export const ampcodeApi = {
-  async getAmpcode(): Promise<AmpcodeConfig> {
-    const data = await apiClient.get('/ampcode');
-    return normalizeAmpcodeConfig(data) ?? {};
-  },
-
   updateUpstreamUrl: (url: string) => apiClient.put('/ampcode/upstream-url', { value: url }),
   clearUpstreamUrl: () => apiClient.delete('/ampcode/upstream-url'),
 
