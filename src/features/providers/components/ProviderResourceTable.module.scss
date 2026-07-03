@@ -2,7 +2,7 @@
 @use '../../../styles/variables' as *;
 
 .providerTable {
-  min-width: 960px;
+  min-width: 1060px;
   table-layout: fixed;
 
   tbody tr:hover .actionsCell {
@@ -23,7 +23,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 220px;
+  max-width: 142px;
 }
 
 .primarySub {
@@ -33,7 +33,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 220px;
+  max-width: 142px;
 }
 
 .baseUrl {
@@ -43,18 +43,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 220px;
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 9px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: var(--muted);
-  color: var(--muted-foreground);
-  font-size: 12px;
+  max-width: 212px;
 }
 
 .metricsCell {
@@ -87,20 +76,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-.flagTag {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 9px;
-  border-radius: 6px;
-  border: 1px solid var(--primary-30);
-  background: var(--primary-10);
-  color: var(--primary-color);
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.4;
-  white-space: nowrap;
-}
-
 .statusBadge {
   display: inline-flex;
   align-items: center;
@@ -113,27 +88,43 @@
   white-space: nowrap;
 }
 
-.statusCell {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  align-items: flex-start;
+.recentSuccess,
+.mutedMono {
+  display: inline-flex;
   min-width: 0;
-  max-width: 190px;
+  max-width: 128px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: $font-mono;
+  font-size: 12px;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 }
 
-.stats {
+.mutedMono {
+  color: var(--muted-foreground);
+}
+
+.statusSummary {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
   max-width: 100%;
+  overflow: hidden;
+
+  .statusBadge,
+  .statPill {
+    flex: 0 0 auto;
+  }
 }
 
 .statPill {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 7px;
+  padding: 3px 7px;
   border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
@@ -167,17 +158,31 @@
   color: var(--amber-text);
 }
 
-.statusBarWrap {
-  width: min(100%, 178px);
-  min-width: 0;
+.enabledBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 54px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.enabledBadgeReadonly {
+  color: var(--text-secondary);
 }
 
 .actionsHead,
 .actionsCell {
   position: sticky;
   right: 0;
-  width: 176px;
-  min-width: 176px;
+  width: 132px;
+  min-width: 132px;
   box-shadow: -1px 0 0 var(--border);
 }
 
@@ -206,7 +211,7 @@
 .toggleWrap {
   display: inline-flex;
   align-items: center;
-  margin-right: 4px;
+  justify-content: center;
 }
 
 .iconBtn {

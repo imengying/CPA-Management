@@ -57,8 +57,3 @@ export type RawConfigSection =
   | 'openai-compatibility'
   | 'ampcode'
   | 'oauth-excluded-models';
-
-export interface ConfigCache {
-  data: Config;
-  timestamp: number;
-}

@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IconAlertTriangle,
@@ -16,19 +15,17 @@ import {
   TableRow,
 } from '@/components/ui/Table';
 import { ToggleSwitch } from '@/components/ui/ToggleSwitch';
-import { ProviderStatusBar } from '@/components/providers/ProviderStatusBar';
 import {
-  getOpenAIProviderRecentStatusData,
+  getOpenAIProviderLatestSuccessTime,
   getOpenAIProviderTotalStats,
-  getProviderRecentStatusData,
+  getProviderLatestSuccessTime,
   getProviderTotalStats,
   type ProviderRecentUsageMap,
 } from '@/components/providers/utils';
 import type { OpenAIProviderConfig } from '@/types';
-import type { StatusBarData } from '@/utils/recentRequests';
+import { parseTimestampMs } from '@/utils/timestamp';
 import type { ProviderResource } from '../types';
 import styles from './ProviderResourceTable.module.scss';
-import statusBarStyles from './providerStatusBar.module.scss';
 
 interface ProviderResourceTableProps {
   resources: ProviderResource[];
@@ -41,21 +38,18 @@ interface ProviderResourceTableProps {
   onToggleDisabled?: (resource: ProviderResource, disabled: boolean) => void;
 }
 
-const columnWidths = ['180px', '220px', '72px', '138px', '174px', '176px'];
+const columnWidths = ['146px', '216px', '92px', '132px', '260px', '82px', '132px'];
 
-const resolveStatusBarData = (
-  resource: ProviderResource,
-  usageByProvider: ProviderRecentUsageMap
-): StatusBarData => {
-  if (resource.brand === 'openaiCompatibility') {
-    return getOpenAIProviderRecentStatusData(resource.raw as OpenAIProviderConfig, usageByProvider);
-  }
-  return getProviderRecentStatusData(
-    usageByProvider,
-    resource.brand,
-    resource.apiKey ?? undefined,
-    resource.baseUrl ?? undefined
-  );
+const formatRecentSuccessTime = (value: string | null): string => {
+  if (!value) return '—';
+  const timestampMs = parseTimestampMs(value);
+  if (!Number.isFinite(timestampMs)) return '—';
+
+  const date = new Date(timestampMs);
+  const pad = (num: number) => num.toString().padStart(2, '0');
+  return `${pad(date.getMonth() + 1)}:${pad(date.getDate())}:${pad(date.getHours())}:${pad(
+    date.getMinutes()
+  )}:${pad(date.getSeconds())}`;
 };
 
 const resolveTotalStats = (
@@ -66,6 +60,24 @@ const resolveTotalStats = (
     return getOpenAIProviderTotalStats(resource.raw as OpenAIProviderConfig, usageByProvider);
   }
   return getProviderTotalStats(
+    usageByProvider,
+    resource.brand,
+    resource.apiKey ?? undefined,
+    resource.baseUrl ?? undefined
+  );
+};
+
+const resolveLatestSuccessTime = (
+  resource: ProviderResource,
+  usageByProvider: ProviderRecentUsageMap
+): string | null => {
+  if (resource.brand === 'openaiCompatibility') {
+    return getOpenAIProviderLatestSuccessTime(
+      resource.raw as OpenAIProviderConfig,
+      usageByProvider
+    );
+  }
+  return getProviderLatestSuccessTime(
     usageByProvider,
     resource.brand,
     resource.apiKey ?? undefined,
@@ -85,50 +97,26 @@ export function ProviderResourceTable({
 }: ProviderResourceTableProps) {
   const { t } = useTranslation();
 
-  const renderMetric = (key: string, label: string, value: number) => (
-    <span key={key} className={styles.metric}>
+  const renderMetric = (label: string, value: number) => (
+    <span className={styles.metric}>
       <span className={styles.metricLabel}>{label}</span>
       <span className={styles.metricValue}>{value}</span>
     </span>
   );
 
-  const renderFlagTag = (key: string, label: string) => (
-    <span key={key} className={styles.flagTag}>
-      {label}
-    </span>
-  );
-
   const renderModelsSummary = (r: ProviderResource) => {
-    const items: ReactNode[] = [];
     if (r.brand === 'ampcode') {
-      items.push(
-        renderMetric('models', t('providersPage.ampcode.modelMappings'), r.modelCount),
-        renderMetric('keys', t('providersPage.ampcode.keyMappings'), r.apiKeyEntryCount)
+      return (
+        <div className={styles.metricsCell}>
+          {renderMetric(t('providersPage.table.metrics.models'), r.modelCount)}
+        </div>
       );
-      if (r.flags.forceModelMappings) {
-        items.push(renderFlagTag('force', t('providersPage.ampcode.forceModelMappingsTag')));
-      }
-      return <div className={styles.metricsCell}>{items}</div>;
     }
-    if (r.brand === 'openaiCompatibility') {
-      items.push(
-        renderMetric('models', t('providersPage.table.metrics.models'), r.modelCount),
-        renderMetric('keys', t('providersPage.table.metrics.keys'), r.apiKeyEntryCount),
-        renderMetric('headers', t('providersPage.table.metrics.headers'), r.headerCount)
-      );
-    } else {
-      items.push(
-        renderMetric('models', t('providersPage.table.metrics.models'), r.modelCount),
-        renderMetric('headers', t('providersPage.table.metrics.headers'), r.headerCount)
-      );
-      if (r.brand === 'codex' && r.flags.websockets) {
-        items.push(renderFlagTag('ws', t('providersPage.table.websocketsTag')));
-      }
-      if (r.brand === 'claude' && r.flags.cloakEnabled) {
-        items.push(renderFlagTag('cloak', t('providersPage.table.cloakTag')));
-      }
-    }
-    return <div className={styles.metricsCell}>{items}</div>;
+    return (
+      <div className={styles.metricsCell}>
+        {renderMetric(t('providersPage.table.metrics.models'), r.modelCount)}
+      </div>
+    );
   };
 
   const renderStatus = (r: ProviderResource) => {
@@ -187,6 +175,64 @@ export function ProviderResourceTable({
     return <span className={styles.baseUrl}>{r.baseUrl ?? t('providersPage.status.notSet')}</span>;
   };
 
+  const renderRecentSuccess = (resource: ProviderResource) => {
+    if (!usageByProvider || resource.brand === 'ampcode') {
+      return <span className={styles.mutedMono}>—</span>;
+    }
+
+    return (
+      <span className={styles.recentSuccess}>
+        {formatRecentSuccessTime(resolveLatestSuccessTime(resource, usageByProvider))}
+      </span>
+    );
+  };
+
+  const renderStatusSummary = (resource: ProviderResource) => {
+    const stats =
+      usageByProvider && resource.brand !== 'ampcode'
+        ? resolveTotalStats(resource, usageByProvider)
+        : { success: 0, failure: 0 };
+
+    return (
+      <div className={styles.statusSummary}>
+        {renderStatus(resource)}
+        <span className={`${styles.statPill} ${styles.statSuccess}`}>
+          {t('stats.success')}: {stats.success}
+        </span>
+        <span className={`${styles.statPill} ${styles.statFailure}`}>
+          {t('stats.failure')}: {stats.failure}
+        </span>
+      </div>
+    );
+  };
+
+  const renderEnabled = (resource: ProviderResource) => {
+    if (!onToggleDisabled || resource.brand === 'ampcode') {
+      return (
+        <span className={`${styles.enabledBadge} ${styles.enabledBadgeReadonly}`}>
+          {resource.disabled
+            ? t('providersPage.status.disabled')
+            : t('providersPage.status.active')}
+        </span>
+      );
+    }
+
+    return (
+      <span className={styles.toggleWrap} onClick={(e) => e.stopPropagation()}>
+        <ToggleSwitch
+          checked={!resource.disabled}
+          disabled={disableMutations}
+          onChange={(value) => onToggleDisabled(resource, !value)}
+          ariaLabel={
+            resource.disabled
+              ? t('providersPage.actions.enable')
+              : t('providersPage.actions.disable')
+          }
+        />
+      </span>
+    );
+  };
+
   return (
     <Table
       className={styles.providerTable}
@@ -198,9 +244,10 @@ export function ProviderResourceTable({
         <TableRow>
           <TableHead>{t('providersPage.table.key')}</TableHead>
           <TableHead>{t('providersPage.table.baseUrl')}</TableHead>
-          <TableHead>{t('providersPage.table.prefix')}</TableHead>
           <TableHead>{t('providersPage.table.models')}</TableHead>
+          <TableHead>{t('providersPage.table.recentSuccess')}</TableHead>
           <TableHead>{t('providersPage.table.status')}</TableHead>
+          <TableHead>{t('providersPage.table.enabled')}</TableHead>
           <TableHead alignRight className={styles.actionsHead}>
             {t('providersPage.table.actions')}
           </TableHead>
@@ -212,42 +259,10 @@ export function ProviderResourceTable({
             <TableRow key={resource.id} selected={resource.id === selectedId}>
               <TableCell>{renderPrimary(resource)}</TableCell>
               <TableCell>{renderBaseUrl(resource)}</TableCell>
-              <TableCell>
-                {resource.prefix ? (
-                  <span className={styles.chip}>{resource.prefix}</span>
-                ) : (
-                  <span className={styles.baseUrl}>{t('providersPage.status.none')}</span>
-                )}
-              </TableCell>
               <TableCell>{renderModelsSummary(resource)}</TableCell>
-              <TableCell>
-                <div className={styles.statusCell}>
-                  {renderStatus(resource)}
-                  {usageByProvider && resource.brand !== 'ampcode' ? (
-                    <>
-                      {(() => {
-                        const stats = resolveTotalStats(resource, usageByProvider);
-                        return (
-                          <div className={styles.stats}>
-                            <span className={`${styles.statPill} ${styles.statSuccess}`}>
-                              {t('stats.success')}: {stats.success}
-                            </span>
-                            <span className={`${styles.statPill} ${styles.statFailure}`}>
-                              {t('stats.failure')}: {stats.failure}
-                            </span>
-                          </div>
-                        );
-                      })()}
-                      <div className={styles.statusBarWrap}>
-                        <ProviderStatusBar
-                          statusData={resolveStatusBarData(resource, usageByProvider)}
-                          styles={statusBarStyles}
-                        />
-                      </div>
-                    </>
-                  ) : null}
-                </div>
-              </TableCell>
+              <TableCell>{renderRecentSuccess(resource)}</TableCell>
+              <TableCell>{renderStatusSummary(resource)}</TableCell>
+              <TableCell>{renderEnabled(resource)}</TableCell>
               <TableCell
                 alignRight
                 className={[
@@ -258,20 +273,6 @@ export function ProviderResourceTable({
                   .join(' ')}
               >
                 <div className={styles.actions}>
-                  {onToggleDisabled && resource.brand !== 'ampcode' ? (
-                    <span className={styles.toggleWrap} onClick={(e) => e.stopPropagation()}>
-                      <ToggleSwitch
-                        checked={!resource.disabled}
-                        disabled={disableMutations}
-                        onChange={(value) => onToggleDisabled(resource, !value)}
-                        ariaLabel={
-                          resource.disabled
-                            ? t('providersPage.actions.enable')
-                            : t('providersPage.actions.disable')
-                        }
-                      />
-                    </span>
-                  ) : null}
                   <button
                     type="button"
                     className={styles.iconBtn}

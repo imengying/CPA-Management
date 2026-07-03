@@ -32,10 +32,6 @@ import { useModelDiscovery } from './useModelDiscovery';
 import { ModelDiscoveryPanel } from './ModelDiscoveryPanel';
 import styles from './sharedForm.module.scss';
 
-export interface BaseProviderFormHandle {
-  submit: () => Promise<void>;
-}
-
 interface BaseProviderFormProps {
   brand: ProviderBrand;
   resource: ProviderResource | null;

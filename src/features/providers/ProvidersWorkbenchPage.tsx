@@ -49,7 +49,7 @@ const matchesFilter = (r: ProviderResource, normalized: string): boolean => {
     r.apiKey,
     r.baseUrl,
     r.proxyUrl,
-    r.prefix,
+    ...r.models,
   ]
     .filter(Boolean)
     .map((v) => String(v).toLowerCase());

@@ -151,12 +151,6 @@
   min-width: 0;
 }
 
-.divider {
-  border: 0;
-  border-top: 1px solid var(--border);
-  margin: 4px 0;
-}
-
 .errorBox {
   border: 1px solid var(--destructive-30);
   background: var(--destructive-10);
@@ -217,74 +211,11 @@
   color: var(--muted-foreground);
 }
 
-.entryCardToggle {
-  display: flex;
-  min-width: 0;
-  flex: 1;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
-
-  &:focus-visible {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 3px;
-    border-radius: 6px;
-  }
-}
-
 .entryCardHeaderRight {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
-}
-
-.entryCardBody {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.entryCardIconBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--text-tertiary);
-  cursor: pointer;
-  transition:
-    background-color $transition-fast,
-    color $transition-fast;
-
-  &:hover {
-    background: var(--accent);
-    color: var(--text-primary);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--primary-color);
-    outline-offset: -1px;
-  }
-}
-
-.entryCardChevron {
-  transition: transform $transition-fast;
-}
-
-.entryCardChevronOpen {
-  transform: rotate(180deg);
 }
 
 .entriesToolbar {
@@ -709,15 +640,6 @@
 .footerBtnGhost {
   background: transparent;
   border-color: transparent;
-
-  &:hover:not(:disabled) {
-    background: var(--accent);
-  }
-}
-
-.footerBtnOutline {
-  border-color: var(--border);
-  background: var(--card);
 
   &:hover:not(:disabled) {
     background: var(--accent);

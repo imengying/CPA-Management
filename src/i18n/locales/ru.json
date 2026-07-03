@@ -1441,19 +1441,16 @@
     "table": {
       "key": "Ключ",
       "baseUrl": "Base URL",
-      "prefix": "Префикс",
-      "models": "Модели/Заголовки",
+      "models": "Модели",
+      "recentSuccess": "Последний успех",
       "status": "Статус",
+      "enabled": "Включено",
       "actions": "Действия",
       "metrics": {
-        "models": "Модели",
-        "keys": "Ключи",
-        "headers": "Заголовки"
+        "models": "Модели"
       },
-      "websocketsTag": "WebSockets",
-      "cloakTag": "Cloak",
       "empty": "Ресурсов пока нет. Нажмите \"{{action}}\", чтобы начать.",
-      "filterPlaceholder": "Поиск по ключам, URL, префиксам…",
+      "filterPlaceholder": "Поиск по ключам, URL, моделям…",
       "description": "Управление ресурсами {{route}}",
       "providerIssue": "Проблема с провайдером"
     },

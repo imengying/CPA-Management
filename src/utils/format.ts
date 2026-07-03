@@ -79,12 +79,6 @@ export function parseDateValue(value: unknown): Date | null {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-export function formatDateValue(value: unknown, locale?: string): string {
-  const date = parseDateValue(value);
-  if (!date) return '';
-  return locale ? date.toLocaleDateString(locale) : date.toLocaleDateString();
-}
-
 export function formatDateTimeValue(value: unknown, locale?: string): string {
   const date = parseDateValue(value);
   if (!date) return '';

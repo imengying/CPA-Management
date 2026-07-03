@@ -258,9 +258,6 @@ const saveAuthFileText = async (name: string, text: string) => {
   await authFilesApi.upload(file);
 };
 
-export const isAuthFileInvalidJsonObjectError = (err: unknown): boolean =>
-  err instanceof Error && err.message === AUTH_FILE_INVALID_JSON_OBJECT_ERROR;
-
 const normalizeOauthExcludedModels = (payload: unknown): Record<string, string[]> => {
   if (!payload || typeof payload !== 'object') return {};
 

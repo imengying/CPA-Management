@@ -94,10 +94,3 @@ export function deobfuscateData(payload: string): string {
     return payload;
   }
 }
-
-/**
- * 检查是否已加密
- */
-export function isObfuscated(value: string): boolean {
-  return value?.startsWith(ENC_PREFIX) || false;
-}

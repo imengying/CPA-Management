@@ -14,11 +14,6 @@ export interface LogsQuery {
   offset?: number;
 }
 
-export interface CPALogsResponse {
-  lines: string[];
-  'line-count': number;
-}
-
 export interface LogsResponse {
   lines: string[];
   lineCount: number;

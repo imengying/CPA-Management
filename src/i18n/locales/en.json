@@ -1441,19 +1441,16 @@
     "table": {
       "key": "Key",
       "baseUrl": "Base URL",
-      "prefix": "Prefix",
-      "models": "Models/Headers",
+      "models": "Models",
+      "recentSuccess": "Recent success",
       "status": "Status",
+      "enabled": "Enabled",
       "actions": "Actions",
       "metrics": {
-        "models": "Models",
-        "keys": "Keys",
-        "headers": "Headers"
+        "models": "Models"
       },
-      "websocketsTag": "WebSockets",
-      "cloakTag": "Cloak",
       "empty": "No resources yet. Click {{action}} to get started.",
-      "filterPlaceholder": "Search keys, URLs, prefixes…",
+      "filterPlaceholder": "Search keys, URLs, models…",
       "description": "Manage resources under {{route}}",
       "providerIssue": "This provider has an issue"
     },

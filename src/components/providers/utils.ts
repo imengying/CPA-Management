@@ -2,12 +2,12 @@ import type { OpenAIProviderConfig } from '@/types';
 import {
   buildRecentRequestCompositeKey,
   mergeRecentRequestBucketGroups,
-  statusBarDataFromRecentRequests,
+  normalizeRecentRequestBuckets,
   sumRecentRequests,
   type RecentRequestBucket,
   type RecentRequestUsageEntry,
-  type StatusBarData,
 } from '@/utils/recentRequests';
+import { parseTimestampMs } from '@/utils/timestamp';
 
 const DISABLE_ALL_MODELS_RULE = '*';
 const DEFAULT_GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com';
@@ -146,16 +146,25 @@ const getProviderRecentBuckets = (
 ): RecentRequestBucket[] =>
   getProviderRecentUsageEntry(usageByProvider, provider, apiKey, baseUrl).recentRequests;
 
-export function getProviderRecentStatusData(
-  usageByProvider: ProviderRecentUsageMap,
-  provider: string,
-  apiKey?: string,
-  baseUrl?: string
-): StatusBarData {
-  return statusBarDataFromRecentRequests(
-    getProviderRecentBuckets(usageByProvider, provider, apiKey, baseUrl)
-  );
-}
+const chooseLatestTimestamp = (current: string | null, next: string | null): string | null => {
+  if (!next) return current;
+  if (!current) return next;
+
+  const currentMs = parseTimestampMs(current);
+  const nextMs = parseTimestampMs(next);
+  if (Number.isFinite(currentMs) && Number.isFinite(nextMs)) {
+    return nextMs >= currentMs ? next : current;
+  }
+  if (Number.isFinite(nextMs)) return next;
+  return current;
+};
+
+const getLatestSuccessfulRequestTime = (buckets: RecentRequestBucket[]): string | null => {
+  return normalizeRecentRequestBuckets(buckets).reduce<string | null>((latest, bucket) => {
+    if (bucket.success <= 0 || !bucket.time) return latest;
+    return chooseLatestTimestamp(latest, bucket.time);
+  }, null);
+};
 
 export function getProviderTotalStats(
   usageByProvider: ProviderRecentUsageMap,
@@ -165,6 +174,17 @@ export function getProviderTotalStats(
 ): { success: number; failure: number } {
   const entry = getProviderRecentUsageEntry(usageByProvider, provider, apiKey, baseUrl);
   return { success: entry.success, failure: entry.failed };
+}
+
+export function getProviderLatestSuccessTime(
+  usageByProvider: ProviderRecentUsageMap,
+  provider: string,
+  apiKey?: string,
+  baseUrl?: string
+): string | null {
+  return getLatestSuccessfulRequestTime(
+    getProviderRecentBuckets(usageByProvider, provider, apiKey, baseUrl)
+  );
 }
 
 export function getProviderRecentWindowStats(
@@ -219,11 +239,17 @@ export function getOpenAIProviderTotalStats(
   );
 }
 
-export function getOpenAIProviderRecentStatusData(
+export function getOpenAIProviderLatestSuccessTime(
   provider: OpenAIProviderConfig,
   usageByProvider: ProviderRecentUsageMap
-): StatusBarData {
-  return statusBarDataFromRecentRequests(
-    collectOpenAIProviderRecentBuckets(provider, usageByProvider)
-  );
+): string | null {
+  return (provider.apiKeyEntries || []).reduce<string | null>((latest, entry) => {
+    const next = getProviderLatestSuccessTime(
+      usageByProvider,
+      provider.name,
+      entry.apiKey,
+      provider.baseUrl
+    );
+    return chooseLatestTimestamp(latest, next);
+  }, null);
 }

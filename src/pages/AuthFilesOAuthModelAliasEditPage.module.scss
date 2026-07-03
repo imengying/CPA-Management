@@ -157,21 +157,6 @@
   color: var(--text-primary);
 }
 
-.modelsHint {
-  display: flex;
-  align-items: center;
-  gap: $spacing-xs;
-  padding: $spacing-sm $spacing-lg;
-  font-size: 13px;
-  color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-color);
-
-  @include mobile {
-    padding-left: $spacing-md;
-    padding-right: $spacing-md;
-  }
-}
-
 .mappingsBody {
   padding: $spacing-sm $spacing-lg $spacing-lg;
 
