@@ -3,6 +3,8 @@ import {
   buildRecentRequestCompositeKey,
   mergeRecentRequestBucketGroups,
   normalizeRecentRequestBuckets,
+  RECENT_REQUEST_BLOCK_COUNT,
+  RECENT_REQUEST_BLOCK_DURATION_MS,
   statusBarDataFromRecentRequests,
   sumRecentRequests,
   type RecentRequestBucket,
@@ -162,9 +164,21 @@ const chooseLatestTimestamp = (current: string | null, next: string | null): str
 };
 
 const getLatestSuccessfulRequestTime = (buckets: RecentRequestBucket[]): string | null => {
-  return normalizeRecentRequestBuckets(buckets).reduce<string | null>((latest, bucket) => {
-    if (bucket.success <= 0 || !bucket.time) return latest;
-    return chooseLatestTimestamp(latest, bucket.time);
+  const normalizedBuckets = normalizeRecentRequestBuckets(buckets);
+  const emptyBucketCount = Math.max(0, RECENT_REQUEST_BLOCK_COUNT - normalizedBuckets.length);
+  const windowStart = Date.now() - RECENT_REQUEST_BLOCK_COUNT * RECENT_REQUEST_BLOCK_DURATION_MS;
+
+  return normalizedBuckets.reduce<string | null>((latest, bucket, index) => {
+    if (bucket.success <= 0) return latest;
+
+    const bucketTimeMs = parseTimestampMs(bucket.time);
+    const fallbackTimeMs =
+      windowStart + (emptyBucketCount + index + 1) * RECENT_REQUEST_BLOCK_DURATION_MS;
+    const candidateTime = new Date(
+      Number.isFinite(bucketTimeMs) ? bucketTimeMs : fallbackTimeMs
+    ).toISOString();
+
+    return chooseLatestTimestamp(latest, candidateTime);
   }, null);
 };
 

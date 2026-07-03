@@ -41,12 +41,51 @@ export type ApiKeyUsageResponse = Record<
   >
 >;
 
-const RECENT_REQUEST_BLOCK_COUNT = 20;
-const RECENT_REQUEST_BLOCK_DURATION_MS = 10 * 60 * 1000;
+export const RECENT_REQUEST_BLOCK_COUNT = 20;
+export const RECENT_REQUEST_BLOCK_DURATION_MS = 10 * 60 * 1000;
+
+const RECENT_REQUEST_BUCKET_TIME_KEYS = [
+  'time',
+  'timestamp',
+  'start_time',
+  'startTime',
+  'end_time',
+  'endTime',
+  'bucket_time',
+  'bucketTime',
+];
 
 const toFiniteNumber = (value: unknown): number => {
   const numberValue = typeof value === 'number' ? value : Number(value);
   return Number.isFinite(numberValue) ? numberValue : 0;
+};
+
+const normalizeNumericBucketTime = (value: number): string | undefined => {
+  const timestampMs = value < 1_000_000_000_000 ? value * 1000 : value;
+  const date = new Date(timestampMs);
+  return Number.isFinite(date.getTime()) ? date.toISOString() : undefined;
+};
+
+const normalizeBucketTime = (record: Record<string, unknown>): string | undefined => {
+  for (const key of RECENT_REQUEST_BUCKET_TIME_KEYS) {
+    const value = record[key];
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (trimmed) {
+        if (/^\d+(\.\d+)?$/.test(trimmed)) {
+          const numericValue = Number(trimmed);
+          if (Number.isFinite(numericValue)) {
+            return normalizeNumericBucketTime(numericValue);
+          }
+        }
+        return trimmed;
+      }
+    }
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return normalizeNumericBucketTime(value);
+    }
+  }
+  return undefined;
 };
 
 export function normalizeUsageTotal(value: unknown): number {
@@ -88,7 +127,7 @@ export function normalizeRecentRequestBuckets(input: unknown): RecentRequestBuck
 
   return input.slice(-RECENT_REQUEST_BLOCK_COUNT).map((item) => {
     const record = item && typeof item === 'object' ? (item as Record<string, unknown>) : {};
-    const time = typeof record.time === 'string' ? record.time : undefined;
+    const time = normalizeBucketTime(record);
 
     return {
       ...(time ? { time } : {}),
