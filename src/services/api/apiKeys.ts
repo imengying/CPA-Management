@@ -10,10 +10,4 @@ export const apiKeysApi = {
     const keys = data['api-keys'];
     return Array.isArray(keys) ? keys.map((key) => String(key)) : [];
   },
-
-  replace: (keys: string[]) => apiClient.put('/api-keys', keys),
-
-  update: (index: number, value: string) => apiClient.patch('/api-keys', { index, value }),
-
-  delete: (index: number) => apiClient.delete(`/api-keys?index=${index}`),
 };

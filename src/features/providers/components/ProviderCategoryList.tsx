@@ -71,9 +71,6 @@ export function ProviderCategoryList({ groups, activeBrand, onSelect }: Provider
                 </span>
               </span>
             </span>
-            <span className={`${styles.badge} ${total === 0 ? styles.badgeAmber : ''}`}>
-              {total}
-            </span>
           </button>
         );
       })}

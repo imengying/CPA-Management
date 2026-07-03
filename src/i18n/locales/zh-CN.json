@@ -93,7 +93,9 @@
     "error_not_found": "未找到 Management API，请确认服务地址指向 CLIProxyAPI 后端",
     "error_server": "后端处理管理接口时发生错误，请查看服务日志",
     "error_cors": "跨域请求被阻止，请检查服务器配置",
-    "error_ssl": "SSL/TLS 证书验证失败"
+    "error_ssl": "SSL/TLS 证书验证失败",
+    "show_key": "显示密钥",
+    "hide_key": "隐藏密钥"
   },
   "header": {
     "refresh_all": "刷新全部",
@@ -159,33 +161,11 @@
     "system_overview": "系统概览"
   },
   "basic_settings": {
-    "title": "基础设置",
-    "debug_title": "调试模式",
     "debug_enable": "启用调试模式",
-    "proxy_title": "代理设置",
     "proxy_url_label": "代理 URL:",
-    "proxy_url_placeholder": "例如: socks5://user:pass@127.0.0.1:1080/",
-    "proxy_update": "更新",
-    "proxy_clear": "清空",
-    "retry_title": "请求重试",
     "retry_count_label": "重试次数:",
-    "retry_update": "更新",
-    "quota_title": "配额超出行为",
-    "quota_switch_project": "自动切换项目",
-    "quota_switch_preview": "切换到预览模型",
-    "logging_title": "日志记录",
     "logging_to_file_enable": "启用日志记录到文件",
-    "logs_max_total_size_title": "日志容量限制",
-    "logs_max_total_size_label": "日志总大小上限 (MB):",
-    "logs_max_total_size_hint": "设置为 0 表示不限制。",
-    "logs_max_total_size_update": "更新",
-    "force_model_prefix_enable": "强制模型前缀",
-    "ws_auth_title": "WebSocket 鉴权",
     "ws_auth_enable": "启用 /ws/* 鉴权",
-    "routing_title": "路由策略",
-    "routing_strategy_label": "路由策略:",
-    "routing_strategy_hint": "round-robin 为轮询，fill-first 为优先填充。",
-    "routing_strategy_update": "更新",
     "routing_strategy_round_robin": "round-robin (轮询)",
     "routing_strategy_fill_first": "fill-first (优先填充)"
   },
@@ -350,7 +330,9 @@
     "quota_refresh_single": "刷新额度",
     "quota_refresh_hint": "仅刷新该认证文件的额度",
     "quota_refresh_success": "已刷新 \"{{name}}\" 的额度",
-    "quota_refresh_failed": "刷新 \"{{name}}\" 的额度失败：{{message}}"
+    "quota_refresh_failed": "刷新 \"{{name}}\" 的额度失败：{{message}}",
+    "delete_title": "删除文件",
+    "delete_all_title": "删除全部文件"
   },
   "antigravity_subscription": {
     "subscription_label": "订阅",
@@ -555,7 +537,8 @@
     "scope_provider": "当前范围：{{provider}}",
     "upgrade_required": "当前 CPA 版本不支持 OAuth 模型禁用，请升级 CPA 版本",
     "upgrade_required_title": "需要升级 CPA 版本",
-    "upgrade_required_desc": "当前服务器版本不支持获取 OAuth 模型禁用功能，请升级到最新版本的 CPA（CLI Proxy API）后重试。"
+    "upgrade_required_desc": "当前服务器版本不支持获取 OAuth 模型禁用功能，请升级到最新版本的 CPA（CLI Proxy API）后重试。",
+    "delete_title": "删除模型禁用"
   },
   "oauth_model_alias": {
     "title": "OAuth 模型别名",
@@ -618,7 +601,8 @@
     "provider_required": "请先填写提供商名称",
     "upgrade_required": "当前 CPA 版本不支持模型别名功能，请升级 CPA 版本",
     "upgrade_required_title": "需要升级 CPA 版本",
-    "upgrade_required_desc": "当前服务器版本不支持 OAuth 模型别名功能，请升级到最新版本的 CPA（CLI Proxy API）后重试。"
+    "upgrade_required_desc": "当前服务器版本不支持 OAuth 模型别名功能，请升级到最新版本的 CPA（CLI Proxy API）后重试。",
+    "delete_title": "删除模型别名"
   },
   "auth_login": {
     "codex_oauth_title": "Codex OAuth",
@@ -800,7 +784,8 @@
     "lines": "行",
     "removed": "已过滤",
     "upgrade_required_title": "需要升级 CLI Proxy API",
-    "upgrade_required_desc": "当前服务器版本不支持日志查看功能，请升级到最新版本的 CLI Proxy API 以使用此功能。"
+    "upgrade_required_desc": "当前服务器版本不支持日志查看功能，请升级到最新版本的 CLI Proxy API 以使用此功能。",
+    "clear_confirm_title": "清空日志"
   },
   "config_management": {
     "editor_title": "配置文件",
@@ -826,7 +811,6 @@
     "error_yaml_not_supported": "服务器未返回 YAML 格式，请确认 /config.yaml 接口可用",
     "visual_mode_unavailable": "YAML 语法修复前无法使用可视化编辑",
     "visual_mode_unavailable_short": "YAML错误",
-    "validation_blocked_short": "待修复",
     "visual_mode_unavailable_detail": "当前配置存在无效 YAML，暂时无法使用可视化编辑：{{message}}",
     "visual_mode_save_blocked": "请先修复 YAML 语法错误，再从可视化模式保存",
     "visual_mode_latest_yaml_invalid": "服务端最新配置包含无效 YAML，请先切回源码模式检查后再保存可视化修改：{{message}}",
@@ -1123,7 +1107,8 @@
         "cancel": "取消",
         "update": "更新",
         "add": "添加"
-      }
+      },
+      "validation_blocked_short": "修复错误"
     }
   },
   "quota_management": {
@@ -1318,65 +1303,17 @@
     "clear_login_confirm": "确认清理本地登录信息并退出登录？"
   },
   "notification": {
-    "debug_updated": "调试设置已更新",
-    "proxy_updated": "代理设置已更新",
-    "proxy_cleared": "代理设置已清空",
-    "retry_updated": "重试设置已更新",
-    "quota_switch_project_updated": "项目切换设置已更新",
-    "quota_switch_preview_updated": "预览模型切换设置已更新",
-    "logging_to_file_updated": "日志记录设置已更新",
-    "logs_max_total_size_updated": "日志容量设置已更新",
-    "force_model_prefix_updated": "模型前缀设置已更新",
-    "ws_auth_updated": "WebSocket 鉴权设置已更新",
-    "routing_strategy_updated": "路由策略已更新",
     "login_storage_cleared": "本地登录信息已清理",
-    "api_key_added": "API密钥添加成功",
-    "api_key_updated": "API密钥更新成功",
-    "api_key_deleted": "API密钥删除成功",
-    "api_key_invalid_chars": "API密钥仅支持英文字母、数字和符号",
-    "gemini_key_added": "Gemini密钥添加成功",
-    "gemini_key_updated": "Gemini密钥更新成功",
-    "gemini_key_deleted": "Gemini密钥删除成功",
-    "gemini_multi_input_required": "请先输入至少一个Gemini密钥",
-    "gemini_multi_failed": "Gemini密钥批量添加失败",
-    "gemini_multi_summary": "Gemini批量添加完成：成功 {{success}}，跳过 {{skipped}}，失败 {{failed}}",
-    "codex_config_added": "Codex配置添加成功",
-    "codex_config_updated": "Codex配置更新成功",
-    "codex_config_deleted": "Codex配置删除成功",
-    "codex_base_url_required": "请填写Codex Base URL",
-    "claude_config_added": "Claude配置添加成功",
-    "claude_config_updated": "Claude配置更新成功",
-    "claude_config_deleted": "Claude配置删除成功",
-    "vertex_config_added": "Vertex配置添加成功",
-    "vertex_config_updated": "Vertex配置更新成功",
-    "vertex_config_deleted": "Vertex配置删除成功",
-    "config_enabled": "配置已启用",
-    "config_disabled": "配置已停用",
-    "field_required": "必填字段不能为空",
-    "openai_provider_required": "请填写提供商名称和Base URL",
-    "openai_provider_added": "OpenAI提供商添加成功",
-    "openai_provider_updated": "OpenAI提供商更新成功",
-    "openai_provider_deleted": "OpenAI提供商删除成功",
-    "openai_model_name_required": "请填写模型名称",
-    "openai_test_url_required": "请先填写有效的 Base URL 以进行测试",
-    "openai_test_key_required": "请至少填写一个 API 密钥以进行测试",
-    "openai_test_model_required": "请选择要测试的模型",
     "data_refreshed": "数据刷新成功",
     "connection_required": "请先建立连接",
     "refresh_failed": "刷新失败",
+    "load_failed": "加载失败",
+    "save_failed": "保存失败",
     "update_failed": "更新失败",
-    "add_failed": "添加失败",
     "delete_failed": "删除失败",
     "upload_failed": "上传失败",
     "download_failed": "下载失败",
     "login_failed": "登录失败",
-    "please_enter": "请输入",
-    "please_fill": "请填写",
-    "provider_name_url": "提供商名称和Base URL",
-    "api_key": "API密钥",
-    "gemini_api_key": "Gemini API密钥",
-    "codex_api_key": "Codex API密钥",
-    "claude_api_key": "Claude API密钥",
     "commercial_mode_restart_required": "商业模式开关已变更，请重启服务后生效",
     "copy_failed": "复制失败",
     "link_copied": "已复制"

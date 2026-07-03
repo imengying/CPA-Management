@@ -93,7 +93,9 @@
     "error_not_found": "Management API не найден, проверьте, что адрес указывает на backend CLIProxyAPI",
     "error_server": "Backend не смог обработать запрос управления, проверьте журналы сервера",
     "error_cors": "Блокировка CORS, проверьте конфигурацию сервера",
-    "error_ssl": "Ошибка проверки SSL/TLS сертификата"
+    "error_ssl": "Ошибка проверки SSL/TLS сертификата",
+    "show_key": "Показать ключ",
+    "hide_key": "Скрыть ключ"
   },
   "header": {
     "refresh_all": "Обновить всё",
@@ -159,33 +161,11 @@
     "system_overview": "Обзор системы"
   },
   "basic_settings": {
-    "title": "Основные настройки",
-    "debug_title": "Режим отладки",
     "debug_enable": "Включить режим отладки",
-    "proxy_title": "Настройки прокси",
     "proxy_url_label": "URL прокси:",
-    "proxy_url_placeholder": "например: socks5://user:pass@127.0.0.1:1080/",
-    "proxy_update": "Обновить",
-    "proxy_clear": "Очистить",
-    "retry_title": "Повтор запросов",
     "retry_count_label": "Количество повторов:",
-    "retry_update": "Обновить",
-    "quota_title": "Поведение при превышении квоты",
-    "quota_switch_project": "Автоматически переключать проект",
-    "quota_switch_preview": "Переключаться на preview-модель",
-    "logging_title": "Журналирование",
     "logging_to_file_enable": "Включить журналирование в файл",
-    "logs_max_total_size_title": "Лимит размера журналов",
-    "logs_max_total_size_label": "Максимальный общий размер журналов (МБ):",
-    "logs_max_total_size_hint": "Установите 0, чтобы отключить лимит.",
-    "logs_max_total_size_update": "Обновить",
-    "force_model_prefix_enable": "Включить принудительный префикс модели",
-    "ws_auth_title": "Аутентификация WebSocket",
     "ws_auth_enable": "Требовать аутентификацию для /ws/*",
-    "routing_title": "Стратегия маршрутизации",
-    "routing_strategy_label": "Стратегия маршрутизации:",
-    "routing_strategy_hint": "round-robin циклически перебирает ключи; fill-first отдаёт приоритет первому доступному ключу.",
-    "routing_strategy_update": "Обновить",
     "routing_strategy_round_robin": "round-robin (цикл)",
     "routing_strategy_fill_first": "fill-first (приоритет)"
   },
@@ -350,7 +330,9 @@
     "quota_refresh_single": "Обновить квоту",
     "quota_refresh_hint": "Обновить квоту только для этих учётных данных",
     "quota_refresh_success": "Квота для \"{{name}}\" обновлена",
-    "quota_refresh_failed": "Не удалось обновить квоту для \"{{name}}\": {{message}}"
+    "quota_refresh_failed": "Не удалось обновить квоту для \"{{name}}\": {{message}}",
+    "delete_title": "Удалить файл",
+    "delete_all_title": "Удалить все файлы"
   },
   "antigravity_subscription": {
     "subscription_label": "Подписка",
@@ -555,7 +537,8 @@
     "scope_provider": "Область: {{provider}}",
     "upgrade_required": "Текущая версия CPA не поддерживает отключение OAuth-моделей. Пожалуйста, обновите систему.",
     "upgrade_required_title": "Пожалуйста, обновите CLI Proxy API",
-    "upgrade_required_desc": "Текущая версия сервера не поддерживает получение отключения OAuth-моделей. Обновите CPA (CLI Proxy API) до последней версии и повторите попытку."
+    "upgrade_required_desc": "Текущая версия сервера не поддерживает получение отключения OAuth-моделей. Обновите CPA (CLI Proxy API) до последней версии и повторите попытку.",
+    "delete_title": "Удалить отключение моделей"
   },
   "oauth_model_alias": {
     "title": "Псевдонимы моделей OAuth",
@@ -618,7 +601,8 @@
     "provider_required": "Сначала укажите провайдера",
     "upgrade_required": "Эта функция требует более новой версии CLI Proxy API (CPA). Обновите систему.",
     "upgrade_required_title": "Пожалуйста, обновите CLI Proxy API",
-    "upgrade_required_desc": "Текущая версия сервера не поддерживает API псевдонимов моделей OAuth. Обновите CLI Proxy API (CPA) до последней версии."
+    "upgrade_required_desc": "Текущая версия сервера не поддерживает API псевдонимов моделей OAuth. Обновите CLI Proxy API (CPA) до последней версии.",
+    "delete_title": "Удалить псевдонимы моделей"
   },
   "auth_login": {
     "codex_oauth_title": "Codex OAuth",
@@ -800,7 +784,8 @@
     "lines": "строк",
     "removed": "Отфильтровано",
     "upgrade_required_title": "Обновите CLI Proxy API",
-    "upgrade_required_desc": "Текущая версия сервера не поддерживает просмотр журналов. Обновите CLI Proxy API до последней версии, чтобы использовать эту функцию."
+    "upgrade_required_desc": "Текущая версия сервера не поддерживает просмотр журналов. Обновите CLI Proxy API до последней версии, чтобы использовать эту функцию.",
+    "clear_confirm_title": "Очистить журналы"
   },
   "config_management": {
     "editor_title": "Файл конфигурации",
@@ -826,7 +811,6 @@
     "error_yaml_not_supported": "Сервер не вернул YAML. Убедитесь, что доступна конечная точка /config.yaml.",
     "visual_mode_unavailable": "Визуальный редактор недоступен, пока не исправлен синтаксис YAML",
     "visual_mode_unavailable_short": "Ошибка YAML",
-    "validation_blocked_short": "Есть ошибки",
     "visual_mode_unavailable_detail": "Визуальный редактор недоступен, потому что в конфигурации есть некорректный YAML: {{message}}",
     "visual_mode_save_blocked": "Нельзя сохранять из визуального режима, пока не исправлен синтаксис YAML",
     "visual_mode_latest_yaml_invalid": "Последняя конфигурация на сервере содержит некорректный YAML. Проверьте её в режиме исходника перед сохранением визуальных изменений: {{message}}",
@@ -1123,7 +1107,8 @@
         "cancel": "Отменить",
         "update": "Обновить",
         "add": "Добавить"
-      }
+      },
+      "validation_blocked_short": "Исправьте ошибки"
     }
   },
   "quota_management": {
@@ -1318,65 +1303,17 @@
     "clear_login_confirm": "Очистить локальные данные входа и выйти?"
   },
   "notification": {
-    "debug_updated": "Настройки отладки обновлены",
-    "proxy_updated": "Настройки прокси обновлены",
-    "proxy_cleared": "Настройки прокси очищены",
-    "retry_updated": "Настройки повторов обновлены",
-    "quota_switch_project_updated": "Настройки переключения проектов обновлены",
-    "quota_switch_preview_updated": "Настройки переключения на preview-модель обновлены",
-    "logging_to_file_updated": "Настройки журналирования обновлены",
-    "logs_max_total_size_updated": "Лимит размера журналов обновлён",
-    "force_model_prefix_updated": "Настройка префикса модели обновлена",
-    "ws_auth_updated": "Настройка аутентификации WebSocket обновлена",
-    "routing_strategy_updated": "Стратегия маршрутизации обновлена",
     "login_storage_cleared": "Локальные данные входа очищены",
-    "api_key_added": "API-ключ успешно добавлен",
-    "api_key_updated": "API-ключ успешно обновлён",
-    "api_key_deleted": "API-ключ успешно удалён",
-    "api_key_invalid_chars": "API-ключ может содержать только буквы, цифры и символы",
-    "gemini_key_added": "Ключ Gemini успешно добавлен",
-    "gemini_key_updated": "Ключ Gemini успешно обновлён",
-    "gemini_key_deleted": "Ключ Gemini успешно удалён",
-    "gemini_multi_input_required": "Введите хотя бы один ключ Gemini",
-    "gemini_multi_failed": "Пакетное добавление Gemini не удалось",
-    "gemini_multi_summary": "Пакетное добавление Gemini завершено: добавлено {{success}}, пропущено {{skipped}}, ошибок {{failed}}",
-    "codex_config_added": "Конфигурация Codex успешно добавлена",
-    "codex_config_updated": "Конфигурация Codex успешно обновлена",
-    "codex_config_deleted": "Конфигурация Codex успешно удалена",
-    "codex_base_url_required": "Введите базовый URL Codex",
-    "claude_config_added": "Конфигурация Claude успешно добавлена",
-    "claude_config_updated": "Конфигурация Claude успешно обновлена",
-    "claude_config_deleted": "Конфигурация Claude успешно удалена",
-    "vertex_config_added": "Конфигурация Vertex успешно добавлена",
-    "vertex_config_updated": "Конфигурация Vertex успешно обновлена",
-    "vertex_config_deleted": "Конфигурация Vertex успешно удалена",
-    "config_enabled": "Конфигурация включена",
-    "config_disabled": "Конфигурация выключена",
-    "field_required": "Обязательные поля не могут быть пустыми",
-    "openai_provider_required": "Заполните имя провайдера и базовый URL",
-    "openai_provider_added": "Провайдер OpenAI успешно добавлен",
-    "openai_provider_updated": "Провайдер OpenAI успешно обновлён",
-    "openai_provider_deleted": "Провайдер OpenAI успешно удалён",
-    "openai_model_name_required": "Введите имя модели",
-    "openai_test_url_required": "Укажите корректный базовый URL перед тестированием",
-    "openai_test_key_required": "Добавьте хотя бы один API-ключ перед тестированием",
-    "openai_test_model_required": "Выберите модель для теста",
     "data_refreshed": "Данные успешно обновлены",
     "connection_required": "Сначала установите подключение",
     "refresh_failed": "Не удалось обновить",
+    "load_failed": "Не удалось загрузить",
+    "save_failed": "Не удалось сохранить",
     "update_failed": "Не удалось обновить",
-    "add_failed": "Не удалось добавить",
     "delete_failed": "Не удалось удалить",
     "upload_failed": "Не удалось загрузить",
     "download_failed": "Не удалось скачать",
     "login_failed": "Вход не выполнен",
-    "please_enter": "Пожалуйста, введите",
-    "please_fill": "Пожалуйста, заполните",
-    "provider_name_url": "имя провайдера и базовый URL",
-    "api_key": "API-ключ",
-    "gemini_api_key": "API-ключ Gemini",
-    "codex_api_key": "API-ключ Codex",
-    "claude_api_key": "API-ключ Claude",
     "commercial_mode_restart_required": "Режим коммерческого использования изменён. Перезапустите сервис, чтобы применить изменения",
     "copy_failed": "Не удалось скопировать",
     "link_copied": "Ссылка скопирована в буфер обмена"

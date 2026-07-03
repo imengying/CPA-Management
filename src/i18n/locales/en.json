@@ -93,7 +93,9 @@
     "error_not_found": "Management API not found, confirm the server address points to the CLIProxyAPI backend",
     "error_server": "Backend failed while handling the management request, check the server logs",
     "error_cors": "Cross-origin request blocked, please check server configuration",
-    "error_ssl": "SSL/TLS certificate verification failed"
+    "error_ssl": "SSL/TLS certificate verification failed",
+    "show_key": "Show key",
+    "hide_key": "Hide key"
   },
   "header": {
     "refresh_all": "Refresh All",
@@ -159,33 +161,11 @@
     "system_overview": "System Overview"
   },
   "basic_settings": {
-    "title": "Basic Settings",
-    "debug_title": "Debug Mode",
     "debug_enable": "Enable Debug Mode",
-    "proxy_title": "Proxy Settings",
     "proxy_url_label": "Proxy URL:",
-    "proxy_url_placeholder": "e.g.: socks5://user:pass@127.0.0.1:1080/",
-    "proxy_update": "Update",
-    "proxy_clear": "Clear",
-    "retry_title": "Request Retry",
     "retry_count_label": "Retry Count:",
-    "retry_update": "Update",
-    "quota_title": "Quota Exceeded Behavior",
-    "quota_switch_project": "Auto Switch Project",
-    "quota_switch_preview": "Switch to Preview Model",
-    "logging_title": "Logging",
     "logging_to_file_enable": "Enable logging to file",
-    "logs_max_total_size_title": "Log Size Limit",
-    "logs_max_total_size_label": "Total log size cap (MB):",
-    "logs_max_total_size_hint": "Set to 0 to disable the limit.",
-    "logs_max_total_size_update": "Update",
-    "force_model_prefix_enable": "Force model prefix",
-    "ws_auth_title": "WebSocket Authentication",
     "ws_auth_enable": "Require auth for /ws/*",
-    "routing_title": "Routing Strategy",
-    "routing_strategy_label": "Routing strategy:",
-    "routing_strategy_hint": "round-robin cycles through keys; fill-first prioritizes the first available key.",
-    "routing_strategy_update": "Update",
     "routing_strategy_round_robin": "round-robin (cycle)",
     "routing_strategy_fill_first": "fill-first (prioritize)"
   },
@@ -350,7 +330,9 @@
     "quota_refresh_single": "Refresh quota",
     "quota_refresh_hint": "Refresh quota only for this credential",
     "quota_refresh_success": "Quota refreshed for \"{{name}}\"",
-    "quota_refresh_failed": "Failed to refresh quota for \"{{name}}\": {{message}}"
+    "quota_refresh_failed": "Failed to refresh quota for \"{{name}}\": {{message}}",
+    "delete_title": "Delete File",
+    "delete_all_title": "Delete All Files"
   },
   "antigravity_subscription": {
     "subscription_label": "Subscription",
@@ -555,7 +537,8 @@
     "scope_provider": "Scope: {{provider}}",
     "upgrade_required": "Current CPA version does not support OAuth model disablement. Please upgrade.",
     "upgrade_required_title": "Please upgrade CLI Proxy API",
-    "upgrade_required_desc": "The current server version does not support fetching OAuth model disablement. Please upgrade to the latest CPA (CLI Proxy API) version and try again."
+    "upgrade_required_desc": "The current server version does not support fetching OAuth model disablement. Please upgrade to the latest CPA (CLI Proxy API) version and try again.",
+    "delete_title": "Delete Model Disablement"
   },
   "oauth_model_alias": {
     "title": "OAuth Model Aliases",
@@ -618,7 +601,8 @@
     "provider_required": "Please enter a provider first",
     "upgrade_required": "This feature requires a newer CLI Proxy API (CPA) version. Please upgrade.",
     "upgrade_required_title": "Please upgrade CLI Proxy API",
-    "upgrade_required_desc": "The current server does not support the OAuth model aliases API. Please upgrade to the latest CLI Proxy API (CPA) version."
+    "upgrade_required_desc": "The current server does not support the OAuth model aliases API. Please upgrade to the latest CLI Proxy API (CPA) version.",
+    "delete_title": "Delete Model Aliases"
   },
   "auth_login": {
     "codex_oauth_title": "Codex OAuth",
@@ -800,7 +784,8 @@
     "lines": "lines",
     "removed": "Filtered",
     "upgrade_required_title": "Please Upgrade CLI Proxy API",
-    "upgrade_required_desc": "The current server version does not support the logs viewing feature. Please upgrade to the latest version of CLI Proxy API to use this feature."
+    "upgrade_required_desc": "The current server version does not support the logs viewing feature. Please upgrade to the latest version of CLI Proxy API to use this feature.",
+    "clear_confirm_title": "Clear Logs"
   },
   "config_management": {
     "editor_title": "Configuration File",
@@ -826,7 +811,6 @@
     "error_yaml_not_supported": "Server did not return YAML. Verify the /config.yaml endpoint is available.",
     "visual_mode_unavailable": "Visual editor unavailable until YAML syntax is fixed",
     "visual_mode_unavailable_short": "YAML issue",
-    "validation_blocked_short": "Fix errors",
     "visual_mode_unavailable_detail": "Visual editor is unavailable because the configuration contains invalid YAML: {{message}}",
     "visual_mode_save_blocked": "Cannot save from visual mode until the YAML syntax is fixed",
     "visual_mode_latest_yaml_invalid": "The latest server configuration contains invalid YAML. Review it in source mode before saving visual changes: {{message}}",
@@ -1123,7 +1107,8 @@
         "cancel": "Cancel",
         "update": "Update",
         "add": "Add"
-      }
+      },
+      "validation_blocked_short": "Fix errors"
     }
   },
   "quota_management": {
@@ -1318,65 +1303,17 @@
     "clear_login_confirm": "Clear local login data and sign out now?"
   },
   "notification": {
-    "debug_updated": "Debug settings updated",
-    "proxy_updated": "Proxy settings updated",
-    "proxy_cleared": "Proxy settings cleared",
-    "retry_updated": "Retry settings updated",
-    "quota_switch_project_updated": "Project switch settings updated",
-    "quota_switch_preview_updated": "Preview model switch settings updated",
-    "logging_to_file_updated": "Logging settings updated",
-    "logs_max_total_size_updated": "Log size limit updated",
-    "force_model_prefix_updated": "Model prefix setting updated",
-    "ws_auth_updated": "WebSocket authentication setting updated",
-    "routing_strategy_updated": "Routing strategy updated",
     "login_storage_cleared": "Local login data cleared",
-    "api_key_added": "API key added successfully",
-    "api_key_updated": "API key updated successfully",
-    "api_key_deleted": "API key deleted successfully",
-    "api_key_invalid_chars": "API key can only contain letters, numbers, and symbols",
-    "gemini_key_added": "Gemini key added successfully",
-    "gemini_key_updated": "Gemini key updated successfully",
-    "gemini_key_deleted": "Gemini key deleted successfully",
-    "gemini_multi_input_required": "Please enter at least one Gemini key",
-    "gemini_multi_failed": "Gemini bulk add failed",
-    "gemini_multi_summary": "Gemini bulk add finished: {{success}} added, {{skipped}} skipped, {{failed}} failed",
-    "codex_config_added": "Codex configuration added successfully",
-    "codex_config_updated": "Codex configuration updated successfully",
-    "codex_config_deleted": "Codex configuration deleted successfully",
-    "codex_base_url_required": "Please enter the Codex Base URL",
-    "claude_config_added": "Claude configuration added successfully",
-    "claude_config_updated": "Claude configuration updated successfully",
-    "claude_config_deleted": "Claude configuration deleted successfully",
-    "vertex_config_added": "Vertex configuration added successfully",
-    "vertex_config_updated": "Vertex configuration updated successfully",
-    "vertex_config_deleted": "Vertex configuration deleted successfully",
-    "config_enabled": "Configuration enabled",
-    "config_disabled": "Configuration disabled",
-    "field_required": "Required fields cannot be empty",
-    "openai_provider_required": "Please fill in provider name and Base URL",
-    "openai_provider_added": "OpenAI provider added successfully",
-    "openai_provider_updated": "OpenAI provider updated successfully",
-    "openai_provider_deleted": "OpenAI provider deleted successfully",
-    "openai_model_name_required": "Model name is required",
-    "openai_test_url_required": "Please provide a valid Base URL before testing",
-    "openai_test_key_required": "Please add at least one API key before testing",
-    "openai_test_model_required": "Please select a model to test",
     "data_refreshed": "Data refreshed successfully",
     "connection_required": "Please establish connection first",
     "refresh_failed": "Refresh failed",
+    "load_failed": "Load failed",
+    "save_failed": "Save failed",
     "update_failed": "Update failed",
-    "add_failed": "Add failed",
     "delete_failed": "Delete failed",
     "upload_failed": "Upload failed",
     "download_failed": "Download failed",
     "login_failed": "Login failed",
-    "please_enter": "Please enter",
-    "please_fill": "Please fill",
-    "provider_name_url": "provider name and Base URL",
-    "api_key": "API key",
-    "gemini_api_key": "Gemini API key",
-    "codex_api_key": "Codex API key",
-    "claude_api_key": "Claude API key",
     "commercial_mode_restart_required": "Commercial mode setting changed. Please restart the service for it to take effect",
     "copy_failed": "Copy failed",
     "link_copied": "Link copied to clipboard"

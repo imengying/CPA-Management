@@ -247,13 +247,6 @@ class ApiClient {
     });
     return response.data;
   }
-
-  /**
-   * 保留对 axios.request 的访问，便于下载等场景
-   */
-  async requestRaw(config: AxiosRequestConfig): Promise<AxiosResponse> {
-    return this.instance.request(config);
-  }
 }
 
 // 导出单例
