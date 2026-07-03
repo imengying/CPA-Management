@@ -1379,7 +1379,7 @@
       "key": "金鑰",
       "baseUrl": "服務位址",
       "models": "模型",
-      "recentSuccess": "近期成功",
+      "recentSuccess": "最近請求",
       "status": "狀態",
       "enabled": "啟用",
       "actions": "操作",

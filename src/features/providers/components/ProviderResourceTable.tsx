@@ -52,7 +52,7 @@ const formatRecentSuccessTime = (value: string | null): string => {
 
   const date = new Date(timestampMs);
   const pad = (num: number) => num.toString().padStart(2, '0');
-  return `${pad(date.getMonth() + 1)}:${pad(date.getDate())}:${pad(date.getHours())}:${pad(
+  return `${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(
     date.getMinutes()
   )}:${pad(date.getSeconds())}`;
 };

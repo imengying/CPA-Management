@@ -1379,7 +1379,7 @@
       "key": "Ключ",
       "baseUrl": "Base URL",
       "models": "Модели",
-      "recentSuccess": "Последний успех",
+      "recentSuccess": "Последний запрос",
       "status": "Статус",
       "enabled": "Включено",
       "actions": "Действия",

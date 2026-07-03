@@ -1,8 +1,3 @@
-/**
- * 配置状态管理
- * 从原项目 src/core/config-service.js 迁移
- */
-
 import { create } from 'zustand';
 import type { Config } from '@/types';
 import type { RawConfigSection } from '@/types/config';

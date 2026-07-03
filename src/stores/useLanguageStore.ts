@@ -1,8 +1,3 @@
-/**
- * 语言状态管理
- * 从原项目 src/modules/language.js 迁移
- */
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Language } from '@/types';

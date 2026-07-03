@@ -1,8 +1,3 @@
-/**
- * 模型工具函数
- * 迁移自基线 utils/models.js
- */
-
 import { isRecord } from './helpers';
 
 export interface ModelInfo {

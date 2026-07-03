@@ -1,8 +1,3 @@
-/**
- * 认证状态管理
- * 从原项目 src/modules/login.js 和 src/core/connection.js 迁移
- */
-
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { AuthState, LoginCredentials, ConnectionStatus } from '@/types';

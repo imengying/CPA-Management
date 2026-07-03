@@ -54,9 +54,7 @@ import {
   isAuthFilesStatusFilterMode,
   isAuthFilesSortMode,
   readAuthFilesUiState,
-  readPersistedAuthFilesCompactMode,
   writeAuthFilesUiState,
-  writePersistedAuthFilesCompactMode,
   type AuthFilesStatusFilterMode,
   type AuthFilesSortMode,
 } from '@/features/authFiles/uiState';
@@ -67,8 +65,8 @@ const easePower3Out = (progress: number) => 1 - (1 - progress) ** 4;
 const easePower2In = (progress: number) => progress ** 3;
 const BATCH_BAR_BASE_TRANSFORM = 'translateX(-50%)';
 const BATCH_BAR_HIDDEN_TRANSFORM = 'translateX(-50%) translateY(56px)';
-const DEFAULT_REGULAR_PAGE_SIZE = 9;
-const DEFAULT_COMPACT_PAGE_SIZE = 12;
+const DEFAULT_REGULAR_PAGE_SIZE = 10;
+const DEFAULT_COMPACT_PAGE_SIZE = 15;
 
 const escapeWildcardSearchSegment = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -78,17 +76,7 @@ const buildWildcardSearch = (value: string): RegExp | null => {
   return new RegExp(pattern, 'i');
 };
 
-const resolveStatusFilterMode = (
-  problemOnly: boolean,
-  disabledOnly: boolean
-): AuthFilesStatusFilterMode => {
-  if (problemOnly) return 'problem';
-  if (disabledOnly) return 'disabled';
-  return 'all';
-};
-
 const normalizePersistedStatusFilterMode = (value: unknown): AuthFilesStatusFilterMode | null => {
-  if (value === 'disabledProblem') return 'problem';
   return isAuthFilesStatusFilterMode(value) ? value : null;
 };
 
@@ -106,7 +94,6 @@ type AuthFilesPageInitialState = {
 };
 
 const readInitialAuthFilesPageState = (): AuthFilesPageInitialState => {
-  const persistedCompactMode = readPersistedAuthFilesCompactMode();
   const persisted = readAuthFilesUiState();
 
   const regularPageSize =
@@ -123,15 +110,6 @@ const readInitialAuthFilesPageState = (): AuthFilesPageInitialState => {
       persisted?.statusFilterMode
     );
     if (persistedStatusFilterMode) return persistedStatusFilterMode;
-    if (
-      typeof persisted?.problemOnly === 'boolean' ||
-      typeof persisted?.disabledOnly === 'boolean'
-    ) {
-      return resolveStatusFilterMode(
-        persisted.problemOnly === true,
-        persisted.disabledOnly === true
-      );
-    }
     return 'all';
   })();
 
@@ -141,10 +119,7 @@ const readInitialAuthFilesPageState = (): AuthFilesPageInitialState => {
         ? normalizeProviderKey(persisted.filter)
         : 'all',
     statusFilterMode,
-    compactMode:
-      typeof persistedCompactMode === 'boolean'
-        ? persistedCompactMode
-        : persisted?.compactMode === true,
+    compactMode: persisted?.compactMode === true,
     search: typeof persisted?.search === 'string' ? persisted.search : '',
     page:
       typeof persisted?.page === 'number' && Number.isFinite(persisted.page)
@@ -278,25 +253,18 @@ export function AuthFilesPage() {
     writeAuthFilesUiState({
       filter,
       statusFilterMode,
-      problemOnly,
-      disabledOnly,
       compactMode,
       search,
       page,
-      pageSize,
       regularPageSize: pageSizeByMode.regular,
       compactPageSize: pageSizeByMode.compact,
       sortMode,
     });
-    writePersistedAuthFilesCompactMode(compactMode);
   }, [
     compactMode,
-    disabledOnly,
     filter,
     page,
-    pageSize,
     pageSizeByMode,
-    problemOnly,
     search,
     sortMode,
     statusFilterMode,

@@ -1,11 +1,6 @@
 import { parseTimestamp } from './timestamp';
 
 /**
- * 格式化工具函数
- * 从原项目 src/utils/string.js 迁移
- */
-
-/**
  * 隐藏 API Key 中间部分，仅保留前后两位
  */
 export function maskApiKey(key: string): string {

@@ -1,8 +1,3 @@
-/**
- * 常量定义
- * 从原项目 src/utils/constants.js 迁移
- */
-
 import type { Language } from '@/types';
 
 const defineLanguageOrder = <T extends readonly Language[]>(

@@ -1379,7 +1379,7 @@
       "key": "Key",
       "baseUrl": "Base URL",
       "models": "Models",
-      "recentSuccess": "Recent success",
+      "recentSuccess": "Latest request",
       "status": "Status",
       "enabled": "Enabled",
       "actions": "Actions",
