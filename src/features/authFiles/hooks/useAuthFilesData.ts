@@ -69,6 +69,7 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const batchStatusPendingRef = useRef(false);
+  const hasLoadedFilesRef = useRef(false);
   const selectionCount = selectedFiles.size;
   const toggleSelect = useCallback((name: string) => {
     setSelectedFiles((prev) => {
@@ -165,7 +166,10 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
   }, [files, selectedFiles.size]);
 
   const loadFiles = useCallback(async () => {
-    setLoading(true);
+    const shouldShowLoading = !hasLoadedFilesRef.current;
+    if (shouldShowLoading) {
+      setLoading(true);
+    }
     setError('');
     try {
       const data = await authFilesApi.list();
@@ -174,7 +178,10 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
       const errorMessage = err instanceof Error ? err.message : t('notification.refresh_failed');
       setError(errorMessage);
     } finally {
-      setLoading(false);
+      hasLoadedFilesRef.current = true;
+      if (shouldShowLoading) {
+        setLoading(false);
+      }
     }
   }, [t]);
 
