@@ -379,7 +379,9 @@ export function DashboardPage() {
           </div>
 
           <div className={styles.infoTile}>
-            <div className={styles.tileLabel}>{t('footer.build_date')}</div>
+            <div className={styles.tileHeader}>
+              <div className={styles.tileLabel}>{t('footer.build_date')}</div>
+            </div>
             <div className={styles.tileValue}>{buildTime}</div>
           </div>
         </div>

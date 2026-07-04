@@ -296,7 +296,7 @@ export function AuthFileCard(props: AuthFileCardProps) {
                 </Button>
               )}
               {!isRuntimeOnly && (
-                <div className={styles.cardUtilityActions}>
+                <>
                   <Button
                     variant="secondary"
                     size="sm"
@@ -331,7 +331,7 @@ export function AuthFileCard(props: AuthFileCardProps) {
                       <IconTrash2 className={styles.actionIcon} size={16} />
                     )}
                   </Button>
-                </div>
+                </>
               )}
             </div>
             {!isRuntimeOnly && (
