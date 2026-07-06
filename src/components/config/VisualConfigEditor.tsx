@@ -2,12 +2,14 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type ComponentType,
   type ReactNode,
 } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { usePageTransitionLayer } from '@/components/common/PageTransitionLayer';
 import { Collapsible } from '@/components/ui/Collapsible';
@@ -191,6 +193,9 @@ export function VisualConfigEditor({
   const pageTransitionLayer = usePageTransitionLayer();
   const isCurrentLayer = pageTransitionLayer ? pageTransitionLayer.isCurrentLayer : true;
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const isFloatingSidebar = useMediaQuery('(min-width: 1281px)');
+  const shouldRenderFloatingSidebar = !isMobile && isFloatingSidebar && isCurrentLayer;
+  const shouldRenderCompactSectionNav = !shouldRenderFloatingSidebar;
   const routingStrategyLabelId = useId();
   const routingStrategyHintId = `${routingStrategyLabelId}-hint`;
   const disableImageGenerationLabelId = useId();
@@ -202,6 +207,9 @@ export function VisualConfigEditor({
   const nonstreamKeepaliveHintId = `${nonstreamKeepaliveInputId}-hint`;
   const nonstreamKeepaliveErrorId = `${nonstreamKeepaliveInputId}-error`;
   const [activeSectionId, setActiveSectionId] = useState<VisualSectionId>('connectivity');
+  const workspaceRef = useRef<HTMLDivElement | null>(null);
+  const sidebarAnchorRef = useRef<HTMLElement | null>(null);
+  const floatingSidebarRef = useRef<HTMLDivElement | null>(null);
   const sectionRefs = useRef<Partial<Record<VisualSectionId, HTMLElement | null>>>({});
   const mobileNavScrollerRef = useRef<HTMLDivElement | null>(null);
   const mobileNavButtonRefs = useRef<Partial<Record<VisualSectionId, HTMLButtonElement | null>>>(
@@ -507,7 +515,7 @@ export function VisualConfigEditor({
   }, [isCurrentLayer, sections]);
 
   useEffect(() => {
-    if (!isCurrentLayer || !isMobile) return;
+    if (!isCurrentLayer || !shouldRenderCompactSectionNav) return;
     const scroller = mobileNavScrollerRef.current;
     const button = mobileNavButtonRefs.current[activeSectionId];
     if (!scroller || !button) return;
@@ -525,7 +533,7 @@ export function VisualConfigEditor({
       left: targetLeft,
       behavior: 'smooth',
     });
-  }, [activeSectionId, isCurrentLayer, isMobile]);
+  }, [activeSectionId, isCurrentLayer, shouldRenderCompactSectionNav]);
 
   const handleSectionJump = useCallback((sectionId: VisualSectionId) => {
     setActiveSectionId(sectionId);
@@ -535,6 +543,128 @@ export function VisualConfigEditor({
       inline: 'nearest',
     });
   }, []);
+
+  useLayoutEffect(() => {
+    const floatingElement = floatingSidebarRef.current;
+    const anchorElement = sidebarAnchorRef.current;
+    const workspaceElement = workspaceRef.current;
+
+    if (!floatingElement) return undefined;
+
+    const clearFloatingStyles = () => {
+      floatingElement.style.removeProperty('transform');
+      floatingElement.style.removeProperty('width');
+      floatingElement.style.removeProperty('max-height');
+      floatingElement.style.removeProperty('opacity');
+      floatingElement.style.removeProperty('pointer-events');
+    };
+
+    if (!shouldRenderFloatingSidebar || !anchorElement || !workspaceElement) {
+      clearFloatingStyles();
+      return undefined;
+    }
+
+    const computeHeaderHeight = () => {
+      const header = document.querySelector('.main-header') as HTMLElement | null;
+      if (header) return header.getBoundingClientRect().height;
+
+      const raw = getComputedStyle(document.documentElement).getPropertyValue('--header-height');
+      const parsed = Number.parseFloat(raw);
+      return Number.isFinite(parsed) ? parsed : 64;
+    };
+
+    let headerHeight = computeHeaderHeight();
+    const getScrollParents = (element: HTMLElement) => {
+      const parents: HTMLElement[] = [];
+      let parent = element.parentElement;
+
+      while (parent && parent !== document.body) {
+        const style = getComputedStyle(parent);
+        if (/(auto|scroll|overlay)/.test(style.overflowY)) {
+          parents.push(parent);
+        }
+        parent = parent.parentElement;
+      }
+
+      const contentScroller = document.querySelector('.content') as HTMLElement | null;
+      if (contentScroller && !parents.includes(contentScroller)) {
+        parents.push(contentScroller);
+      }
+
+      return parents;
+    };
+    const scrollParents = getScrollParents(workspaceElement);
+    let cachedFloatingHeight = floatingElement.getBoundingClientRect().height || 200;
+    let frameId = 0;
+
+    const updateFloatingPosition = () => {
+      frameId = 0;
+
+      const anchorRect = anchorElement.getBoundingClientRect();
+      const workspaceRect = workspaceElement.getBoundingClientRect();
+      const stickyTop = headerHeight + 8;
+      const viewportPadding = 12;
+      const maxTop = workspaceRect.bottom - cachedFloatingHeight;
+      const unclampedTop = Math.min(Math.max(anchorRect.top, stickyTop), maxTop);
+      const top = Math.max(unclampedTop, viewportPadding);
+      const left = Math.max(anchorRect.left, viewportPadding);
+      const width = Math.max(
+        Math.min(anchorRect.width, window.innerWidth - left - viewportPadding),
+        200
+      );
+      const maxHeight = Math.max(window.innerHeight - top - viewportPadding, 160);
+      const isVisible =
+        workspaceRect.bottom > stickyTop + 24 && anchorRect.top < window.innerHeight;
+
+      floatingElement.style.transform = `translate3d(${left}px, ${top}px, 0)`;
+      floatingElement.style.width = `${width}px`;
+      floatingElement.style.maxHeight = `${maxHeight}px`;
+      floatingElement.style.opacity = isVisible ? '1' : '0';
+      floatingElement.style.pointerEvents = isVisible ? 'auto' : 'none';
+    };
+
+    const requestPositionUpdate = () => {
+      if (frameId) cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(updateFloatingPosition);
+    };
+
+    const handleResize = () => {
+      headerHeight = computeHeaderHeight();
+      cachedFloatingHeight = floatingElement.getBoundingClientRect().height || cachedFloatingHeight;
+      requestPositionUpdate();
+    };
+
+    requestPositionUpdate();
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('scroll', requestPositionUpdate, { passive: true });
+    for (const scrollParent of scrollParents) {
+      scrollParent.addEventListener('scroll', requestPositionUpdate, { passive: true });
+    }
+
+    const resizeObserver =
+      typeof ResizeObserver === 'undefined'
+        ? null
+        : new ResizeObserver(() => {
+            cachedFloatingHeight =
+              floatingElement.getBoundingClientRect().height || cachedFloatingHeight;
+            requestPositionUpdate();
+          });
+    resizeObserver?.observe(anchorElement);
+    resizeObserver?.observe(workspaceElement);
+    resizeObserver?.observe(floatingElement);
+
+    return () => {
+      if (frameId) cancelAnimationFrame(frameId);
+      resizeObserver?.disconnect();
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', requestPositionUpdate);
+      for (const scrollParent of scrollParents) {
+        scrollParent.removeEventListener('scroll', requestPositionUpdate);
+      }
+      clearFloatingStyles();
+    };
+  }, [shouldRenderFloatingSidebar]);
 
   // Shared high-frequency field blocks used in multiple sections.
   const hostField = (
@@ -793,8 +923,8 @@ export function VisualConfigEditor({
         </div>
       </div>
 
-      <div className={styles.workspace}>
-        {isMobile ? (
+      <div ref={workspaceRef} className={styles.workspace}>
+        {shouldRenderCompactSectionNav ? (
           <div className={styles.mobileSectionNav}>
             <div
               ref={mobileNavScrollerRef}
@@ -832,9 +962,11 @@ export function VisualConfigEditor({
           </div>
         ) : null}
 
-        <aside className={styles.sidebar}>
-          <div className={styles.sidebarRail}>{navContent}</div>
-        </aside>
+        {shouldRenderFloatingSidebar ? (
+          <aside ref={sidebarAnchorRef} className={styles.sidebar}>
+            <div className={styles.sidebarPlaceholder} aria-hidden="true" />
+          </aside>
+        ) : null}
 
         <div className={styles.sections}>
           <ConfigSection
@@ -1728,6 +1860,15 @@ export function VisualConfigEditor({
           </ConfigSection>
         </div>
       </div>
+
+      {shouldRenderFloatingSidebar && typeof document !== 'undefined'
+        ? createPortal(
+            <div ref={floatingSidebarRef} className={styles.floatingSidebarContainer}>
+              <div className={styles.floatingSidebarRail}>{navContent}</div>
+            </div>,
+            document.body
+          )
+        : null}
     </div>
   );
 }

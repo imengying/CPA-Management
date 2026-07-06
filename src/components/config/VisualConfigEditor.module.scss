@@ -397,14 +397,19 @@
 
 .workspace {
   display: grid;
-  grid-template-columns: minmax(200px, 232px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 232px) minmax(0, 1fr);
   gap: 14px;
   align-items: start;
   width: 100%;
+  max-width: 100%;
   min-width: 0;
+  box-sizing: border-box;
+
+  @media (max-width: 1280px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
 
   @include mobile {
-    grid-template-columns: minmax(0, 1fr);
     gap: 12px;
   }
 }
@@ -412,11 +417,13 @@
 .mobileSectionNav {
   display: none;
 
-  @include mobile {
+  @media (max-width: 1280px) {
     position: sticky;
     top: calc(var(--header-height, 64px) + 10px);
     z-index: 4;
     display: block;
+    min-width: 0;
+    max-width: 100%;
     margin-bottom: 4px;
     background: color-mix(in srgb, var(--bg-secondary) 94%, transparent);
   }
@@ -487,25 +494,43 @@
 }
 
 .sidebar {
-  position: sticky;
-  top: calc(var(--header-height, 64px) + 12px);
-  z-index: 5;
+  position: relative;
   align-self: start;
   min-width: 0;
 
-  @include mobile {
+  @media (max-width: 1280px) {
     display: none;
   }
 }
 
-.sidebarRail {
-  max-height: calc(100dvh - var(--header-height, 64px) - 36px);
+.sidebarPlaceholder {
+  min-height: 1px;
+}
+
+.floatingSidebarContainer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 45;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+  will-change: transform, width, max-height;
+
+  @media (max-width: 1280px) {
+    display: none;
+  }
+}
+
+.floatingSidebarRail {
+  max-height: inherit;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 8px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: color-mix(in srgb, var(--bg-primary) 94%, transparent);
+  background: color-mix(in srgb, var(--bg-primary) 96%, transparent);
+  box-shadow: var(--shadow-lg);
   scrollbar-width: thin;
 }
 
