@@ -221,9 +221,8 @@ export function VisualConfigEditor({
   const { t } = useTranslation();
   const pageTransitionLayer = usePageTransitionLayer();
   const isCurrentLayer = pageTransitionLayer ? pageTransitionLayer.isCurrentLayer : true;
-  const isMobile = useMediaQuery('(max-width: 768px)');
   const isFloatingSidebar = useMediaQuery('(min-width: 1281px)');
-  const shouldRenderFloatingSidebar = !isMobile && isFloatingSidebar && isCurrentLayer;
+  const shouldRenderFloatingSidebar = isFloatingSidebar && isCurrentLayer;
   const shouldRenderCompactSectionNav = !shouldRenderFloatingSidebar;
   const routingStrategyLabelId = useId();
   const routingStrategyHintId = `${routingStrategyLabelId}-hint`;
@@ -535,15 +534,8 @@ export function VisualConfigEditor({
         if (!element) continue;
 
         const rect = element.getBoundingClientRect();
-        if (rect.top <= markerY) {
-          nextActiveId = section.id;
-          continue;
-        }
-
-        if (!nextActiveId && rect.bottom >= markerY) {
-          nextActiveId = section.id;
-        }
-        break;
+        if (rect.top > markerY) break;
+        nextActiveId = section.id;
       }
 
       if (nextActiveId) {
