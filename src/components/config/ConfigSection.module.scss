@@ -3,43 +3,36 @@
 .section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  height: clamp(520px, calc(100dvh - var(--header-height, 64px) - 250px), 780px);
+  gap: 14px;
   min-width: 0;
+  max-width: 100%;
   box-sizing: border-box;
-  overflow-y: auto;
-  overscroll-behavior: auto;
-  padding: clamp(18px, 2vw, 24px);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--card);
-  scroll-margin-top: 104px;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-  scrollbar-width: thin;
+  padding: 22px 0;
+  border-top: 1px solid var(--border);
+  scroll-margin-top: calc(var(--header-height, 64px) + 18px);
+
+  &:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
 
   @include mobile {
-    gap: 14px;
-    height: clamp(420px, calc(100dvh - var(--header-height, 64px) - 260px), 680px);
-    padding: 16px;
-    scroll-margin-top: 92px;
+    gap: 12px;
+    padding: 18px 0;
+    scroll-margin-top: calc(var(--header-height, 64px) + 74px);
   }
 }
 
 .header {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 12px;
-  align-items: start;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  max-width: 100%;
   background: transparent;
 
   @include mobile {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 10px;
-    padding-bottom: 12px;
-    background: transparent;
+    align-items: flex-start;
   }
 }
 
@@ -48,31 +41,18 @@
   align-items: center;
   gap: 8px;
   min-width: 0;
-}
-
-.indexBadge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 32px;
-  height: 28px;
-  padding: 0 8px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--muted);
-  color: var(--muted-foreground);
-  font-size: 11px;
-  font-weight: 750;
-  letter-spacing: 0.08em;
+  flex: 0 0 auto;
 }
 
 .iconBadge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border);
   border-radius: 6px;
+  background: var(--muted);
   color: var(--muted-foreground);
   flex: 0 0 auto;
 }
@@ -80,29 +60,26 @@
 .headingGroup {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
+  flex: 1;
 }
 
 .title {
   margin: 0;
   color: var(--text-primary);
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
-  line-height: 1.18;
+  line-height: 1.2;
   letter-spacing: 0;
 }
 
 .description {
   margin: 0;
-  max-width: 72ch;
+  max-width: none;
   color: var(--muted-foreground);
-  font-size: 13px;
-  line-height: 1.65;
-
-  @include mobile {
-    max-width: none;
-  }
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .content {
@@ -111,4 +88,5 @@
   gap: 14px;
   width: 100%;
   min-width: 0;
+  max-width: 100%;
 }
