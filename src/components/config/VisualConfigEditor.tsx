@@ -304,9 +304,7 @@ export function VisualConfigEditor({
       return;
     }
 
-    // Expand the collapsed <details> group this field belongs to: an ancestor when the
-    // anchor sits inside the group (TLS / remote / advanced fields), or a descendant when
-    // the anchor wraps the whole group (payload rule groups).
+    // Open any nested legacy <details> container before scrolling to a matched field.
     const details = el.closest('details') ?? el.querySelector('details');
     if (details && !details.open) details.open = true;
 
@@ -1032,7 +1030,7 @@ export function VisualConfigEditor({
               <Collapsible
                 label={t('config_management.visual.sections.tls.title')}
                 hint={t('config_management.visual.sections.tls.description')}
-                defaultOpen={false}
+                alwaysOpen
               >
                 <SectionStack>
                   <FieldAnchor fieldId="tlsEnable">
@@ -1076,7 +1074,7 @@ export function VisualConfigEditor({
               <Collapsible
                 label={t('config_management.visual.sections.remote.title')}
                 hint={t('config_management.visual.sections.remote.description')}
-                defaultOpen={false}
+                alwaysOpen
               >
                 <SectionStack>
                   <SectionGrid>
@@ -1561,7 +1559,7 @@ export function VisualConfigEditor({
               {supportsPlugin ? (
                 <Collapsible
                   label={t('config_management.visual.sections.advanced.plugins_title')}
-                  defaultOpen={false}
+                  alwaysOpen
                 >
                   <SectionStack>
                     <SectionGrid>
@@ -1636,7 +1634,7 @@ export function VisualConfigEditor({
 
               <Collapsible
                 label={t('config_management.visual.sections.advanced.signature_title')}
-                defaultOpen={false}
+                alwaysOpen
               >
                 <SectionGrid>
                   <FieldAnchor fieldId="antigravitySignatureCacheEnabled">
@@ -1675,7 +1673,7 @@ export function VisualConfigEditor({
               <Collapsible
                 label={t('config_management.visual.sections.headers.title')}
                 hint={t('config_management.visual.sections.headers.description')}
-                defaultOpen={false}
+                alwaysOpen
               >
                 <SectionStack>
                   <div className={styles.subsectionHeader}>
@@ -1815,7 +1813,7 @@ export function VisualConfigEditor({
                   key={`payloadDefaultRules-${payloadValidationKey}`}
                   label={t('config_management.visual.sections.payload.default_rules')}
                   hint={t('config_management.visual.sections.payload.default_rules_desc')}
-                  defaultOpen={hasPayloadValidationErrors}
+                  alwaysOpen
                 >
                   <PayloadRulesEditor
                     value={values.payloadDefaultRules}
@@ -1830,7 +1828,7 @@ export function VisualConfigEditor({
                   key={`payloadDefaultRawRules-${payloadValidationKey}`}
                   label={t('config_management.visual.sections.payload.default_raw_rules')}
                   hint={t('config_management.visual.sections.payload.default_raw_rules_desc')}
-                  defaultOpen={hasPayloadValidationErrors}
+                  alwaysOpen
                 >
                   <PayloadRulesEditor
                     value={values.payloadDefaultRawRules}
@@ -1846,7 +1844,7 @@ export function VisualConfigEditor({
                   key={`payloadOverrideRules-${payloadValidationKey}`}
                   label={t('config_management.visual.sections.payload.override_rules')}
                   hint={t('config_management.visual.sections.payload.override_rules_desc')}
-                  defaultOpen={hasPayloadValidationErrors}
+                  alwaysOpen
                 >
                   <PayloadRulesEditor
                     value={values.payloadOverrideRules}
@@ -1862,7 +1860,7 @@ export function VisualConfigEditor({
                   key={`payloadOverrideRawRules-${payloadValidationKey}`}
                   label={t('config_management.visual.sections.payload.override_raw_rules')}
                   hint={t('config_management.visual.sections.payload.override_raw_rules_desc')}
-                  defaultOpen={hasPayloadValidationErrors}
+                  alwaysOpen
                 >
                   <PayloadRulesEditor
                     value={values.payloadOverrideRawRules}
@@ -1879,7 +1877,7 @@ export function VisualConfigEditor({
                   key={`payloadFilterRules-${payloadValidationKey}`}
                   label={t('config_management.visual.sections.payload.filter_rules')}
                   hint={t('config_management.visual.sections.payload.filter_rules_desc')}
-                  defaultOpen={hasPayloadValidationErrors}
+                  alwaysOpen
                 >
                   <PayloadFilterRulesEditor
                     value={values.payloadFilterRules}

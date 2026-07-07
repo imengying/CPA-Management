@@ -35,6 +35,19 @@
   }
 }
 
+.summaryStatic {
+  cursor: default;
+  user-select: text;
+
+  &:hover {
+    background: transparent;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+
 .summaryLabel {
   display: flex;
   align-items: center;
