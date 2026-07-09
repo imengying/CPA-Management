@@ -61,36 +61,6 @@
   font-size: 14px;
 }
 
-.pageSizeSelect {
-  padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: $radius-md;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  font-size: 14px;
-  cursor: text;
-  height: 38px;
-  box-sizing: border-box;
-
-  &:focus {
-    outline: none;
-    border-color: var(--primary-color);
-  }
-}
-
-.statsInfo {
-  padding: 8px 12px;
-  background-color: var(--bg-secondary);
-  border-radius: $radius-md;
-  font-size: 13px;
-  color: var(--text-secondary);
-  white-space: nowrap;
-  height: 38px;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-}
-
 .antigravityGrid,
 .claudeGrid,
 .codexGrid,
@@ -102,35 +72,6 @@
 
   @include mobile {
     grid-template-columns: 1fr;
-  }
-}
-
-.antigravityControls,
-.claudeControls,
-.codexControls,
-.kimiControls,
-.xaiControls {
-  display: flex;
-  gap: $spacing-md;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  margin-bottom: $spacing-md;
-}
-
-.antigravityControl,
-.claudeControl,
-.codexControl,
-.kimiControl,
-.xaiControl {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-
-  label {
-    font-size: 12px;
-    color: var(--text-secondary);
-    font-weight: 500;
-    white-space: nowrap;
   }
 }
 
@@ -427,15 +368,6 @@
   padding: $spacing-xs $spacing-sm;
 }
 
-.quotaWarning {
-  font-size: 12px;
-  color: var(--warning-text);
-  background-color: var(--warning-bg);
-  border: 1px solid var(--warning-border);
-  border-radius: $radius-sm;
-  padding: $spacing-xs $spacing-sm;
-}
-
 .codexPlan {
   display: flex;
   align-items: center;
@@ -516,12 +448,6 @@
   border: 1px solid var(--warning-border);
   border-radius: $radius-sm;
   padding: $spacing-xs $spacing-sm;
-}
-
-.codexPlanSeparator {
-  width: 1px;
-  height: 12px;
-  background-color: var(--border-color);
 }
 
 .premiumPlanValue {

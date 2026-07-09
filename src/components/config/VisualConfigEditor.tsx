@@ -304,10 +304,6 @@ export function VisualConfigEditor({
       return;
     }
 
-    // Open any nested legacy <details> container before scrolling to a matched field.
-    const details = el.closest('details') ?? el.querySelector('details');
-    if (details && !details.open) details.open = true;
-
     // Clear any in-flight highlight before starting a new one.
     if (highlightTimerRef.current !== null) {
       clearTimeout(highlightTimerRef.current);
