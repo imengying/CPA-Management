@@ -4,7 +4,6 @@
  */
 
 import type {
-  AmpcodeConfig,
   GeminiKeyConfig,
   ProviderKeyConfig,
   OpenAIProviderConfig,
@@ -33,7 +32,6 @@ export interface Config {
   claudeApiKeys?: ProviderKeyConfig[];
   vertexApiKeys?: ProviderKeyConfig[];
   openaiCompatibility?: OpenAIProviderConfig[];
-  ampcode?: AmpcodeConfig;
   oauthExcludedModels?: Record<string, string[]>;
   raw?: Record<string, unknown>;
 }
@@ -55,5 +53,4 @@ export type RawConfigSection =
   | 'claude-api-key'
   | 'vertex-api-key'
   | 'openai-compatibility'
-  | 'ampcode'
   | 'oauth-excluded-models';

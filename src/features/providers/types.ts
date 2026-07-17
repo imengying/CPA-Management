@@ -7,8 +7,7 @@ export type ProviderBrand =
   | 'codex'
   | 'claude'
   | 'vertex'
-  | 'openaiCompatibility'
-  | 'ampcode';
+  | 'openaiCompatibility';
 
 export const PROVIDER_SORT_BY_VALUES = ['name', 'priority', 'recent-success'] as const;
 export type ProviderSortBy = (typeof PROVIDER_SORT_BY_VALUES)[number];
@@ -21,14 +20,11 @@ export type ProviderResourceSelector =
   | { brand: 'codex'; apiKey: string; baseUrl?: string; index: number }
   | { brand: 'claude'; apiKey: string; baseUrl?: string; index: number }
   | { brand: 'vertex'; apiKey: string; baseUrl?: string; index: number }
-  | { brand: 'openaiCompatibility'; name: string; index: number }
-  | { brand: 'ampcode' };
+  | { brand: 'openaiCompatibility'; name: string; index: number };
 
 export interface ProviderResourceFlags {
   cloakEnabled?: boolean;
   websockets?: boolean;
-  forceModelMappings?: boolean;
-  isPlaceholder?: boolean;
 }
 
 export interface ProviderResource {

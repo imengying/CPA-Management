@@ -148,16 +148,6 @@ export function ProviderResourceTable({
         </div>
       );
     }
-    if (r.brand === 'ampcode') {
-      return (
-        <div className={styles.primaryCell}>
-          <span className={styles.primaryName}>{r.identifier}</span>
-          <span className={styles.primarySub}>
-            {r.apiKeyPreview ?? t('providersPage.status.notConfigured')}
-          </span>
-        </div>
-      );
-    }
     return (
       <div className={styles.primaryCell}>
         <span className={styles.primaryName}>{r.apiKeyPreview ?? '—'}</span>
@@ -178,7 +168,7 @@ export function ProviderResourceTable({
   };
 
   const renderRecentSuccess = (resource: ProviderResource) => {
-    if (!usageByProvider || resource.brand === 'ampcode') {
+    if (!usageByProvider) {
       return <span className={styles.mutedMono}>—</span>;
     }
 
@@ -190,10 +180,9 @@ export function ProviderResourceTable({
   };
 
   const renderStatusSummary = (resource: ProviderResource) => {
-    const stats =
-      usageByProvider && resource.brand !== 'ampcode'
-        ? resolveTotalStats(resource, usageByProvider)
-        : { success: 0, failure: 0 };
+    const stats = usageByProvider
+      ? resolveTotalStats(resource, usageByProvider)
+      : { success: 0, failure: 0 };
 
     return (
       <div className={styles.statusCell}>
@@ -206,7 +195,7 @@ export function ProviderResourceTable({
             {t('stats.failure')}: {stats.failure}
           </span>
         </div>
-        {usageByProvider && resource.brand !== 'ampcode' ? (
+        {usageByProvider ? (
           <div className={styles.statusBarWrap}>
             <ProviderStatusBar
               statusData={resolveStatusBarData(resource, usageByProvider)}
@@ -219,7 +208,7 @@ export function ProviderResourceTable({
   };
 
   const renderEnabled = (resource: ProviderResource) => {
-    if (!onToggleDisabled || resource.brand === 'ampcode') {
+    if (!onToggleDisabled) {
       return (
         <span className={`${styles.enabledBadge} ${styles.enabledBadgeReadonly}`}>
           {resource.disabled

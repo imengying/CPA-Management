@@ -55,13 +55,8 @@ export function ProviderResourcePanel({
   onCreate,
 }: ProviderResourcePanelProps) {
   const { t } = useTranslation();
-  const hasProviderInfo = group.resources.some((r) => !r.flags.isPlaceholder);
-  const showAmpcodeConfigure = group.id === 'ampcode' && !hasProviderInfo;
-  const createActionLabel = showAmpcodeConfigure
-    ? t('providersPage.actions.configure')
-    : t('providersPage.actions.new');
+  const createActionLabel = t('providersPage.actions.new');
   const emptyText = t('providersPage.table.empty', { action: createActionLabel });
-  const realResources = filteredResources.filter((r) => !r.flags.isPlaceholder);
 
   return (
     <section className={styles.panel}>
@@ -122,7 +117,7 @@ export function ProviderResourcePanel({
         </div>
       </div>
 
-      {realResources.length === 0 ? (
+      {filteredResources.length === 0 ? (
         <div className={styles.empty}>
           <div>{emptyText}</div>
           <div className={styles.emptyAction}>

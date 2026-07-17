@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Collapsible } from '@/components/ui/Collapsible';
 import { IconCheck, IconX } from '@/components/ui/icons';
 import { getProviderTotalStats, type ProviderRecentUsageMap } from '@/components/providers/utils';
-import type { AmpcodeConfig, OpenAIProviderConfig } from '@/types';
+import type { OpenAIProviderConfig } from '@/types';
 import { maskApiKey } from '@/utils/format';
 import type { ProviderResource } from '../types';
 import styles from './forms/sharedForm.module.scss';
@@ -14,64 +14,6 @@ interface ResourceDetailViewProps {
 
 export function ResourceDetailView({ resource, usageByProvider }: ResourceDetailViewProps) {
   const { t } = useTranslation();
-
-  if (resource.brand === 'ampcode') {
-    const raw = (resource.raw as AmpcodeConfig | undefined) ?? {};
-    const upstreamMappings = raw.upstreamApiKeys ?? [];
-    const modelMappings = raw.modelMappings ?? [];
-
-    return (
-      <div>
-        <dl className={styles.dl}>
-          <div>
-            <dt className={styles.dt}>{t('providersPage.detail.fields.identifier')}</dt>
-            <dd className={styles.dd}>{resource.identifier}</dd>
-          </div>
-          <div>
-            <dt className={styles.dt}>{t('providersPage.ampcode.upstreamUrl')}</dt>
-            <dd className={styles.dd}>{raw.upstreamUrl ?? t('providersPage.status.notSet')}</dd>
-          </div>
-          <div>
-            <dt className={styles.dt}>{t('providersPage.ampcode.upstreamApiKey')}</dt>
-            <dd className={styles.dd}>
-              {raw.upstreamApiKey
-                ? maskApiKey(raw.upstreamApiKey)
-                : t('providersPage.status.notSet')}
-            </dd>
-          </div>
-          <div>
-            <dt className={styles.dt}>{t('providersPage.ampcode.keyMappings')}</dt>
-            <dd className={styles.dd}>{upstreamMappings.length}</dd>
-          </div>
-          <div>
-            <dt className={styles.dt}>{t('providersPage.ampcode.modelMappings')}</dt>
-            <dd className={styles.dd}>{modelMappings.length}</dd>
-          </div>
-          <div>
-            <dt className={styles.dt}>{t('providersPage.ampcode.forceModelMappings')}</dt>
-            <dd className={styles.dd}>
-              {raw.forceModelMappings ? t('common.yes') : t('common.no')}
-            </dd>
-          </div>
-        </dl>
-
-        {modelMappings.length > 0 ? (
-          <div className={styles.detailSection}>
-            <Collapsible label={t('providersPage.ampcode.modelMappingsSection')}>
-              <dl className={styles.dl}>
-                {modelMappings.map((mapping) => (
-                  <div key={mapping.from}>
-                    <dt className={styles.dt}>{mapping.from}</dt>
-                    <dd className={styles.dd}>{mapping.to}</dd>
-                  </div>
-                ))}
-              </dl>
-            </Collapsible>
-          </div>
-        ) : null}
-      </div>
-    );
-  }
 
   const primary: Array<[string, string]> = [
     ['identifier', resource.identifier],

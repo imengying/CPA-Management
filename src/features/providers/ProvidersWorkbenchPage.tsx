@@ -63,9 +63,6 @@ const getResourceRecentSuccess = (
   resource: ProviderResource,
   usageByProvider: ProviderRecentUsageMap
 ): number => {
-  if (resource.brand === 'ampcode') {
-    return 0;
-  }
   if (resource.brand === 'openaiCompatibility') {
     return getOpenAIProviderRecentWindowStats(resource.raw as OpenAIProviderConfig, usageByProvider)
       .success;
@@ -368,7 +365,7 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
         selectedId={sheetState.open ? (sheetState.resource?.id ?? null) : null}
         isFetching={workbench.isFetching}
         disableMutations={disableMutations}
-        showCreateAction={!fixedBrand && activeBrand !== 'ampcode'}
+        showCreateAction={!fixedBrand}
         usageByProvider={usageByProvider}
         toolbarControls={toolbarControls}
         onRefresh={() => void handleRefresh()}

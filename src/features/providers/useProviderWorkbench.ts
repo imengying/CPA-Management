@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ampcodeApi, providersApi } from '@/services/api';
+import { providersApi } from '@/services/api';
 import { getErrorMessage } from '@/utils/helpers';
 import { useAuthStore, useConfigStore } from '@/stores';
 import {
@@ -7,14 +7,12 @@ import {
   withoutDisableAllModelsRule,
 } from '@/components/providers/utils';
 import type {
-  AmpcodeConfig,
   GeminiKeyConfig,
   ModelAlias,
   OpenAIProviderConfig,
   ProviderKeyConfig,
 } from '@/types';
 import {
-  ampcodeToResource,
   claudeToResource,
   codexToResource,
   geminiToResource,
@@ -43,9 +41,7 @@ export interface UseProviderWorkbenchResult {
   updateProvider: (resource: ProviderResource, input: ProviderEntryFormInput) => Promise<void>;
   deleteProvider: (resource: ProviderResource) => Promise<void>;
   toggleDisabled: (resource: ProviderResource, disabled: boolean) => Promise<void>;
-  saveAmpcode: (config: AmpcodeConfig) => Promise<void>;
   mutating: boolean;
-  refreshSnapshot: () => void;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -239,10 +235,6 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
     }
   }, [clearCache, fetchConfig, updateConfigValue]);
 
-  const refreshSnapshot = useCallback(() => {
-    setFetchedAt(new Date().toISOString());
-  }, []);
-
   useEffect(() => {
     if (hasFetchedRef.current) return;
     if (!connected) return;
@@ -281,9 +273,6 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
         case 'openaiCompatibility':
           resources = (config.openaiCompatibility ?? []).map((c, i) => openaiToResource(c, i));
           break;
-        case 'ampcode':
-          resources = [ampcodeToResource(config.ampcode)];
-          break;
       }
       return {
         id: brand,
@@ -320,8 +309,6 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
           );
         } else if (brand === 'openaiCompatibility') {
           await providersApi.createOpenAIProvider(buildOpenAIConfig(input));
-        } else if (brand === 'ampcode') {
-          throw new Error('Use saveAmpcode for ampcode create/update');
         }
         await refetch();
       } finally {
@@ -383,8 +370,6 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
             selector.index,
             buildOpenAIConfig(input, resource.raw as OpenAIProviderConfig)
           );
-        } else if (brand === 'ampcode') {
-          throw new Error('Use saveAmpcode for ampcode update');
         }
         await refetch();
       } finally {
@@ -409,24 +394,13 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
           await providersApi.deleteVertexConfig(sel.apiKey, sel.baseUrl);
         } else if (sel.brand === 'openaiCompatibility') {
           await providersApi.deleteOpenAIProvider(sel.index);
-        } else if (sel.brand === 'ampcode') {
-          await Promise.allSettled([
-            ampcodeApi.clearUpstreamUrl(),
-            ampcodeApi.clearUpstreamApiKey(),
-            ampcodeApi.saveUpstreamApiKeys([]),
-            ampcodeApi.clearModelMappings(),
-            ampcodeApi.updateForceModelMappings(false),
-          ]);
-          updateConfigValue('ampcode', {});
-          clearCache('ampcode');
         }
-        if (sel.brand === 'ampcode') refreshSnapshot();
-        else await refetch();
+        await refetch();
       } finally {
         setMutating(false);
       }
     },
-    [clearCache, refetch, refreshSnapshot, updateConfigValue]
+    [refetch]
   );
 
   const toggleDisabled = useCallback(
@@ -473,8 +447,6 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
           });
         } else if (brand === 'openaiCompatibility' && selector.brand === 'openaiCompatibility') {
           await providersApi.updateOpenAIProviderDisabled(selector.index, disabled);
-        } else if (brand === 'ampcode') {
-          return;
         }
         await refetch();
       } finally {
@@ -482,44 +454,6 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
       }
     },
     [refetch]
-  );
-
-  const saveAmpcode = useCallback(
-    async (next: AmpcodeConfig) => {
-      setMutating(true);
-      try {
-        const url = (next.upstreamUrl ?? '').trim();
-        if (url) {
-          await ampcodeApi.updateUpstreamUrl(url);
-        } else {
-          await ampcodeApi.clearUpstreamUrl();
-        }
-
-        const fallbackKey = (next.upstreamApiKey ?? '').trim();
-        if (fallbackKey) {
-          await ampcodeApi.updateUpstreamApiKey(fallbackKey);
-        } else {
-          await ampcodeApi.clearUpstreamApiKey();
-        }
-
-        await ampcodeApi.saveUpstreamApiKeys(next.upstreamApiKeys ?? []);
-
-        if (next.modelMappings?.length) {
-          await ampcodeApi.saveModelMappings(next.modelMappings);
-        } else {
-          await ampcodeApi.clearModelMappings();
-        }
-
-        await ampcodeApi.updateForceModelMappings(next.forceModelMappings === true);
-
-        updateConfigValue('ampcode', next);
-        clearCache('ampcode');
-        refreshSnapshot();
-      } finally {
-        setMutating(false);
-      }
-    },
-    [clearCache, refreshSnapshot, updateConfigValue]
   );
 
   return {
@@ -534,8 +468,6 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
     updateProvider,
     deleteProvider,
     toggleDisabled,
-    saveAmpcode,
     mutating,
-    refreshSnapshot,
   };
 }

@@ -1369,7 +1369,6 @@
       "cancel": "Cancel",
       "save": "Save",
       "create": "Create",
-      "configure": "Configure",
       "enable": "Enable",
       "disable": "Disable"
     },
@@ -1382,8 +1381,7 @@
       "codex": "Codex",
       "claude": "Claude",
       "vertex": "Vertex",
-      "openaiCompatibility": "OpenAI Compatible",
-      "ampcode": "AmpCode"
+      "openaiCompatibility": "OpenAI Compatible"
     },
     "table": {
       "key": "Key",
@@ -1400,25 +1398,6 @@
       "filterPlaceholder": "Search keys, URLs, models…",
       "description": "Manage resources under {{route}}",
       "providerIssue": "This provider has an issue"
-    },
-    "ampcode": {
-      "detailHint": "Configure Amp CLI upstream routing, client key mappings, and model remaps.",
-      "empty": "AmpCode is not configured yet.",
-      "upstreamUrl": "Upstream URL",
-      "upstreamApiKey": "Upstream API key",
-      "upstreamApiKeyHint": "Leave empty while editing to keep the current key",
-      "forceModelMappings": "Force model mappings",
-      "forceModelMappingsHint": "Reject models that are not listed in the mappings.",
-      "forceModelMappingsTag": "Forced",
-      "keyMappingsSection": "Client key mappings",
-      "keyMappings": "Key mappings",
-      "modelMappingsSection": "Model mappings",
-      "modelMappings": "Model mappings",
-      "mappingRow": "Mapping #{{index}}",
-      "clientKeys": "Client API keys",
-      "clientKeysHint": "One key per line or comma-separated",
-      "addMapping": "Add key mapping",
-      "addModelMapping": "Add model mapping"
     },
     "status": {
       "active": "Active",

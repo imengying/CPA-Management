@@ -1369,7 +1369,6 @@
       "cancel": "取消",
       "save": "保存",
       "create": "创建",
-      "configure": "配置",
       "enable": "启用",
       "disable": "停用"
     },
@@ -1382,8 +1381,7 @@
       "codex": "Codex",
       "claude": "Claude",
       "vertex": "Vertex",
-      "openaiCompatibility": "OpenAI 兼容",
-      "ampcode": "AmpCode"
+      "openaiCompatibility": "OpenAI 兼容"
     },
     "table": {
       "key": "密钥",
@@ -1400,25 +1398,6 @@
       "filterPlaceholder": "搜索密钥、地址、模型…",
       "description": "在 {{route}} 下管理资源",
       "providerIssue": "此提供商存在问题"
-    },
-    "ampcode": {
-      "detailHint": "配置 Amp CLI 的上游路由、客户端 Key 映射与模型映射。",
-      "empty": "尚未配置 AmpCode。",
-      "upstreamUrl": "上游 URL",
-      "upstreamApiKey": "上游 API 密钥",
-      "upstreamApiKeyHint": "编辑时留空表示保留当前密钥",
-      "forceModelMappings": "强制模型映射",
-      "forceModelMappingsHint": "未出现在映射表中的模型会被拒绝。",
-      "forceModelMappingsTag": "强制映射",
-      "keyMappingsSection": "客户端 Key 映射",
-      "keyMappings": "Key 映射",
-      "modelMappingsSection": "模型映射",
-      "modelMappings": "模型映射",
-      "mappingRow": "映射 #{{index}}",
-      "clientKeys": "客户端 API Key",
-      "clientKeysHint": "每行一个,也可以用逗号分隔",
-      "addMapping": "添加 Key 映射",
-      "addModelMapping": "添加模型映射"
     },
     "status": {
       "active": "活跃",

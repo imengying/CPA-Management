@@ -1369,7 +1369,6 @@
       "cancel": "Отмена",
       "save": "Сохранить",
       "create": "Создать",
-      "configure": "Настроить",
       "enable": "Включить",
       "disable": "Отключить"
     },
@@ -1382,8 +1381,7 @@
       "codex": "Codex",
       "claude": "Claude",
       "vertex": "Vertex",
-      "openaiCompatibility": "OpenAI-совместимый",
-      "ampcode": "AmpCode"
+      "openaiCompatibility": "OpenAI-совместимый"
     },
     "table": {
       "key": "Ключ",
@@ -1400,25 +1398,6 @@
       "filterPlaceholder": "Поиск по ключам, URL, моделям…",
       "description": "Управление ресурсами {{route}}",
       "providerIssue": "Проблема с провайдером"
-    },
-    "ampcode": {
-      "detailHint": "Настройка upstream-маршрута Amp CLI, сопоставлений клиентских ключей и моделей.",
-      "empty": "AmpCode ещё не настроен.",
-      "upstreamUrl": "Upstream URL",
-      "upstreamApiKey": "Upstream API key",
-      "upstreamApiKeyHint": "Оставьте пустым при редактировании, чтобы сохранить текущий ключ",
-      "forceModelMappings": "Принудительные сопоставления моделей",
-      "forceModelMappingsHint": "Модели, которых нет в таблице сопоставлений, будут отклонены.",
-      "forceModelMappingsTag": "Принудительно",
-      "keyMappingsSection": "Сопоставления клиентских ключей",
-      "keyMappings": "Сопоставления ключей",
-      "modelMappingsSection": "Сопоставления моделей",
-      "modelMappings": "Сопоставления моделей",
-      "mappingRow": "Сопоставление #{{index}}",
-      "clientKeys": "Клиентские API keys",
-      "clientKeysHint": "Один ключ на строку или через запятую",
-      "addMapping": "Добавить сопоставление ключей",
-      "addModelMapping": "Добавить сопоставление моделей"
     },
     "status": {
       "active": "Активен",

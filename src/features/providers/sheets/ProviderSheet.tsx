@@ -3,14 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { Sheet } from '@/components/ui/Sheet';
 import { IconLoader2, IconPencil } from '@/components/ui/icons';
 import type { ProviderRecentUsageMap } from '@/components/providers/utils';
-import type { AmpcodeConfig } from '@/types';
 import { useNotificationStore } from '@/stores';
 import { PROVIDER_DESCRIPTORS } from '../descriptors';
 import type { ProviderBrand, ProviderEntryFormInput, ProviderResource } from '../types';
 import type { UseProviderWorkbenchResult } from '../useProviderWorkbench';
 import { BaseProviderForm } from './forms/BaseProviderForm';
 import { ResourceDetailView } from './ResourceDetailView';
-import { AmpcodeForm } from './forms/AmpcodeForm';
 import styles from './forms/sharedForm.module.scss';
 
 type SheetMode = 'detail' | 'create' | 'edit';
@@ -142,24 +140,6 @@ export function ProviderSheet({
     [isDirty, mutationDisabled, onUpdated, state.resource, workbench]
   );
 
-  const handleSaveAmpcode = useCallback(
-    async (config: AmpcodeConfig) => {
-      if (mutationDisabled || (state.mode === 'edit' && !isDirty)) return;
-      setSubmitting(true);
-      try {
-        await workbench.saveAmpcode(config);
-        if (state.mode === 'create') {
-          onCreated();
-        } else {
-          onUpdated();
-        }
-      } finally {
-        setSubmitting(false);
-      }
-    },
-    [isDirty, mutationDisabled, onCreated, onUpdated, state.mode, workbench]
-  );
-
   const renderBody = () => {
     if (state.mode === 'detail') {
       if (!state.resource) {
@@ -168,18 +148,6 @@ export function ProviderSheet({
       return <ResourceDetailView resource={state.resource} usageByProvider={usageByProvider} />;
     }
     const formKey = `${state.brand}:${state.resource?.id ?? 'new'}:${state.mode}`;
-    if (state.brand === 'ampcode') {
-      return (
-        <AmpcodeForm
-          key={formKey}
-          resource={state.resource}
-          mutating={formMutating}
-          formId={formId}
-          onSubmit={handleSaveAmpcode}
-          onDirtyChange={handleDirtyChange}
-        />
-      );
-    }
     return (
       <BaseProviderForm
         key={formKey}
@@ -196,7 +164,7 @@ export function ProviderSheet({
 
   const footer =
     state.mode === 'detail' ? (
-      state.resource && !state.resource.flags.isPlaceholder ? (
+      state.resource ? (
         <>
           <button
             type="button"
@@ -265,9 +233,7 @@ export function ProviderSheet({
         route:
           state.brand === 'openaiCompatibility'
             ? '/ai-providers/openai'
-            : state.brand === 'ampcode'
-              ? '/ai-providers/ampcode'
-              : `/ai-providers/${state.brand}`,
+            : `/ai-providers/${state.brand}`,
       })}
       footer={footer}
       closeDisabled={submitting}

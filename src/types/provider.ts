@@ -68,21 +68,3 @@ export interface OpenAIProviderConfig {
   authIndex?: string;
   [key: string]: unknown;
 }
-
-export interface AmpcodeUpstreamApiKeyMapping {
-  upstreamApiKey: string;
-  apiKeys: string[];
-}
-
-export interface AmpcodeModelMapping {
-  from: string;
-  to: string;
-}
-
-export interface AmpcodeConfig {
-  upstreamUrl?: string;
-  upstreamApiKey?: string;
-  upstreamApiKeys?: AmpcodeUpstreamApiKeyMapping[];
-  modelMappings?: AmpcodeModelMapping[];
-  forceModelMappings?: boolean;
-}
