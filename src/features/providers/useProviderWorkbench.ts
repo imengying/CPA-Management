@@ -6,18 +6,14 @@ import {
   withDisableAllModelsRule,
   withoutDisableAllModelsRule,
 } from '@/components/providers/utils';
-import type {
-  GeminiKeyConfig,
-  ModelAlias,
-  OpenAIProviderConfig,
-  ProviderKeyConfig,
-} from '@/types';
+import type { GeminiKeyConfig, ModelAlias, OpenAIProviderConfig, ProviderKeyConfig } from '@/types';
 import {
   claudeToResource,
   codexToResource,
   geminiToResource,
   openaiToResource,
   vertexToResource,
+  xaiToResource,
 } from './adapters';
 import { PROVIDER_BRAND_ORDER } from './descriptors';
 import type {
@@ -113,7 +109,7 @@ const buildModelAliases = (
     .filter((m) => m.name);
 
 const buildProviderKeyConfig = (
-  brand: 'gemini' | 'codex' | 'claude' | 'vertex',
+  brand: 'gemini' | 'codex' | 'xai' | 'claude' | 'vertex',
   input: ProviderEntryFormInput,
   existing?: ProviderKeyConfig | GeminiKeyConfig | null
 ): ProviderKeyConfig | GeminiKeyConfig => {
@@ -133,7 +129,7 @@ const buildProviderKeyConfig = (
     disableCooling: input.disableCooling === true,
     authIndex: existing?.authIndex,
   };
-  if (brand === 'codex' && input.websockets !== undefined) {
+  if ((brand === 'codex' || brand === 'xai') && input.websockets !== undefined) {
     next.websockets = input.websockets;
   }
   if (brand === 'claude' && input.cloak) {
@@ -264,6 +260,9 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
         case 'codex':
           resources = (config.codexApiKeys ?? []).map((c, i) => codexToResource(c, i));
           break;
+        case 'xai':
+          resources = (config.xaiApiKeys ?? []).map((c, i) => xaiToResource(c, i));
+          break;
         case 'claude':
           resources = (config.claudeApiKeys ?? []).map((c, i) => claudeToResource(c, i));
           break;
@@ -298,6 +297,10 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
         } else if (brand === 'codex') {
           await providersApi.createCodexConfig(
             buildProviderKeyConfig('codex', input) as ProviderKeyConfig
+          );
+        } else if (brand === 'xai') {
+          await providersApi.createXAIConfig(
+            buildProviderKeyConfig('xai', input) as ProviderKeyConfig
           );
         } else if (brand === 'claude') {
           await providersApi.createClaudeConfig(
@@ -340,6 +343,16 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
             selector.baseUrl,
             buildProviderKeyConfig(
               'codex',
+              input,
+              resource.raw as ProviderKeyConfig
+            ) as ProviderKeyConfig
+          );
+        } else if (brand === 'xai' && selector.brand === 'xai') {
+          await providersApi.updateXAIConfig(
+            selector.apiKey,
+            selector.baseUrl,
+            buildProviderKeyConfig(
+              'xai',
               input,
               resource.raw as ProviderKeyConfig
             ) as ProviderKeyConfig
@@ -388,6 +401,8 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
           await providersApi.deleteGeminiKey(sel.apiKey, sel.baseUrl);
         } else if (sel.brand === 'codex') {
           await providersApi.deleteCodexConfig(sel.apiKey, sel.baseUrl);
+        } else if (sel.brand === 'xai') {
+          await providersApi.deleteXAIConfig(sel.apiKey, sel.baseUrl);
         } else if (sel.brand === 'claude') {
           await providersApi.deleteClaudeConfig(sel.apiKey, sel.baseUrl);
         } else if (sel.brand === 'vertex') {
@@ -424,6 +439,15 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
             ? withDisableAllModelsRule(current.excludedModels)
             : withoutDisableAllModelsRule(current.excludedModels);
           await providersApi.updateCodexConfig(selector.apiKey, selector.baseUrl, {
+            ...current,
+            excludedModels: excluded,
+          });
+        } else if (brand === 'xai' && selector.brand === 'xai') {
+          const current = resource.raw as ProviderKeyConfig;
+          const excluded = disabled
+            ? withDisableAllModelsRule(current.excludedModels)
+            : withoutDisableAllModelsRule(current.excludedModels);
+          await providersApi.updateXAIConfig(selector.apiKey, selector.baseUrl, {
             ...current,
             excludedModels: excluded,
           });

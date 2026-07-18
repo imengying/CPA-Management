@@ -260,15 +260,7 @@ export function AuthFilesPage() {
       compactPageSize: pageSizeByMode.compact,
       sortMode,
     });
-  }, [
-    compactMode,
-    filter,
-    page,
-    pageSizeByMode,
-    search,
-    sortMode,
-    statusFilterMode,
-  ]);
+  }, [compactMode, filter, page, pageSizeByMode, search, sortMode, statusFilterMode]);
 
   useEffect(() => {
     let cancelled = false;
@@ -879,6 +871,7 @@ export function AuthFilesPage() {
         disableControls={disableControls}
         excludedError={excludedError}
         excluded={excluded}
+        onRetry={loadExcluded}
         onAdd={() => openExcludedEditor()}
         onEdit={openExcludedEditor}
         onDelete={deleteExcluded}
@@ -888,6 +881,7 @@ export function AuthFilesPage() {
         disableControls={disableControls}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
+        onRetry={loadModelAlias}
         onAdd={() => openModelAliasEditor()}
         onEditProvider={openModelAliasEditor}
         onDeleteProvider={deleteModelAlias}
