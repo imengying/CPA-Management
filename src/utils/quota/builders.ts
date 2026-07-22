@@ -284,6 +284,8 @@ function normalizeXaiProductUsage(
 }
 
 const emptyXaiBillingSummary = (): XaiBillingSummary => ({
+  mode: 'billing',
+  source: 'cli-chat-proxy',
   periodType: 'unknown',
   usagePercent: null,
   productUsage: [],
@@ -390,6 +392,8 @@ export function mergeXaiBillingSummaries(
   if (!fallback) return primary;
 
   return {
+    mode: 'billing',
+    source: 'cli-chat-proxy',
     periodType: primary.periodType !== 'unknown' ? primary.periodType : fallback.periodType,
     usagePercent: primary.usagePercent ?? fallback.usagePercent,
     periodStart: primary.periodStart ?? fallback.periodStart,

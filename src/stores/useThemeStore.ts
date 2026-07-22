@@ -9,7 +9,6 @@ interface ThemeState {
   theme: Theme;
   resolvedTheme: ResolvedTheme;
   setTheme: (theme: Theme) => void;
-  cycleTheme: () => void;
   initializeTheme: () => () => void;
 }
 
@@ -33,7 +32,8 @@ const applyTheme = (resolved: ResolvedTheme) => {
   document.documentElement.removeAttribute('data-theme');
 };
 
-const resolveTheme = (theme: Theme): ResolvedTheme => (theme === 'auto' ? resolveAutoTheme() : theme);
+const resolveTheme = (theme: Theme): ResolvedTheme =>
+  theme === 'auto' ? resolveAutoTheme() : theme;
 
 export const useThemeStore = create<ThemeState>()(
   persist(
@@ -48,14 +48,6 @@ export const useThemeStore = create<ThemeState>()(
           theme,
           resolvedTheme: resolved,
         });
-      },
-
-      cycleTheme: () => {
-        const { theme, setTheme } = get();
-        const order: Theme[] = ['light', 'dark', 'auto'];
-        const currentIndex = order.indexOf(theme);
-        const nextTheme = order[(currentIndex + 1) % order.length];
-        setTheme(nextTheme);
       },
 
       initializeTheme: () => {

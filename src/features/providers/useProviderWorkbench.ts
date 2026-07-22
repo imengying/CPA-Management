@@ -189,7 +189,6 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
   const config = useConfigStore((s) => s.config);
   const fetchConfig = useConfigStore((s) => s.fetchConfig);
   const updateConfigValue = useConfigStore((s) => s.updateConfigValue);
-  const clearCache = useConfigStore((s) => s.clearCache);
   const isCacheValid = useConfigStore((s) => s.isCacheValid);
 
   const [isPending, setIsPending] = useState<boolean>(() => !isCacheValid());
@@ -207,7 +206,7 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
     setErrorMessage(null);
     try {
       const [configResult, vertexResult, openaiResult] = await Promise.allSettled([
-        fetchConfig(undefined, true),
+        fetchConfig(true),
         providersApi.getVertexConfigs(),
         providersApi.getOpenAIProviders(),
       ]);
@@ -216,11 +215,9 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
       }
       if (vertexResult.status === 'fulfilled') {
         updateConfigValue('vertex-api-key', vertexResult.value || []);
-        clearCache('vertex-api-key');
       }
       if (openaiResult.status === 'fulfilled') {
         updateConfigValue('openai-compatibility', openaiResult.value || []);
-        clearCache('openai-compatibility');
       }
       setFetchedAt(new Date().toISOString());
     } catch (err) {
@@ -229,7 +226,7 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
       setIsPending(false);
       setIsFetching(false);
     }
-  }, [clearCache, fetchConfig, updateConfigValue]);
+  }, [fetchConfig, updateConfigValue]);
 
   useEffect(() => {
     if (hasFetchedRef.current) return;

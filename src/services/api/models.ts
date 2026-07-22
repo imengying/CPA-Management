@@ -81,6 +81,34 @@ const resolveBearerTokenFromAuthorization = (headers: Record<string, string>): s
   return match?.[1]?.trim() || '';
 };
 
+const fetchBearerModelsViaApiCall = async (
+  endpoint: string,
+  apiKey?: string,
+  headers: Record<string, string> = {},
+  authIndex?: string
+) => {
+  const trimmedAuthIndex = authIndex?.trim() || undefined;
+  const resolvedHeaders = { ...headers };
+  if (apiKey && !hasHeader(resolvedHeaders, 'authorization')) {
+    resolvedHeaders.Authorization = `Bearer ${apiKey}`;
+  } else if (trimmedAuthIndex && !hasHeader(resolvedHeaders, 'authorization')) {
+    resolvedHeaders.Authorization = 'Bearer $TOKEN$';
+  }
+
+  const result = await apiCallApi.request({
+    authIndex: trimmedAuthIndex,
+    method: 'GET',
+    url: endpoint,
+    header: Object.keys(resolvedHeaders).length ? resolvedHeaders : undefined,
+  });
+
+  if (result.statusCode < 200 || result.statusCode >= 300) {
+    throw new Error(getApiCallErrorMessage(result));
+  }
+
+  return normalizeModelList(result.body ?? result.bodyText, { dedupe: true });
+};
+
 export const modelsApi = {
   /**
    * Fetch available models from /v1/models endpoint (for system info page)
@@ -117,28 +145,7 @@ export const modelsApi = {
     if (!endpoint) {
       throw new Error('Invalid base url');
     }
-
-    const trimmedAuthIndex = authIndex?.trim() || undefined;
-    const resolvedHeaders = { ...headers };
-    if (apiKey && !hasHeader(resolvedHeaders, 'authorization')) {
-      resolvedHeaders.Authorization = `Bearer ${apiKey}`;
-    } else if (trimmedAuthIndex && !hasHeader(resolvedHeaders, 'authorization')) {
-      resolvedHeaders.Authorization = 'Bearer $TOKEN$';
-    }
-
-    const result = await apiCallApi.request({
-      authIndex: trimmedAuthIndex,
-      method: 'GET',
-      url: endpoint,
-      header: Object.keys(resolvedHeaders).length ? resolvedHeaders : undefined,
-    });
-
-    if (result.statusCode < 200 || result.statusCode >= 300) {
-      throw new Error(getApiCallErrorMessage(result));
-    }
-
-    const payload = result.body ?? result.bodyText;
-    return normalizeModelList(payload, { dedupe: true });
+    return fetchBearerModelsViaApiCall(endpoint, apiKey, headers, authIndex);
   },
 
   /**
@@ -154,40 +161,7 @@ export const modelsApi = {
     if (!endpoint) {
       throw new Error('Invalid base url');
     }
-
-    const trimmedAuthIndex = authIndex?.trim() || undefined;
-    const resolvedHeaders = { ...headers };
-    if (apiKey && !hasHeader(resolvedHeaders, 'authorization')) {
-      resolvedHeaders.Authorization = `Bearer ${apiKey}`;
-    } else if (trimmedAuthIndex && !hasHeader(resolvedHeaders, 'authorization')) {
-      resolvedHeaders.Authorization = 'Bearer $TOKEN$';
-    }
-
-    const result = await apiCallApi.request({
-      authIndex: trimmedAuthIndex,
-      method: 'GET',
-      url: endpoint,
-      header: Object.keys(resolvedHeaders).length ? resolvedHeaders : undefined,
-    });
-
-    if (result.statusCode < 200 || result.statusCode >= 300) {
-      throw new Error(getApiCallErrorMessage(result));
-    }
-
-    const payload = result.body ?? result.bodyText;
-    return normalizeModelList(payload, { dedupe: true });
-  },
-
-  buildV1ModelsEndpoint(baseUrl: string) {
-    return buildV1ModelsEndpoint(baseUrl);
-  },
-
-  buildClaudeModelsEndpoint(baseUrl: string) {
-    return buildClaudeModelsEndpoint(baseUrl);
-  },
-
-  buildGeminiModelsEndpoint(baseUrl: string) {
-    return buildGeminiModelsEndpoint(baseUrl);
+    return fetchBearerModelsViaApiCall(endpoint, apiKey, headers, authIndex);
   },
 
   /**

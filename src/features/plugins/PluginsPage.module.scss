@@ -1,24 +1,12 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use '../../styles/pluginPages' as pluginPages;
 
 // ─── Page Container ─────────────────────────────────────
 
-.page {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  width: 100%;
-}
+@include pluginPages.page-alerts;
 
 // ─── Alert Boxes ────────────────────────────────────────
-
-.errorBox,
-.warningBox {
-  padding: $spacing-md;
-  border-radius: $radius-md;
-  font-size: 14px;
-  line-height: 1.5;
-}
 
 .errorBox {
   border: 1px solid var(--danger-color);
@@ -26,117 +14,9 @@
   color: var(--danger-color);
 }
 
-.warningBox {
-  border: 1px solid color-mix(in srgb, var(--warning-color, #c65746) 42%, var(--border-color));
-  background: color-mix(in srgb, var(--warning-color, #c65746) 9%, var(--bg-secondary));
-  color: var(--text-primary);
-}
-
 // ─── Status Bar ─────────────────────────────────────────
 
-.statusBar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--background);
-  flex-wrap: wrap;
-}
-
-.statusPill {
-  display: inline-flex;
-  min-width: 0;
-  max-width: 100%;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.statusDot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.statusDotOn {
-  background: $success-color;
-  box-shadow: 0 0 6px rgba($success-color, 0.5);
-}
-
-.statusDotOff {
-  background: var(--text-tertiary);
-}
-
-.statusLabel {
-  color: var(--text-secondary);
-}
-
-.statusValue {
-  color: var(--text-primary);
-  font-weight: 700;
-}
-
-.statusPathValue {
-  display: block;
-  min-width: 0;
-  max-width: min(360px, 58vw);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.statusDivider {
-  width: 1px;
-  height: 20px;
-  background: color-mix(in srgb, var(--border-color) 60%, transparent);
-  flex-shrink: 0;
-
-  @include mobile {
-    display: none;
-  }
-}
-
-// ─── Toolbar ────────────────────────────────────────────
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-
-  :global(.form-group) {
-    flex: 1;
-    max-width: 480px;
-    margin: 0;
-  }
-
-  :global(.input) {
-    padding-right: 36px;
-  }
-
-  :global(.btn > span) {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  @include mobile {
-    flex-direction: column;
-    align-items: stretch;
-
-    :global(.form-group) {
-      max-width: none;
-    }
-  }
-}
+@include pluginPages.status-toolbar;
 
 // ─── Plugin List ────────────────────────────────────────
 
@@ -378,49 +258,7 @@
   background: var(--bg-primary);
 }
 
-.skeletonAvatar {
-  width: 40px;
-  height: 40px;
-  border-radius: $radius-md;
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--bg-secondary) 86%, transparent) 25%,
-    color-mix(in srgb, var(--bg-hover) 70%, transparent) 37%,
-    color-mix(in srgb, var(--bg-secondary) 86%, transparent) 63%
-  );
-  background-size: 400% 100%;
-  animation: skeletonPulse 1.35s ease-in-out infinite;
-  flex-shrink: 0;
-}
-
-.skeletonText {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1;
-}
-
-.skeletonLine {
-  height: 14px;
-  border-radius: 4px;
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--bg-secondary) 86%, transparent) 25%,
-    color-mix(in srgb, var(--bg-hover) 70%, transparent) 37%,
-    color-mix(in srgb, var(--bg-secondary) 86%, transparent) 63%
-  );
-  background-size: 400% 100%;
-  animation: skeletonPulse 1.35s ease-in-out infinite;
-
-  &:first-child {
-    width: 45%;
-  }
-
-  &:last-child {
-    width: 70%;
-    height: 10px;
-  }
-}
+@include pluginPages.skeleton-parts;
 
 // ─── Sheet Config Form ──────────────────────────────────
 
@@ -533,17 +371,6 @@
   background: color-mix(in srgb, var(--bg-secondary) 70%, transparent);
   color: var(--text-secondary);
   font-size: 14px;
-}
-
-// ─── Animation ──────────────────────────────────────────
-
-@keyframes skeletonPulse {
-  0% {
-    background-position: 100% 0;
-  }
-  100% {
-    background-position: 0 0;
-  }
 }
 
 // ─── Mobile Overrides ───────────────────────────────────

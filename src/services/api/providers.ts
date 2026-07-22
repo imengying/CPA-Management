@@ -4,11 +4,7 @@
 
 import { apiClient } from './client';
 import { isRecord } from '@/utils/helpers';
-import {
-  normalizeGeminiKeyConfig,
-  normalizeOpenAIProvider,
-  normalizeProviderKeyConfig,
-} from './transformers';
+import { normalizeOpenAIProvider, normalizeProviderKeyConfig } from './transformers';
 import type {
   GeminiKeyConfig,
   OpenAIProviderConfig,
@@ -423,12 +419,6 @@ export const providersApi = {
       )
     ),
 
-  async getGeminiKeys(): Promise<GeminiKeyConfig[]> {
-    const data = await apiClient.get('/gemini-api-key');
-    const list = extractArrayPayload(data, 'gemini-api-key');
-    return list.map((item) => normalizeGeminiKeyConfig(item)).filter(Boolean) as GeminiKeyConfig[];
-  },
-
   deleteGeminiKey: (apiKey: string, baseUrl?: string) =>
     apiClient.delete(`/gemini-api-key${buildProviderDeleteQuery(apiKey, baseUrl)}`),
 
@@ -448,14 +438,6 @@ export const providersApi = {
         (raw, payload) => mergeProviderKeyPayload(raw, payload, CODEX_KEY_FIELDS)
       )
     ),
-
-  async getCodexConfigs(): Promise<ProviderKeyConfig[]> {
-    const data = await apiClient.get('/codex-api-key');
-    const list = extractArrayPayload(data, 'codex-api-key');
-    return list
-      .map((item) => normalizeProviderKeyConfig(item))
-      .filter(Boolean) as ProviderKeyConfig[];
-  },
 
   deleteCodexConfig: (apiKey: string, baseUrl?: string) =>
     apiClient.delete(`/codex-api-key${buildProviderDeleteQuery(apiKey, baseUrl)}`),
@@ -496,14 +478,6 @@ export const providersApi = {
         (raw, payload) => mergeProviderKeyPayload(raw, payload, CLAUDE_KEY_FIELDS)
       )
     ),
-
-  async getClaudeConfigs(): Promise<ProviderKeyConfig[]> {
-    const data = await apiClient.get('/claude-api-key');
-    const list = extractArrayPayload(data, 'claude-api-key');
-    return list
-      .map((item) => normalizeProviderKeyConfig(item))
-      .filter(Boolean) as ProviderKeyConfig[];
-  },
 
   deleteClaudeConfig: (apiKey: string, baseUrl?: string) =>
     apiClient.delete(`/claude-api-key${buildProviderDeleteQuery(apiKey, baseUrl)}`),

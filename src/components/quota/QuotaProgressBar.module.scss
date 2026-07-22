@@ -1,0 +1,24 @@
+.bar {
+  height: 8px;
+  background-color: var(--bg-tertiary);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background-color: var(--success-color, #22c55e);
+  transition: width 0.2s ease;
+}
+
+.high {
+  background-color: var(--success-color, #22c55e);
+}
+
+.medium {
+  background-color: var(--quota-medium-color, #e0aa14);
+}
+
+.low {
+  background-color: var(--danger-color);
+}

@@ -1,16 +1,8 @@
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  type ReactNode,
-  type PropsWithChildren,
-} from 'react';
+import { useId, useRef, type ReactNode, type PropsWithChildren } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { IconX } from '../icons';
-import { FOCUSABLE_SELECTOR, lockScroll, unlockScroll } from '../scrollLock';
+import { useDialogLifecycle } from '../useDialogLifecycle';
 import styles from './Sheet.module.scss';
 
 export type SheetSize = 'md' | 'lg' | 'xl';
@@ -58,142 +50,19 @@ export function Sheet({
   const { t } = useTranslation();
   const titleId = useId();
   const descId = useId();
-  const [isVisible, setIsVisible] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
-  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+  const { isClosing, requestClose, shouldRender } = useDialogLifecycle({
+    open,
+    onClose,
+    closeDisabled,
+    closeAnimationDuration: CLOSE_ANIMATION_DURATION,
+    dialogRef: sheetRef,
+    initialFocusRef: closeBtnRef,
+    confirmClose,
+  });
 
-  const getFocusableElements = useCallback(() => {
-    if (!sheetRef.current) return [] as HTMLElement[];
-    return Array.from(sheetRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
-      (el) => !el.hasAttribute('disabled') && el.tabIndex !== -1
-    );
-  }, []);
-
-  const startClose = useCallback(
-    (notifyParent: boolean) => {
-      if (closeTimerRef.current !== null) return;
-      setIsClosing(true);
-      closeTimerRef.current = window.setTimeout(() => {
-        setIsVisible(false);
-        setIsClosing(false);
-        closeTimerRef.current = null;
-        if (notifyParent) {
-          onClose();
-        }
-      }, CLOSE_ANIMATION_DURATION);
-    },
-    [onClose]
-  );
-
-  useEffect(() => {
-    let cancelled = false;
-
-    if (open) {
-      if (closeTimerRef.current !== null) {
-        window.clearTimeout(closeTimerRef.current);
-        closeTimerRef.current = null;
-      }
-      queueMicrotask(() => {
-        if (cancelled) return;
-        setIsVisible(true);
-        setIsClosing(false);
-      });
-    } else if (isVisible) {
-      queueMicrotask(() => {
-        if (cancelled) return;
-        startClose(false);
-      });
-    }
-
-    return () => {
-      cancelled = true;
-    };
-  }, [open, isVisible, startClose]);
-
-  const handleClose = useCallback(async () => {
-    if (confirmClose) {
-      try {
-        const ok = await confirmClose();
-        if (ok === false) return;
-      } catch {
-        return;
-      }
-    }
-    startClose(true);
-  }, [confirmClose, startClose]);
-
-  useEffect(() => {
-    return () => {
-      if (closeTimerRef.current !== null) {
-        window.clearTimeout(closeTimerRef.current);
-      }
-    };
-  }, []);
-
-  const shouldLockScroll = open || isVisible;
-
-  useEffect(() => {
-    if (!shouldLockScroll) return;
-    lockScroll();
-    return () => unlockScroll();
-  }, [shouldLockScroll]);
-
-  useEffect(() => {
-    if (!open) return;
-    previouslyFocusedRef.current =
-      document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const t = window.setTimeout(() => {
-      const first = getFocusableElements()[0];
-      (first ?? closeBtnRef.current ?? sheetRef.current)?.focus();
-    }, 0);
-    return () => window.clearTimeout(t);
-  }, [getFocusableElements, open]);
-
-  useEffect(() => {
-    if (open || isVisible) return;
-    previouslyFocusedRef.current?.focus();
-    previouslyFocusedRef.current = null;
-  }, [isVisible, open]);
-
-  useEffect(() => {
-    if (!open) return;
-    const handleKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        if (closeDisabled) return;
-        event.preventDefault();
-        handleClose();
-        return;
-      }
-      if (event.key !== 'Tab') return;
-      const focusables = getFocusableElements();
-      if (focusables.length === 0) {
-        event.preventDefault();
-        sheetRef.current?.focus();
-        return;
-      }
-      const firstEl = focusables[0];
-      const lastEl = focusables[focusables.length - 1];
-      const active = document.activeElement as HTMLElement | null;
-      if (event.shiftKey) {
-        if (active === firstEl || active === sheetRef.current) {
-          event.preventDefault();
-          lastEl.focus();
-        }
-        return;
-      }
-      if (active === lastEl) {
-        event.preventDefault();
-        firstEl.focus();
-      }
-    };
-    document.addEventListener('keydown', handleKey);
-    return () => document.removeEventListener('keydown', handleKey);
-  }, [closeDisabled, getFocusableElements, handleClose, open]);
-
-  if (!open && !isVisible) return null;
+  if (!shouldRender) return null;
 
   const stateClass = isClosing ? styles.exiting : styles.entering;
   const overlayCls = `${styles.overlay} ${stateClass}`.trim();
@@ -207,7 +76,7 @@ export function Sheet({
       role="presentation"
       onMouseDown={(e) => {
         if (closeDisabled) return;
-        if (e.target === e.currentTarget) handleClose();
+        if (e.target === e.currentTarget) void requestClose();
       }}
     >
       <div
@@ -225,7 +94,7 @@ export function Sheet({
           ref={closeBtnRef}
           type="button"
           className={styles.closeBtn}
-          onClick={closeDisabled ? undefined : handleClose}
+          onClick={closeDisabled ? undefined : () => void requestClose()}
           disabled={closeDisabled}
           aria-label={t('common.close')}
         >

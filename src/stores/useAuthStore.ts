@@ -11,7 +11,6 @@ import { detectApiBaseFromLocation, normalizeApiBase } from '@/utils/connection'
 
 interface AuthStoreState extends AuthState {
   connectionStatus: ConnectionStatus;
-  connectionError: string | null;
 
   // 操作
   login: (credentials: LoginCredentials) => Promise<void>;
@@ -20,7 +19,6 @@ interface AuthStoreState extends AuthState {
   restoreSession: () => Promise<boolean>;
   updateServerVersion: (version: string | null, buildDate?: string | null) => void;
   updateSupportsPlugin: (supportsPlugin: boolean) => void;
-  updateConnectionStatus: (status: ConnectionStatus, error?: string | null) => void;
 }
 
 let restoreSessionPromise: Promise<boolean> | null = null;
@@ -37,7 +35,6 @@ export const useAuthStore = create<AuthStoreState>()(
       serverBuildDate: null,
       supportsPlugin: false,
       connectionStatus: 'disconnected',
-      connectionError: null,
 
       // 恢复会话并自动登录
       restoreSession: () => {
@@ -98,7 +95,7 @@ export const useAuthStore = create<AuthStoreState>()(
           });
 
           // 测试连接 - 获取配置
-          await useConfigStore.getState().fetchConfig(undefined, true);
+          await useConfigStore.getState().fetchConfig(true);
 
           // 登录成功
           set({
@@ -107,19 +104,9 @@ export const useAuthStore = create<AuthStoreState>()(
             managementKey,
             rememberPassword,
             connectionStatus: 'connected',
-            connectionError: null,
           });
         } catch (error: unknown) {
-          const message =
-            error instanceof Error
-              ? error.message
-              : typeof error === 'string'
-                ? error
-                : 'Connection failed';
-          set({
-            connectionStatus: 'error',
-            connectionError: message || 'Connection failed',
-          });
+          set({ connectionStatus: 'error' });
           throw error;
         }
       },
@@ -138,7 +125,6 @@ export const useAuthStore = create<AuthStoreState>()(
           serverBuildDate: null,
           supportsPlugin: false,
           connectionStatus: 'disconnected',
-          connectionError: null,
         });
       },
 
@@ -183,14 +169,6 @@ export const useAuthStore = create<AuthStoreState>()(
 
       updateSupportsPlugin: (supportsPlugin) => {
         set({ supportsPlugin });
-      },
-
-      // 更新连接状态
-      updateConnectionStatus: (status, error = null) => {
-        set({
-          connectionStatus: status,
-          connectionError: error,
-        });
       },
     }),
     {
