@@ -83,12 +83,10 @@ export function useAuthFileQuotaControls(props: AuthFileQuotaControlProps) {
     if (quota?.status === 'loading') return;
 
     const config = getQuotaConfig(quotaType) as unknown as {
-      i18nPrefix: string;
       fetchQuota: (file: AuthFileItem, t: TFunction) => Promise<unknown>;
       buildLoadingState: () => unknown;
       buildSuccessState: (data: unknown) => unknown;
       buildErrorState: (message: string, status?: number) => unknown;
-      renderQuotaItems: (quota: unknown, t: TFunction, helpers: unknown) => unknown;
     };
     const cacheGeneration = captureQuotaCacheGeneration();
 
@@ -187,9 +185,7 @@ export function useAuthFileQuotaControls(props: AuthFileQuotaControlProps) {
 
   const quotaStatus = quota?.status ?? 'idle';
   const quotaLoading = quotaStatus === 'loading';
-  const canRefreshQuota = !disableControls && !file.disabled && !resettingQuota;
-  const canUseRefreshQuota = canRefreshQuota && !quotaLoading;
-  const canUseResetQuota = canRefreshQuota && !quotaLoading;
+  const canUseQuotaAction = !disableControls && !file.disabled && !resettingQuota && !quotaLoading;
   const showResetQuotaAction = quota !== undefined && Boolean(config?.canResetQuota?.(quota));
   const resetQuotaAction =
     config?.resetQuota && showResetQuotaAction ? (
@@ -199,7 +195,7 @@ export function useAuthFileQuotaControls(props: AuthFileQuotaControlProps) {
         size="sm"
         className={styles.quotaResetCreditButton}
         onClick={() => resetQuotaForFile()}
-        disabled={!canUseResetQuota}
+        disabled={!canUseQuotaAction}
         loading={resettingQuota}
         title={t('codex_quota.reset_button')}
         aria-label={t('codex_quota.reset_button')}
@@ -218,7 +214,7 @@ export function useAuthFileQuotaControls(props: AuthFileQuotaControlProps) {
     quota,
     quotaStatus,
     quotaLoading,
-    canUseRefreshQuota,
+    canUseRefreshQuota: canUseQuotaAction,
     refreshQuotaForFile,
     resetQuotaAction,
     quotaErrorMessage,

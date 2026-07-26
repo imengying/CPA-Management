@@ -4,16 +4,40 @@ import type { AuthFileQuotaControls } from '@/features/authFiles/hooks/useAuthFi
 import { QuotaProgressBar } from '@/components/quota/QuotaProgressBar';
 import styles from '@/pages/AuthFilesPage.module.scss';
 
-export function AuthFileQuotaContent({ controls }: { controls: AuthFileQuotaControls }) {
+export function AuthFileQuotaContent({
+  controls,
+  refreshDisabled,
+}: {
+  controls: AuthFileQuotaControls;
+  refreshDisabled: boolean;
+}) {
   const { t } = useTranslation();
-  const { config, quota, quotaStatus, quotaErrorMessage, resetQuotaAction } = controls;
+  const {
+    config,
+    quota,
+    quotaStatus,
+    canUseRefreshQuota,
+    refreshQuotaForFile,
+    quotaErrorMessage,
+    resetQuotaAction,
+  } = controls;
 
-  if (!config || quotaStatus === 'idle') return null;
+  if (!config) return null;
 
   return (
     <div className={styles.quotaSection}>
       {quotaStatus === 'loading' ? (
         <div className={styles.quotaMessage}>{t(`${config.i18nPrefix}.loading`)}</div>
+      ) : quotaStatus === 'idle' ? (
+        <button
+          type="button"
+          className={`${styles.quotaMessage} ${styles.quotaMessageAction}`}
+          onClick={() => void refreshQuotaForFile()}
+          disabled={!canUseRefreshQuota || refreshDisabled}
+          title={t('auth_files.quota_refresh_hint')}
+        >
+          {t(`${config.i18nPrefix}.idle`)}
+        </button>
       ) : quotaStatus === 'error' ? (
         <div className={styles.quotaError}>
           {t(`${config.i18nPrefix}.load_failed`, {

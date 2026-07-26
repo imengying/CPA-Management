@@ -2,8 +2,6 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { StatusBarData, StatusBlockDetail } from '@/utils/recentRequests';
 
-const defaultStyles: Record<string, string> = {};
-
 /**
  * 根据成功率 (0–1) 在三个色标之间做 RGB 线性插值
  * 0 → 红 (#ef4444)  →  0.5 → 金黄 (#facc15)  →  1 → 绿 (#22c55e)
@@ -42,12 +40,11 @@ type StylesModule = Record<string, string>;
 
 interface ProviderStatusBarProps {
   statusData: StatusBarData;
-  styles?: StylesModule;
+  styles: StylesModule;
 }
 
-export function ProviderStatusBar({ statusData, styles: stylesProp }: ProviderStatusBarProps) {
+export function ProviderStatusBar({ statusData, styles: s }: ProviderStatusBarProps) {
   const { t } = useTranslation();
-  const s = (stylesProp || defaultStyles) as StylesModule;
   const [activeTooltip, setActiveTooltip] = useState<number | null>(null);
   const blocksRef = useRef<HTMLDivElement>(null);
 

@@ -7,7 +7,6 @@ import type { AuthFileItem } from '@/types';
 import { formatFileSize } from '@/utils/format';
 import { MAX_AUTH_FILE_SIZE } from '@/utils/constants';
 import { downloadBlob } from '@/utils/download';
-import { notifyAuthFilesChanged } from '@/features/authFiles/authFilesEvents';
 import type { AuthFilesStatusFilterMode } from '@/features/authFiles/uiState';
 import {
   getTypeLabel,
@@ -240,7 +239,6 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
             `${t('auth_files.upload_success')}${suffix}`,
             result.failed.length ? 'warning' : 'success'
           );
-          notifyAuthFilesChanged();
           await loadFiles();
         }
 
@@ -272,7 +270,6 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
             const result = await authFilesApi.deleteFile(name);
             showNotification(t('auth_files.delete_success'), 'success');
             applyDeletedFiles(result.files.length > 0 ? result.files : [name]);
-            if (result.deleted > 0) notifyAuthFilesChanged();
           } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : '';
             showNotification(`${t('notification.delete_failed')}: ${errorMessage}`, 'error');
@@ -318,7 +315,6 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
               showNotification(t('auth_files.delete_all_success'), 'success');
               setFiles((prev) => prev.filter((file) => isRuntimeOnlyAuthFile(file)));
               deselectAll();
-              notifyAuthFilesChanged();
             } else {
               const filesToDelete = files.filter((file) => {
                 if (isRuntimeOnlyAuthFile(file)) return false;
@@ -353,7 +349,6 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
               const failed = result.failed.length;
 
               applyDeletedFiles(result.files);
-              if (result.deleted > 0) notifyAuthFilesChanged();
 
               if (failed === 0 && (isDisabledOnly || isEnabledOnly)) {
                 showNotification(
@@ -655,7 +650,6 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
           try {
             const result = await authFilesApi.deleteFiles(uniqueNames);
             applyDeletedFiles(result.files);
-            if (result.deleted > 0) notifyAuthFilesChanged();
 
             if (result.failed.length === 0) {
               showNotification(

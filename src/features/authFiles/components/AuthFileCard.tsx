@@ -107,11 +107,10 @@ export function AuthFileCard(props: AuthFileCardProps) {
   const providerIcon = getAuthFileIcon(providerKey, resolvedTheme);
   const useThemeSurfaceIcon = isThemeSurfaceIconProvider(providerKey);
 
-  const resolvedQuotaType = resolveQuotaType(file);
-  const quotaType = resolvedQuotaType;
-  const useQuotaManagedStyle = Boolean(quotaFilterType && resolvedQuotaType === quotaFilterType);
+  const quotaType = resolveQuotaType(file);
+  const useQuotaManagedStyle = Boolean(quotaFilterType && quotaType === quotaFilterType);
 
-  const showQuotaLayout = Boolean(resolvedQuotaType) && !isRuntimeOnly && !compact;
+  const showQuotaLayout = Boolean(quotaType) && !isRuntimeOnly && !compact;
   const quotaControls = useAuthFileQuotaControls({
     file,
     quotaType,
@@ -275,7 +274,9 @@ export function AuthFileCard(props: AuthFileCardProps) {
               <ProviderStatusBar statusData={statusData} styles={styles} />
             </div>
 
-            {showQuotaLayout && quotaType && <AuthFileQuotaContent controls={quotaControls} />}
+            {showQuotaLayout && quotaType && (
+              <AuthFileQuotaContent controls={quotaControls} refreshDisabled={isManualRefreshing} />
+            )}
           </div>
 
           <div className={styles.cardActions}>
@@ -291,23 +292,6 @@ export function AuthFileCard(props: AuthFileCardProps) {
                   disabled={disableControls}
                 >
                   <IconModelCluster className={styles.actionIcon} size={16} />
-                </Button>
-              )}
-              {showQuotaLayout && quotaType && (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => void quotaControls.refreshQuotaForFile()}
-                  className={`${styles.iconButton} ${styles.quotaRefreshIconButton}`}
-                  title={t('auth_files.quota_refresh_single')}
-                  aria-label={t('auth_files.quota_refresh_single')}
-                  disabled={!quotaControls.canUseRefreshQuota || isManualRefreshing}
-                >
-                  {quotaControls.quotaLoading ? (
-                    <LoadingSpinner size={14} />
-                  ) : (
-                    <IconRefreshCw className={styles.actionIcon} size={16} />
-                  )}
                 </Button>
               )}
               {!isRuntimeOnly && (

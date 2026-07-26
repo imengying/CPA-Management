@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { PageTransition } from '@/components/common/PageTransition';
 import { MainRoutes } from '@/router/MainRoutes';
-import { authFilesApi, pluginsApi } from '@/services/api';
+import { pluginsApi } from '@/services/api';
 import {
   IconSidebarAuthFiles,
   IconSidebarDashboard,
@@ -32,7 +32,7 @@ import {
   IconSlidersHorizontal,
   IconX,
 } from '@/components/ui/icons';
-import { INLINE_LOGO_JPEG } from '@/assets/logoInline';
+import logoUrl from '@/assets/logo.jpg';
 import {
   useAuthStore,
   useConfigStore,
@@ -47,7 +47,6 @@ import {
   type PluginResourceEntry,
 } from '@/features/plugins/pluginResources';
 import { isPluginUiEnabled } from '@/features/plugins/pluginAvailability';
-import { AUTH_FILES_CHANGED_EVENT } from '@/features/authFiles/authFilesEvents';
 import { triggerHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { LANGUAGE_LABEL_KEYS, LANGUAGE_ORDER } from '@/utils/constants';
 import { isSupportedLanguage } from '@/utils/language';
@@ -73,8 +72,6 @@ interface SidebarNavLinkItem {
   metaKey?: string;
   label?: string;
   meta?: string;
-  badge?: number;
-  badgeLabel?: string;
   icon: ReactNode;
 }
 
@@ -253,7 +250,6 @@ export function MainLayout() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [authFilesCount, setAuthFilesCount] = useState<number | null>(null);
   const [railTooltip, setRailTooltip] = useState<{
     targetID: string;
     label: string;
@@ -268,7 +264,6 @@ export function MainLayout() {
     () => new Set()
   );
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const authFilesCountRequestRef = useRef(0);
   const railTooltipRef = useRef<HTMLDivElement | null>(null);
   const focusedRailItemRef = useRef<HTMLElement | null>(null);
   const languageMenuRef = useRef<HTMLDivElement | null>(null);
@@ -423,39 +418,18 @@ export function MainLayout() {
     }
   }, [connectionStatus, pluginUiEnabled]);
 
-  const loadAuthFilesCount = useCallback(async () => {
-    const requestID = ++authFilesCountRequestRef.current;
-    if (connectionStatus !== 'connected') {
-      setAuthFilesCount(null);
-      return;
-    }
-
-    try {
-      const response = await authFilesApi.list();
-      if (requestID !== authFilesCountRequestRef.current) return;
-      setAuthFilesCount(Array.isArray(response.files) ? response.files.length : null);
-    } catch {
-      if (requestID !== authFilesCountRequestRef.current) return;
-      setAuthFilesCount(null);
-    }
-  }, [connectionStatus]);
-
   useEffect(() => {
     const timer = window.setTimeout(() => {
       void loadPluginResources();
-      void loadAuthFilesCount();
     }, 0);
 
     window.addEventListener(PLUGIN_RESOURCES_REFRESH_EVENT, loadPluginResources);
-    window.addEventListener(AUTH_FILES_CHANGED_EVENT, loadAuthFilesCount);
 
     return () => {
-      authFilesCountRequestRef.current += 1;
       window.clearTimeout(timer);
       window.removeEventListener(PLUGIN_RESOURCES_REFRESH_EVENT, loadPluginResources);
-      window.removeEventListener(AUTH_FILES_CHANGED_EVENT, loadAuthFilesCount);
     };
-  }, [apiBase, loadAuthFilesCount, loadPluginResources]);
+  }, [apiBase, loadPluginResources]);
 
   const pluginResourceGroups = pluginResources.reduce<
     Array<{ pluginID: string; pluginTitle: string; entries: PluginResourceEntry[] }>
@@ -535,11 +509,6 @@ export function MainLayout() {
           path: '/auth-files',
           labelKey: 'nav.auth_files',
           metaKey: 'nav_meta.auth_files',
-          badge: authFilesCount ?? undefined,
-          badgeLabel:
-            typeof authFilesCount === 'number'
-              ? t('sidebar.auth_files_count', { count: authFilesCount })
-              : undefined,
           icon: sidebarIcons.authFiles,
         },
         {
@@ -672,7 +641,6 @@ export function MainLayout() {
     const results = await Promise.allSettled([
       fetchConfig(true),
       loadPluginResources(),
-      loadAuthFilesCount(),
       triggerHeaderRefresh(),
     ]);
     const rejected = results.find((result) => result.status === 'rejected');
@@ -742,22 +710,9 @@ export function MainLayout() {
     [hideRailTooltip, showRailTooltip]
   );
 
-  const renderNavBadge = (badge?: number, badgeLabel?: string) =>
-    typeof badge === 'number' ? (
-      <>
-        {badge > 0 ? (
-          <span className="nav-badge" aria-hidden="true">
-            {badge}
-          </span>
-        ) : null}
-        {badgeLabel ? <span className="nav-badge-sr-only">{badgeLabel}</span> : null}
-      </>
-    ) : null;
-
   const renderNavLink = (item: SidebarNavLinkItem, className = 'nav-item') => {
     const itemLabel = item.label ?? (item.labelKey ? t(item.labelKey) : '');
     const itemMeta = item.meta ?? (item.metaKey ? t(item.metaKey) : '');
-    const accessibleLabel = item.badgeLabel ? `${itemLabel}, ${item.badgeLabel}` : itemLabel;
 
     return (
       <NavLink
@@ -769,7 +724,7 @@ export function MainLayout() {
           setSidebarOpen(false);
           hideRailTooltip();
         }}
-        aria-label={showSidebarLabels ? undefined : accessibleLabel}
+        aria-label={showSidebarLabels ? undefined : itemLabel}
         aria-describedby={
           !showSidebarLabels && itemMeta && railTooltip?.targetID === item.path
             ? NAV_TOOLTIP_ID
@@ -794,16 +749,11 @@ export function MainLayout() {
       >
         <span className="nav-icon">{item.icon}</span>
         {showSidebarLabels ? (
-          <>
-            <span className="nav-text">
-              <span className="nav-label">{itemLabel}</span>
-              {itemMeta ? <span className="nav-meta">{itemMeta}</span> : null}
-            </span>
-            {renderNavBadge(item.badge, item.badgeLabel)}
-          </>
-        ) : (
-          renderNavBadge(item.badge)
-        )}
+          <span className="nav-text">
+            <span className="nav-label">{itemLabel}</span>
+            {itemMeta ? <span className="nav-meta">{itemMeta}</span> : null}
+          </span>
+        ) : null}
       </NavLink>
     );
   };
@@ -1039,7 +989,7 @@ export function MainLayout() {
         >
           <div className="sidebar-brand" title="CPAMC">
             <span className="sidebar-brand-logo-wrap" aria-hidden="true">
-              <img src={INLINE_LOGO_JPEG} alt="" className="sidebar-brand-logo" />
+              <img src={logoUrl} alt="" className="sidebar-brand-logo" />
             </span>
             {showSidebarLabels && <span className="sidebar-brand-title">CPAMC</span>}
           </div>

@@ -1341,8 +1341,7 @@
     "toggle_expand": "Развернуть боковую панель",
     "toggle_collapse": "Свернуть боковую панель",
     "expand": "Развернуть",
-    "collapse": "Свернуть",
-    "auth_files_count": "Файлов аутентификации: {{count}}"
+    "collapse": "Свернуть"
   },
   "footer": {
     "api_version": "Версия CLI Proxy API",
