@@ -7,25 +7,30 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  type MouseEvent as ReactMouseEvent,
+  type SyntheticEvent,
 } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { PageTransition } from '@/components/common/PageTransition';
 import { MainRoutes } from '@/router/MainRoutes';
-import { pluginsApi } from '@/services/api';
+import { authFilesApi, pluginsApi } from '@/services/api';
 import {
   IconSidebarAuthFiles,
-  IconSidebarConfig,
   IconSidebarDashboard,
-  IconSidebarLogs,
   IconSidebarOauth,
-  IconSidebarPlugins,
-  IconSidebarProviders,
   IconSidebarQuota,
   IconSidebarStore,
   IconSidebarSystem,
   IconChevronDown,
+  IconChevronLeft,
+  IconNetwork,
+  IconPlug,
+  IconRefreshCw,
+  IconScrollText,
+  IconSlidersHorizontal,
+  IconX,
 } from '@/components/ui/icons';
 import { INLINE_LOGO_JPEG } from '@/assets/logoInline';
 import {
@@ -42,6 +47,7 @@ import {
   type PluginResourceEntry,
 } from '@/features/plugins/pluginResources';
 import { isPluginUiEnabled } from '@/features/plugins/pluginAvailability';
+import { AUTH_FILES_CHANGED_EVENT } from '@/features/authFiles/authFilesEvents';
 import { triggerHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { LANGUAGE_LABEL_KEYS, LANGUAGE_ORDER } from '@/utils/constants';
 import { isSupportedLanguage } from '@/utils/language';
@@ -49,14 +55,14 @@ import type { Theme } from '@/types';
 
 const sidebarIcons: Record<string, ReactNode> = {
   dashboard: <IconSidebarDashboard size={18} />,
-  aiProviders: <IconSidebarProviders size={18} />,
+  aiProviders: <IconNetwork size={18} />,
   authFiles: <IconSidebarAuthFiles size={18} />,
   oauth: <IconSidebarOauth size={18} />,
   quota: <IconSidebarQuota size={18} />,
-  plugins: <IconSidebarPlugins size={18} />,
+  plugins: <IconPlug size={18} />,
   pluginStore: <IconSidebarStore size={18} />,
-  config: <IconSidebarConfig size={18} />,
-  logs: <IconSidebarLogs size={18} />,
+  config: <IconSlidersHorizontal size={18} />,
+  logs: <IconScrollText size={18} />,
   system: <IconSidebarSystem size={18} />,
 };
 
@@ -67,6 +73,8 @@ interface SidebarNavLinkItem {
   metaKey?: string;
   label?: string;
   meta?: string;
+  badge?: number;
+  badgeLabel?: string;
   icon: ReactNode;
 }
 
@@ -80,6 +88,9 @@ interface SidebarNavDrawerItem {
 }
 
 type SidebarNavItem = SidebarNavLinkItem | SidebarNavDrawerItem;
+
+const NAV_TOOLTIP_ID = 'sidebar-nav-tooltip';
+const NAV_TOOLTIP_VIEWPORT_MARGIN = 8;
 
 interface SidebarNavGroup {
   id: string;
@@ -130,7 +141,7 @@ function PluginSidebarIcon({ src }: { src: string }) {
   return showImage ? (
     <img src={src} alt="" onError={() => setFailed(true)} />
   ) : (
-    <IconSidebarPlugins size={18} />
+    <IconPlug size={18} />
   );
 }
 
@@ -149,12 +160,7 @@ const headerIconProps: SVGProps<SVGSVGElement> = {
 };
 
 const headerIcons = {
-  refresh: (
-    <svg {...headerIconProps}>
-      <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
-      <path d="M21 3v5h-5" />
-    </svg>
-  ),
+  refresh: <IconRefreshCw size={16} />,
   menu: (
     <svg {...headerIconProps}>
       <path d="M4 7h16" />
@@ -162,12 +168,7 @@ const headerIcons = {
       <path d="M4 17h16" />
     </svg>
   ),
-  close: (
-    <svg {...headerIconProps}>
-      <path d="M18 6 6 18" />
-      <path d="m6 6 12 12" />
-    </svg>
-  ),
+  close: <IconX size={16} />,
   language: (
     <svg {...headerIconProps}>
       <circle cx="12" cy="12" r="10" />
@@ -251,6 +252,15 @@ export function MainLayout() {
   const setLanguage = useLanguageStore((state) => state.setLanguage);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [authFilesCount, setAuthFilesCount] = useState<number | null>(null);
+  const [railTooltip, setRailTooltip] = useState<{
+    targetID: string;
+    label: string;
+    meta?: string;
+    anchorTop: number;
+    top: number;
+  } | null>(null);
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
   const [themeMenuOpen, setThemeMenuOpen] = useState(false);
   const [pluginResources, setPluginResources] = useState<PluginResourceEntry[]>([]);
@@ -258,6 +268,9 @@ export function MainLayout() {
     () => new Set()
   );
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const authFilesCountRequestRef = useRef(0);
+  const railTooltipRef = useRef<HTMLDivElement | null>(null);
+  const focusedRailItemRef = useRef<HTMLElement | null>(null);
   const languageMenuRef = useRef<HTMLDivElement | null>(null);
   const themeMenuRef = useRef<HTMLDivElement | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
@@ -265,6 +278,7 @@ export function MainLayout() {
   const isLogsPage = location.pathname.startsWith('/logs');
   const pluginUiEnabled = isPluginUiEnabled(supportsPlugin, config);
   const isPluginResourcePage = pluginUiEnabled && location.pathname.startsWith('/plugin-pages');
+  const showSidebarLabels = !sidebarCollapsed || sidebarOpen;
 
   // Keep floating header height available to sticky mobile elements and overlays.
   useLayoutEffect(() => {
@@ -294,6 +308,34 @@ export function MainLayout() {
       window.removeEventListener('resize', updateHeaderHeight);
     };
   }, []);
+
+  useLayoutEffect(() => {
+    if (!railTooltip) return;
+
+    const updateRailTooltipPosition = () => {
+      const tooltip = railTooltipRef.current;
+      if (!tooltip) return;
+
+      const halfHeight = tooltip.offsetHeight / 2;
+      const minTop = NAV_TOOLTIP_VIEWPORT_MARGIN + halfHeight;
+      const maxTop = Math.max(
+        minTop,
+        window.innerHeight - NAV_TOOLTIP_VIEWPORT_MARGIN - halfHeight
+      );
+      const top = Math.min(maxTop, Math.max(minTop, railTooltip.anchorTop));
+
+      setRailTooltip((current) => {
+        if (!current || current.targetID !== railTooltip.targetID || current.top === top) {
+          return current;
+        }
+        return { ...current, top };
+      });
+    };
+
+    updateRailTooltipPosition();
+    window.addEventListener('resize', updateRailTooltipPosition);
+    return () => window.removeEventListener('resize', updateRailTooltipPosition);
+  }, [railTooltip]);
 
   // Keep the content center available to bottom overlays that align with the main area.
   useLayoutEffect(() => {
@@ -381,18 +423,39 @@ export function MainLayout() {
     }
   }, [connectionStatus, pluginUiEnabled]);
 
+  const loadAuthFilesCount = useCallback(async () => {
+    const requestID = ++authFilesCountRequestRef.current;
+    if (connectionStatus !== 'connected') {
+      setAuthFilesCount(null);
+      return;
+    }
+
+    try {
+      const response = await authFilesApi.list();
+      if (requestID !== authFilesCountRequestRef.current) return;
+      setAuthFilesCount(Array.isArray(response.files) ? response.files.length : null);
+    } catch {
+      if (requestID !== authFilesCountRequestRef.current) return;
+      setAuthFilesCount(null);
+    }
+  }, [connectionStatus]);
+
   useEffect(() => {
     const timer = window.setTimeout(() => {
       void loadPluginResources();
+      void loadAuthFilesCount();
     }, 0);
 
     window.addEventListener(PLUGIN_RESOURCES_REFRESH_EVENT, loadPluginResources);
+    window.addEventListener(AUTH_FILES_CHANGED_EVENT, loadAuthFilesCount);
 
     return () => {
+      authFilesCountRequestRef.current += 1;
       window.clearTimeout(timer);
       window.removeEventListener(PLUGIN_RESOURCES_REFRESH_EVENT, loadPluginResources);
+      window.removeEventListener(AUTH_FILES_CHANGED_EVENT, loadAuthFilesCount);
     };
-  }, [apiBase, loadPluginResources]);
+  }, [apiBase, loadAuthFilesCount, loadPluginResources]);
 
   const pluginResourceGroups = pluginResources.reduce<
     Array<{ pluginID: string; pluginTitle: string; entries: PluginResourceEntry[] }>
@@ -472,6 +535,11 @@ export function MainLayout() {
           path: '/auth-files',
           labelKey: 'nav.auth_files',
           metaKey: 'nav_meta.auth_files',
+          badge: authFilesCount ?? undefined,
+          badgeLabel:
+            typeof authFilesCount === 'number'
+              ? t('sidebar.auth_files_count', { count: authFilesCount })
+              : undefined,
           icon: sidebarIcons.authFiles,
         },
         {
@@ -604,6 +672,7 @@ export function MainLayout() {
     const results = await Promise.allSettled([
       fetchConfig(true),
       loadPluginResources(),
+      loadAuthFilesCount(),
       triggerHeaderRefresh(),
     ]);
     const rejected = results.find((result) => result.status === 'rejected');
@@ -632,22 +701,109 @@ export function MainLayout() {
     });
   }, []);
 
+  const showRailTooltip = useCallback(
+    (event: SyntheticEvent<HTMLElement>, targetID: string, label: string, meta?: string) => {
+      const rect = event.currentTarget.getBoundingClientRect();
+      const anchorTop = rect.top + rect.height / 2;
+      setRailTooltip({ targetID, label, meta, anchorTop, top: anchorTop });
+    },
+    []
+  );
+  const hideRailTooltip = useCallback(() => setRailTooltip(null), []);
+  const handleRailTooltipMouseEnter = useCallback(
+    (event: ReactMouseEvent<HTMLElement>, targetID: string, label: string, meta?: string) => {
+      const focusedItem = focusedRailItemRef.current;
+      if (focusedItem && focusedItem !== event.currentTarget) return;
+      showRailTooltip(event, targetID, label, meta);
+    },
+    [showRailTooltip]
+  );
+  const handleRailTooltipMouseLeave = useCallback(() => {
+    if (!focusedRailItemRef.current) hideRailTooltip();
+  }, [hideRailTooltip]);
+  const handleRailTooltipFocus = useCallback(
+    (event: SyntheticEvent<HTMLElement>, targetID: string, label: string, meta?: string) => {
+      focusedRailItemRef.current = event.currentTarget;
+      showRailTooltip(event, targetID, label, meta);
+    },
+    [showRailTooltip]
+  );
+  const handleRailTooltipBlur = useCallback(
+    (event: SyntheticEvent<HTMLElement>, targetID: string, label: string, meta?: string) => {
+      if (focusedRailItemRef.current === event.currentTarget) {
+        focusedRailItemRef.current = null;
+      }
+      if (event.currentTarget.matches(':hover')) {
+        showRailTooltip(event, targetID, label, meta);
+      } else {
+        hideRailTooltip();
+      }
+    },
+    [hideRailTooltip, showRailTooltip]
+  );
+
+  const renderNavBadge = (badge?: number, badgeLabel?: string) =>
+    typeof badge === 'number' ? (
+      <>
+        {badge > 0 ? (
+          <span className="nav-badge" aria-hidden="true">
+            {badge}
+          </span>
+        ) : null}
+        {badgeLabel ? <span className="nav-badge-sr-only">{badgeLabel}</span> : null}
+      </>
+    ) : null;
+
   const renderNavLink = (item: SidebarNavLinkItem, className = 'nav-item') => {
     const itemLabel = item.label ?? (item.labelKey ? t(item.labelKey) : '');
     const itemMeta = item.meta ?? (item.metaKey ? t(item.metaKey) : '');
+    const accessibleLabel = item.badgeLabel ? `${itemLabel}, ${item.badgeLabel}` : itemLabel;
 
     return (
       <NavLink
         key={item.path}
         to={item.path}
         className={({ isActive }) => `${className} ${isActive ? 'active' : ''}`}
-        onClick={() => setSidebarOpen(false)}
+        onClick={() => {
+          focusedRailItemRef.current = null;
+          setSidebarOpen(false);
+          hideRailTooltip();
+        }}
+        aria-label={showSidebarLabels ? undefined : accessibleLabel}
+        aria-describedby={
+          !showSidebarLabels && itemMeta && railTooltip?.targetID === item.path
+            ? NAV_TOOLTIP_ID
+            : undefined
+        }
+        onMouseEnter={
+          showSidebarLabels
+            ? undefined
+            : (event) => handleRailTooltipMouseEnter(event, item.path, itemLabel, itemMeta)
+        }
+        onMouseLeave={showSidebarLabels ? undefined : handleRailTooltipMouseLeave}
+        onFocus={
+          showSidebarLabels
+            ? undefined
+            : (event) => handleRailTooltipFocus(event, item.path, itemLabel, itemMeta)
+        }
+        onBlur={
+          showSidebarLabels
+            ? undefined
+            : (event) => handleRailTooltipBlur(event, item.path, itemLabel, itemMeta)
+        }
       >
         <span className="nav-icon">{item.icon}</span>
-        <span className="nav-text">
-          <span className="nav-label">{itemLabel}</span>
-          {itemMeta ? <span className="nav-meta">{itemMeta}</span> : null}
-        </span>
+        {showSidebarLabels ? (
+          <>
+            <span className="nav-text">
+              <span className="nav-label">{itemLabel}</span>
+              {itemMeta ? <span className="nav-meta">{itemMeta}</span> : null}
+            </span>
+            {renderNavBadge(item.badge, item.badgeLabel)}
+          </>
+        ) : (
+          renderNavBadge(item.badge)
+        )}
       </NavLink>
     );
   };
@@ -668,16 +824,42 @@ export function MainLayout() {
             isOpen ? 'open' : ''
           }`}
           onClick={() => togglePluginResourceDrawer(item.id)}
+          aria-label={showSidebarLabels ? undefined : item.label}
+          aria-describedby={
+            !showSidebarLabels && item.meta && railTooltip?.targetID === item.id
+              ? NAV_TOOLTIP_ID
+              : undefined
+          }
           aria-expanded={isOpen}
+          onMouseEnter={
+            showSidebarLabels
+              ? undefined
+              : (event) => handleRailTooltipMouseEnter(event, item.id, item.label, item.meta)
+          }
+          onMouseLeave={showSidebarLabels ? undefined : handleRailTooltipMouseLeave}
+          onFocus={
+            showSidebarLabels
+              ? undefined
+              : (event) => handleRailTooltipFocus(event, item.id, item.label, item.meta)
+          }
+          onBlur={
+            showSidebarLabels
+              ? undefined
+              : (event) => handleRailTooltipBlur(event, item.id, item.label, item.meta)
+          }
         >
           <span className="nav-icon">{item.icon}</span>
-          <span className="nav-text">
-            <span className="nav-label">{item.label}</span>
-            {item.meta ? <span className="nav-meta">{item.meta}</span> : null}
-          </span>
-          <span className="nav-drawer-caret" aria-hidden="true">
-            <IconChevronDown size={14} />
-          </span>
+          {showSidebarLabels && (
+            <>
+              <span className="nav-text">
+                <span className="nav-label">{item.label}</span>
+                {item.meta ? <span className="nav-meta">{item.meta}</span> : null}
+              </span>
+              <span className="nav-drawer-caret" aria-hidden="true">
+                <IconChevronDown size={14} />
+              </span>
+            </>
+          )}
         </button>
         {isOpen ? (
           <div className="nav-sub-list">
@@ -693,8 +875,22 @@ export function MainLayout() {
     : t('sidebar.toggle_expand', { defaultValue: 'Open navigation' });
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell ${sidebarCollapsed ? 'sidebar-is-collapsed' : ''}`}>
       <header className="main-header" ref={headerRef}>
+        <button
+          type="button"
+          className="sidebar-toggle-floating"
+          onClick={() => {
+            focusedRailItemRef.current = null;
+            hideRailTooltip();
+            setSidebarCollapsed((prev) => !prev);
+          }}
+          title={sidebarCollapsed ? t('sidebar.expand') : t('sidebar.collapse')}
+          aria-label={sidebarCollapsed ? t('sidebar.expand') : t('sidebar.collapse')}
+        >
+          <IconChevronLeft className={sidebarCollapsed ? 'is-reversed' : undefined} size={14} />
+        </button>
+
         <div className="header-main">
           <Button
             className="header-menu-btn"
@@ -838,26 +1034,44 @@ export function MainLayout() {
           tabIndex={sidebarOpen ? 0 : -1}
         />
 
-        <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+        <aside
+          className={`sidebar ${sidebarOpen ? 'open' : ''} ${sidebarCollapsed ? 'collapsed' : ''}`}
+        >
           <div className="sidebar-brand" title="CPAMC">
             <span className="sidebar-brand-logo-wrap" aria-hidden="true">
               <img src={INLINE_LOGO_JPEG} alt="" className="sidebar-brand-logo" />
             </span>
-            <span className="sidebar-brand-title">CPAMC</span>
+            {showSidebarLabels && <span className="sidebar-brand-title">CPAMC</span>}
           </div>
 
           <div className="nav-section">
-            {navGroups.map((group) => (
-              <div
-                className={`nav-group ${group.id === 'plugin-pages' ? 'nav-group-bottom' : ''}`}
-                key={group.id}
-              >
-                <div className="nav-group-label">{t(group.labelKey)}</div>
+            {navGroups.map((group, index) => (
+              <div className="nav-group" key={group.id}>
+                {showSidebarLabels ? (
+                  <div className="nav-group-label">{t(group.labelKey)}</div>
+                ) : (
+                  index > 0 && <div className="nav-group-divider" aria-hidden="true" />
+                )}
                 {group.items.map((item) => renderNavItem(item))}
               </div>
             ))}
           </div>
         </aside>
+
+        {!showSidebarLabels && railTooltip && (
+          <div
+            ref={railTooltipRef}
+            id={NAV_TOOLTIP_ID}
+            className="nav-tooltip"
+            role="tooltip"
+            style={{ top: railTooltip.top }}
+          >
+            <span className="nav-tooltip-label" aria-hidden="true">
+              {railTooltip.label}
+            </span>
+            {railTooltip.meta ? <span className="nav-tooltip-meta">{railTooltip.meta}</span> : null}
+          </div>
+        )}
 
         <div
           className={`content${isLogsPage ? ' content-logs' : ''}${

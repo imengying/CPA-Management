@@ -17,7 +17,7 @@ import {
   useQuotaStore,
 } from '@/stores';
 import type { AuthFileItem } from '@/types';
-import { getStatusFromError } from '@/utils/quota';
+import { getErrorStatus } from '@/utils/helpers';
 import {
   isRuntimeOnlyAuthFile,
   resolveQuotaErrorMessage,
@@ -108,7 +108,7 @@ export function useAuthFileQuotaControls(props: AuthFileQuotaControlProps) {
       });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : t('common.unknown_error');
-      const status = getStatusFromError(err);
+      const status = getErrorStatus(err);
       commitIfQuotaCacheCurrent(cacheGeneration, () => {
         updateQuotaState((prev: Record<string, unknown>) => ({
           ...prev,

@@ -7,8 +7,8 @@ import type { AuthFilesResponse } from '@/types/authFile';
 import type { OAuthModelAliasEntry } from '@/types';
 import { normalizeOAuthProviderKey } from '@/utils/providerKeys';
 import { parseTimestampMs } from '@/utils/timestamp';
+import { getErrorStatus } from '@/utils/helpers';
 
-type StatusError = { status?: number };
 type AuthFileStatusResponse = { status: string; disabled: boolean };
 type AuthFileEntry = AuthFilesResponse['files'][number];
 export type AuthFileFieldsPatch = {
@@ -19,6 +19,7 @@ export type AuthFileFieldsPatch = {
   websockets?: boolean;
   using_api?: boolean;
   note?: string;
+  expired?: string;
 };
 type AuthFileBatchFailure = { name: string; error: string };
 type AuthFileBatchUploadResponse = {
@@ -44,12 +45,6 @@ type AuthFileBatchDeleteResult = {
   deleted: number;
   files: string[];
   failed: AuthFileBatchFailure[];
-};
-
-const getStatusCode = (err: unknown): number | undefined => {
-  if (!err || typeof err !== 'object') return undefined;
-  if ('status' in err) return (err as StatusError).status;
-  return undefined;
 };
 
 const normalizeRequestedAuthFileNames = (names: string[]): string[] => {
@@ -338,6 +333,10 @@ export const serializeOauthModelAliases = (
   });
 
 const OAUTH_MODEL_ALIAS_ENDPOINT = '/oauth-model-alias';
+const MANUAL_REFRESH_EXPIRY_OFFSET_MS = 60_000;
+
+const buildManualRefreshExpiredAt = (nowMs = Date.now()): string =>
+  new Date(nowMs - MANUAL_REFRESH_EXPIRY_OFFSET_MS).toISOString();
 
 export const authFilesApi = {
   list: async () => dedupeAuthFilesResponse(await apiClient.get<AuthFilesResponse>('/auth-files')),
@@ -347,6 +346,12 @@ export const authFilesApi = {
 
   patchFields: (name: string, fields: AuthFileFieldsPatch) =>
     apiClient.patch('/auth-files/fields', { name, ...fields }),
+
+  requestManualRefresh: (name: string) =>
+    apiClient.patch('/auth-files/fields', {
+      name,
+      expired: buildManualRefreshExpiredAt(),
+    }),
 
   uploadFiles: async (files: File[]): Promise<AuthFileBatchUploadResult> => {
     const requestedNames = files.map((file) => file.name);
@@ -434,7 +439,7 @@ export const authFilesApi = {
         aliases: [],
       });
     } catch (err: unknown) {
-      const status = getStatusCode(err);
+      const status = getErrorStatus(err);
       if (status !== 405) throw err;
       await apiClient.delete(
         `${OAUTH_MODEL_ALIAS_ENDPOINT}?channel=${encodeURIComponent(normalizedChannel)}`

@@ -13,7 +13,7 @@ import styles from './forms/sharedForm.module.scss';
 
 type SheetMode = 'detail' | 'create' | 'edit';
 
-export interface ProviderSheetState {
+interface ProviderSheetState {
   open: boolean;
   brand: ProviderBrand;
   mode: SheetMode;

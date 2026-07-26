@@ -8,7 +8,7 @@ export type TypeColorSet = { light: ThemeColors; dark?: ThemeColors };
 export type ResolvedTheme = 'light' | 'dark';
 
 // API payload types
-export interface AntigravityQuotaSummaryBucketPayload {
+interface AntigravityQuotaSummaryBucketPayload {
   bucketId?: string;
   bucket_id?: string;
   displayName?: string;
@@ -21,7 +21,7 @@ export interface AntigravityQuotaSummaryBucketPayload {
   description?: string;
 }
 
-export interface AntigravityQuotaSummaryGroupPayload {
+interface AntigravityQuotaSummaryGroupPayload {
   displayName?: string;
   display_name?: string;
   description?: string;
@@ -53,7 +53,7 @@ export interface CodexRateLimitInfo {
   secondaryWindow?: CodexUsageWindow | null;
 }
 
-export interface CodexAdditionalRateLimit {
+interface CodexAdditionalRateLimit {
   limit_name?: string;
   limitName?: string;
   metered_feature?: string;
@@ -62,7 +62,7 @@ export interface CodexAdditionalRateLimit {
   rateLimit?: CodexRateLimitInfo | null;
 }
 
-export interface CodexRateLimitResetCredits {
+interface CodexRateLimitResetCredits {
   available_count?: number | string;
   availableCount?: number | string;
 }
@@ -88,7 +88,7 @@ export interface CodexUsagePayload {
 }
 
 // Claude API payload types
-export interface ClaudeUsageWindow {
+interface ClaudeUsageWindow {
   utilization: number;
   resets_at: string;
 }
@@ -265,7 +265,7 @@ export interface KimiQuotaState {
 }
 
 // xAI/Grok API payload types
-export interface XaiBillingCent {
+interface XaiBillingCent {
   val?: number | string;
 }
 
@@ -275,7 +275,7 @@ export interface XaiBillingPeriod {
   end?: string;
 }
 
-export interface XaiBillingProductUsage {
+interface XaiBillingProductUsage {
   product?: string;
   usagePercent?: number | string | null;
   usage_percent?: number | string | null;

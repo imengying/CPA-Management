@@ -3,14 +3,10 @@
  */
 
 import type { AuthFileItem, XaiBillingSummary } from '@/types';
+import { asRecord } from '@/utils/helpers';
 
 const XAI_PAID_PREFIX = 'paid';
 const NESTED_AUTH_KEYS = ['metadata', 'attributes', 'oauth', 'raw', 'credential', 'auth'];
-
-const asRecord = (value: unknown): Record<string, unknown> | null =>
-  value && typeof value === 'object' && !Array.isArray(value)
-    ? (value as Record<string, unknown>)
-    : null;
 
 const asString = (value: unknown): string | null => {
   if (typeof value !== 'string') return null;

@@ -5,7 +5,7 @@
 
 import type { RecentRequestBucket } from '@/utils/recentRequests';
 
-export type AuthFileType =
+type AuthFileType =
   | 'qwen'
   | 'kimi'
   | 'gemini'

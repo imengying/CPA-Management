@@ -211,153 +211,213 @@
   color: var(--filter-color);
 }
 
-.filterControlsPanel {
-  position: relative;
-  overflow: hidden;
-  padding: 16px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--background);
+.filterToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 
-  @include mobile {
-    padding: 12px;
-  }
-}
-
-.filterControls {
-  display: grid;
-  grid-template-columns: minmax(340px, 1fr) minmax(360px, 520px);
-  grid-template-areas:
-    'search options'
-    'status status';
-  gap: 14px;
-  align-items: start;
-
-  // 修复 Input 组件在 filterItem 中的嵌套样式
   :global(.form-group) {
     margin: 0;
   }
 
   :global(.input) {
-    height: 42px;
+    height: 40px;
     box-sizing: border-box;
   }
-
-  @media (max-width: 1100px) {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      'search'
-      'status'
-      'options';
-  }
-
-  @include mobile {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      'search'
-      'status'
-      'options';
-  }
 }
 
-.filterSearchItem {
-  grid-area: search;
-  min-width: 0;
-  width: 100%;
+.toolbarSearch {
+  flex: 1 1 280px;
+  min-width: 220px;
 }
 
-.filterItem {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-
-  label {
-    font-size: 11px;
-    color: var(--text-tertiary);
-    font-weight: 700;
-    letter-spacing: 0;
-    white-space: nowrap;
-  }
-}
-
-.filterToggleItem {
-  grid-area: status;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 18px;
-  min-width: 0;
-  width: 100%;
-
-  @include mobile {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-}
-
-.filterOptionsCard {
-  grid-area: options;
-  display: grid;
-  grid-template-columns: minmax(112px, 160px) minmax(180px, 1fr);
-  gap: 12px;
-  align-items: end;
-  align-content: start;
-  min-width: 0;
-  align-self: start;
-  padding: 0;
-  border: 0;
-  background: transparent;
-
-  @include mobile {
-    grid-template-columns: 1fr;
-  }
-}
-
-.filterOptionsControl {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-
-  label {
-    font-size: 11px;
-    color: var(--text-tertiary);
-    font-weight: 700;
-    letter-spacing: 0;
-    white-space: nowrap;
-  }
-}
-
-.filterToggleLabel {
+.statusFilterGroup {
   display: inline-flex;
   align-items: center;
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 3px;
+  border: 1px solid color-mix(in srgb, var(--border-color) 76%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--bg-secondary) 76%, transparent);
+  box-sizing: border-box;
+}
+
+.statusFilterButton {
+  min-width: 52px;
+  height: 32px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color $transition-fast,
+    background-color $transition-fast,
+    box-shadow $transition-fast;
+
+  &:hover {
+    color: var(--text-primary);
+    background: color-mix(in srgb, var(--bg-primary) 76%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--primary-color) 48%, transparent);
+    outline-offset: -2px;
+  }
+}
+
+.statusFilterButtonActive {
+  color: var(--primary-active);
+  background: var(--bg-primary);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+
+  &:hover {
+    color: var(--primary-active);
+    background: var(--bg-primary);
+  }
+}
+
+.statusFilterButtonProblem.statusFilterButtonActive {
+  color: var(--danger-color);
+  background: color-mix(in srgb, var(--danger-color) 10%, var(--bg-primary));
+}
+
+.sortControl {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.toolbarControlLabel {
+  color: var(--text-tertiary);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.displaySettings {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.displaySettingsButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color $transition-fast,
+    border-color $transition-fast,
+    background-color $transition-fast;
+
+  &:hover {
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+    background: var(--bg-secondary);
+  }
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 16%, transparent);
+  }
+}
+
+.displaySettingsButtonActive {
+  color: var(--text-primary);
+  border-color: color-mix(in srgb, var(--primary-color) 52%, var(--border-color));
+  background: color-mix(in srgb, var(--primary-color) 8%, var(--bg-primary));
+}
+
+.displaySettingsPopover {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 8px);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+  padding: 6px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+.displaySettingsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 52px;
   color: var(--text-primary);
   font-size: 13px;
   font-weight: 600;
-  line-height: 1.25;
-  white-space: nowrap;
+
+  + .displaySettingsRow {
+    border-top: 1px solid color-mix(in srgb, var(--border-color) 68%, transparent);
+  }
+
+  label {
+    cursor: pointer;
+  }
 }
 
-.displayOptionsLabel {
-  flex: 0 0 auto;
-  color: var(--text-tertiary);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0;
-  white-space: nowrap;
+@media (max-width: 900px) {
+  .toolbarSearch {
+    flex-basis: 100%;
+  }
 }
 
-.displayOptionToggles {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px 28px;
-  min-width: 0;
+@include mobile {
+  .toolbarSearch,
+  .statusFilterGroup {
+    flex: 1 1 100%;
+    width: 100%;
+  }
 
-  :global(label) {
-    min-width: 0;
+  .statusFilterGroup {
+    overflow-x: auto;
+  }
+
+  .statusFilterButton {
+    flex: 1 0 auto;
+  }
+
+  .sortControl {
+    flex: 1 1 180px;
+  }
+
+  .sortControl .sortSelect {
+    flex: 1;
+    width: auto;
+  }
+
+  .displaySettingsPopover {
+    right: auto;
+    left: 0;
+    width: min(250px, calc(100vw - 48px));
   }
 }
 
@@ -372,15 +432,15 @@
 }
 
 .pageSizeSelect {
-  width: 100%;
-  padding: 8px 12px;
+  width: 84px;
+  height: 34px;
+  padding: 6px 8px;
   border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
   border-radius: 8px;
   background-color: var(--bg-secondary);
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 13px;
   cursor: text;
-  height: 42px;
   box-sizing: border-box;
 
   &:focus {
@@ -813,7 +873,7 @@
 }
 
 .sortSelect {
-  width: 100%;
+  width: 132px;
   min-width: 0;
 }
 

@@ -5,7 +5,7 @@ import { IconX } from '../icons';
 import { useDialogLifecycle } from '../useDialogLifecycle';
 import styles from './Sheet.module.scss';
 
-export type SheetSize = 'md' | 'lg' | 'xl';
+type SheetSize = 'md' | 'lg' | 'xl';
 
 interface SheetProps {
   open: boolean;

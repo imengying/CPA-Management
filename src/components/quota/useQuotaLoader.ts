@@ -6,7 +6,7 @@ import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AuthFileItem } from '@/types';
 import { captureQuotaCacheGeneration, commitIfQuotaCacheCurrent, useQuotaStore } from '@/stores';
-import { getStatusFromError } from '@/utils/quota';
+import { getErrorStatus } from '@/utils/helpers';
 import type { QuotaConfig } from './quotaConfigs';
 
 type QuotaUpdater<T> = T | ((prev: T) => T);
@@ -57,7 +57,7 @@ export function useQuotaLoader<TState, TData>(config: QuotaConfig<TState, TData>
               return { name: file.name, status: 'success', data };
             } catch (err: unknown) {
               const message = err instanceof Error ? err.message : t('common.unknown_error');
-              const errorStatus = getStatusFromError(err);
+              const errorStatus = getErrorStatus(err);
               return { name: file.name, status: 'error', error: message, errorStatus };
             }
           })

@@ -34,7 +34,5 @@ export const LANGUAGE_LABEL_KEYS: Record<Language, string> = {
   en: 'language.english',
   ru: 'language.russian',
 };
-export const SUPPORTED_LANGUAGES = LANGUAGE_ORDER;
-
 // 通知持续时间
 export const NOTIFICATION_DURATION_MS = 3000;

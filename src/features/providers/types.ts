@@ -19,7 +19,7 @@ export type ProviderResourceSelector =
   | { brand: 'vertex'; apiKey: string; baseUrl?: string; index: number }
   | { brand: 'openaiCompatibility'; name: string; index: number };
 
-export interface ProviderResourceFlags {
+interface ProviderResourceFlags {
   cloakEnabled?: boolean;
   websockets?: boolean;
 }
@@ -91,7 +91,7 @@ export interface ApiKeyEntryInput {
   authIndex?: string;
 }
 
-export interface CloakInput {
+interface CloakInput {
   mode: string;
   strictMode: boolean;
   sensitiveWordsText: string;

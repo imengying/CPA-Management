@@ -1,7 +1,7 @@
 import type { PluginConfigField, PluginConfigObject, PluginListEntry } from '@/types';
 import { isRecord } from '@/utils/helpers';
 
-export type PluginDraftValue = string | boolean;
+type PluginDraftValue = string | boolean;
 
 export interface PluginConfigDraft {
   enabled: boolean;

@@ -386,10 +386,6 @@ export function IconSidebarDashboard({ size = 20, ...props }: IconProps) {
   );
 }
 
-export const IconSidebarConfig = IconSlidersHorizontal;
-
-export const IconSidebarPlugins = IconPlug;
-
 export function IconSidebarStore({ size = 20, ...props }: IconProps) {
   return (
     <svg {...baseSvgProps} width={size} height={size} {...props}>
@@ -401,8 +397,6 @@ export function IconSidebarStore({ size = 20, ...props }: IconProps) {
     </svg>
   );
 }
-
-export const IconSidebarProviders = IconNetwork;
 
 export function IconSidebarAuthFiles({ size = 20, ...props }: IconProps) {
   return (
@@ -431,8 +425,6 @@ export function IconSidebarQuota({ size = 20, ...props }: IconProps) {
     </svg>
   );
 }
-
-export const IconSidebarLogs = IconScrollText;
 
 export function IconSidebarSystem({ size = 20, ...props }: IconProps) {
   return (

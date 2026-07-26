@@ -1,4 +1,7 @@
-export interface CodexResetCredit {
+import { asRecord } from '@/utils/helpers';
+import { normalizeNumberValue, normalizeStringValue } from './parsers';
+
+interface CodexResetCredit {
   id: string;
   status: string;
   grantedAt: string;
@@ -21,33 +24,6 @@ const SHANGHAI_TIME_FORMATTER = new Intl.DateTimeFormat('en-CA', {
   second: '2-digit',
   hour12: false,
 });
-
-const asRecord = (value: unknown): Record<string, unknown> | null =>
-  value && typeof value === 'object' && !Array.isArray(value)
-    ? (value as Record<string, unknown>)
-    : null;
-
-const normalizeStringValue = (value: unknown): string | null => {
-  if (typeof value === 'string') {
-    const trimmed = value.trim();
-    return trimmed ? trimmed : null;
-  }
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    return value.toString();
-  }
-  return null;
-};
-
-const normalizeNumberValue = (value: unknown): number | null => {
-  if (typeof value === 'number' && Number.isFinite(value)) return value;
-  if (typeof value === 'string') {
-    const trimmed = value.trim();
-    if (!trimmed) return null;
-    const parsed = Number(trimmed);
-    return Number.isFinite(parsed) ? parsed : null;
-  }
-  return null;
-};
 
 const normalizeCredit = (value: unknown): CodexResetCredit | null => {
   const record = asRecord(value);

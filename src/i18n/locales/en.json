@@ -63,10 +63,6 @@
     "title": "CPA Manager",
     "subtitle": "Management Center"
   },
-  "auto_login": {
-    "title": "Auto Login in Progress...",
-    "message": "Attempting to connect to server using locally saved connection information"
-  },
   "login": {
     "subtitle": "Please enter connection information to access the management interface",
     "connection_title": "Connection Address",
@@ -189,6 +185,9 @@
     "refresh_not_available": "N/A",
     "refresh_just_now": "Just now",
     "download_button": "Download",
+    "manual_refresh_button": "Refresh OAuth credential",
+    "manual_refresh_requested": "Credential refresh requested for \"{{name}}\"",
+    "manual_refresh_failed": "Failed to request credential refresh for \"{{name}}\": {{message}}",
     "delete_button": "Delete",
     "delete_confirm": "Are you sure you want to delete file",
     "delete_all_confirm": "Are you sure you want to delete all auth files? This operation cannot be undone!",
@@ -223,9 +222,11 @@
     "pagination_info": "Page {{current}} / {{total}} · {{count}} files",
     "search_label": "Search configs",
     "search_placeholder": "Filter by name, type, or provider. Use * as a wildcard",
-    "problem_filter_only": "Only show problematic credentials",
-    "disabled_filter_only": "Only show disabled credentials",
-    "enabled_filter_only": "Only show healthy credentials",
+    "problem_filter_label": "Status Filter",
+    "problem_filter_all": "All",
+    "problem_filter_enabled": "Enabled",
+    "problem_filter_problem": "Problem",
+    "problem_filter_disabled": "Disabled",
     "display_options_label": "Display options",
     "compact_mode_label": "Compact mode",
     "sort_label": "Sort",
@@ -711,12 +712,6 @@
     "failure_short": "✗",
     "no_requests": "No requests"
   },
-  "service_health": {
-    "title": "Service Health",
-    "window": "Last 7 days",
-    "oldest": "Oldest",
-    "newest": "Latest"
-  },
   "logs": {
     "refresh_button": "Refresh Logs",
     "clear_button": "Clear Logs",
@@ -950,9 +945,7 @@
           "timeout": "Timeout",
           "stabilize_device": "Stabilize Device Profile",
           "stabilize_device_desc": "Pin OS/Arch and stabilize the software fingerprint per credential/API key",
-          "beta_features": "Beta Features",
-          "codex_identity_confuse": "Codex Identity Confuse",
-          "codex_identity_confuse_desc": "When fill-first routing or session affinity is used, remap Codex prompt_cache_key and installation identity for the selected auth"
+          "beta_features": "Beta Features"
         },
         "network": {
           "title": "Network Configuration",
@@ -1346,7 +1339,10 @@
   },
   "sidebar": {
     "toggle_expand": "Expand sidebar",
-    "toggle_collapse": "Collapse sidebar"
+    "toggle_collapse": "Collapse sidebar",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "auth_files_count": "Authentication files: {{count}}"
   },
   "footer": {
     "api_version": "CLI Proxy API Version",

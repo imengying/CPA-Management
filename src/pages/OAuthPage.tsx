@@ -9,7 +9,8 @@ import { useAuthStore, useNotificationStore, useThemeStore } from '@/stores';
 import { oauthApi, pluginsApi, type BuiltInOAuthProvider } from '@/services/api';
 import { vertexApi, type VertexImportResponse } from '@/services/api/vertex';
 import { copyToClipboard } from '@/utils/clipboard';
-import { getErrorMessage, isRecord } from '@/utils/helpers';
+import { getErrorMessage, getErrorStatus } from '@/utils/helpers';
+import { notifyAuthFilesChanged } from '@/features/authFiles/authFilesEvents';
 import { getPluginTitle, resolvePluginAssetURL } from '@/features/plugins/pluginResources';
 import type { PluginListEntry } from '@/types';
 import styles from './OAuthPage.module.scss';
@@ -65,11 +66,6 @@ interface PluginOAuthProviderCard {
 }
 
 type OAuthProviderCard = BuiltInOAuthProviderCard | PluginOAuthProviderCard;
-
-function getErrorStatus(error: unknown): number | undefined {
-  if (!isRecord(error)) return undefined;
-  return typeof error.status === 'number' ? error.status : undefined;
-}
 
 const PROVIDERS: BuiltInOAuthProviderCard[] = [
   {
@@ -361,6 +357,7 @@ export function OAuthPage() {
   const completeProviderAuth = (provider: string) => {
     clearPollingTimer(provider);
     clearSuccessResetTimer(provider);
+    notifyAuthFilesChanged();
     updateProviderState(provider, {
       url: undefined,
       state: undefined,
@@ -555,6 +552,7 @@ export function OAuthPage() {
         authFile: res['auth-file'] ?? res.auth_file,
       };
       setVertexState((prev) => ({ ...prev, loading: false, result }));
+      notifyAuthFilesChanged();
       showNotification(t('vertex_import.success'), 'success');
     } catch (err: unknown) {
       const message = getErrorMessage(err);

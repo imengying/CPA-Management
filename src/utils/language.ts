@@ -1,10 +1,10 @@
 import type { Language } from '@/types';
-import { STORAGE_KEY_LANGUAGE, SUPPORTED_LANGUAGES } from '@/utils/constants';
+import { LANGUAGE_ORDER, STORAGE_KEY_LANGUAGE } from '@/utils/constants';
 
 const TRADITIONAL_CHINESE_PREFIXES = ['zh-tw', 'zh-hk', 'zh-mo', 'zh-hant'] as const;
 
 export const isSupportedLanguage = (value: string): value is Language =>
-  SUPPORTED_LANGUAGES.includes(value as Language);
+  LANGUAGE_ORDER.includes(value as Language);
 
 const parseStoredLanguage = (value: string): Language | null => {
   try {

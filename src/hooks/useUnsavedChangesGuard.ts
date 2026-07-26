@@ -4,7 +4,7 @@ import { useNotificationStore } from '@/stores';
 
 type ConfirmationVariant = 'danger' | 'primary' | 'secondary';
 
-export type UnsavedChangesDialog = {
+type UnsavedChangesDialog = {
   title: string;
   message: string;
   confirmText: string;

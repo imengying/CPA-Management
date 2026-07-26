@@ -1,4 +1,4 @@
-export type StatusBlockState = 'success' | 'failure' | 'mixed' | 'idle';
+type StatusBlockState = 'success' | 'failure' | 'mixed' | 'idle';
 
 export interface StatusBlockDetail {
   success: number;

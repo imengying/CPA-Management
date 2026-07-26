@@ -20,7 +20,7 @@ import {
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { pluginStoreApi } from '@/services/api';
 import { useAuthStore, useConfigStore, useNotificationStore } from '@/stores';
-import { getErrorMessage, isRecord } from '@/utils/helpers';
+import { getErrorMessage, getErrorStatus, isRecord } from '@/utils/helpers';
 import type { PluginStoreEntry, PluginStoreResponse } from '@/types';
 import {
   buildRepositoryURL,
@@ -47,9 +47,6 @@ interface StoreLoadError {
   kind: 'unsupported' | 'registry' | 'generic';
   message: string;
 }
-
-const getErrorStatus = (error: unknown): number | undefined =>
-  isRecord(error) && typeof error.status === 'number' ? error.status : undefined;
 
 const getErrorDetailMessage = (error: unknown): string => {
   if (!isRecord(error) || !isRecord(error.details)) return '';

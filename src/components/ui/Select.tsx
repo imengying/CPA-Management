@@ -12,7 +12,7 @@ import { createPortal } from 'react-dom';
 import { IconChevronDown } from './icons';
 import styles from './Select.module.scss';
 
-export interface SelectOption {
+interface SelectOption {
   value: string;
   label: string;
 }

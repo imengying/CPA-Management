@@ -6,7 +6,7 @@ import { apiClient } from './client';
 import { LOGS_TIMEOUT_MS } from '@/utils/constants';
 import { isRecord } from '@/utils/helpers';
 
-export type LogBackendKind = 'unknown' | 'file';
+type LogBackendKind = 'unknown' | 'file';
 
 export interface LogsQuery {
   cursor?: string;
@@ -25,7 +25,7 @@ export interface LogsResponse {
   offset?: number;
 }
 
-export interface ErrorLogFile {
+interface ErrorLogFile {
   name: string;
   size?: number;
   modified?: number;

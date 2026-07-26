@@ -76,7 +76,6 @@ import {
   mergeXaiBillingSummaries,
   createStatusError,
   formatShanghaiDateTime,
-  getStatusFromError,
   isAntigravityFile,
   isClaudeFile,
   isCodexFile,
@@ -85,6 +84,7 @@ import {
   isPaidXaiAuthFile,
   isXaiFile,
 } from '@/utils/quota';
+import { getErrorStatus } from '@/utils/helpers';
 import { normalizeAuthIndex } from '@/utils/authIndex';
 import { formatDateTimeValue } from '@/utils/format';
 import type { QuotaRenderHelpers } from './QuotaCard';
@@ -284,7 +284,7 @@ const fetchAntigravityQuota = async (
       };
     } catch (err: unknown) {
       lastError = err instanceof Error ? err.message : t('common.unknown_error');
-      const status = getStatusFromError(err);
+      const status = getErrorStatus(err);
       if (status) {
         lastStatus = status;
         if (status === 403 || status === 404) {

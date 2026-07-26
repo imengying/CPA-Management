@@ -31,7 +31,7 @@ import type {
 import { hasModelAliasConflict } from './aliasValidation';
 import styles from './ModelMappingDiagram.module.scss';
 
-export interface ModelMappingDiagramProps {
+interface ModelMappingDiagramProps {
   modelAlias: Record<string, OAuthModelAliasEntry[]>;
   allProviderModels?: Record<string, AuthFileModelItem[]>;
   onUpdate?: (provider: string, sourceModel: string, newAlias: string) => void;

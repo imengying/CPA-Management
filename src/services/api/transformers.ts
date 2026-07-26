@@ -382,4 +382,4 @@ export const normalizeConfigResponse = (raw: unknown): Config => {
   return config;
 };
 
-export { normalizeGeminiKeyConfig, normalizeOpenAIProvider, normalizeProviderKeyConfig };
+export { normalizeOpenAIProvider, normalizeProviderKeyConfig };

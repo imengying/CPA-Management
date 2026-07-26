@@ -16,6 +16,7 @@ import {
   buildOAuthProviderOptions,
   getTypeLabel,
   normalizeProviderKey,
+  type AuthFileModelItem,
 } from '@/features/authFiles/constants';
 import { getStringSetSignature, isOAuthEditorDirty } from '@/features/authFiles/oauthEditorState';
 import {
@@ -26,10 +27,8 @@ import {
   updateOAuthExcludedRule,
 } from '@/features/authFiles/oauthExcludedRules';
 import type { AuthFileItem, OAuthModelAliasEntry } from '@/types';
-import { getErrorMessage } from '@/utils/helpers';
+import { getErrorMessage, getErrorStatus } from '@/utils/helpers';
 import styles from './AuthFilesOAuthExcludedEditPage.module.scss';
-
-type AuthFileModelItem = { id: string; display_name?: string; type?: string; owned_by?: string };
 
 type LocationState = { fromAuthFiles?: boolean } | null;
 
@@ -194,10 +193,7 @@ export function AuthFilesOAuthExcludedEditPage() {
       }
 
       const err = excludedResult.reason;
-      const status =
-        typeof err === 'object' && err !== null && 'status' in err
-          ? (err as { status?: unknown }).status
-          : undefined;
+      const status = getErrorStatus(err);
 
       if (status === 404) {
         setExcludedUnsupported(true);
@@ -270,10 +266,7 @@ export function AuthFilesOAuthExcludedEditPage() {
         })
         .catch((err: unknown) => {
           if (cancelled) return;
-          const status =
-            typeof err === 'object' && err !== null && 'status' in err
-              ? (err as { status?: unknown }).status
-              : undefined;
+          const status = getErrorStatus(err);
 
           if (status === 400 || status === 404) {
             setModelsList([]);

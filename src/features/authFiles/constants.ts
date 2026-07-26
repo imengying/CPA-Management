@@ -20,7 +20,7 @@ export type AuthFileModelItem = {
   type?: string;
   owned_by?: string;
 };
-export type AuthFileIconAsset = string | { light: string; dark: string };
+type AuthFileIconAsset = string | { light: string; dark: string };
 export type OAuthConfigLoadError = 'loading' | 'unsupported' | 'load' | null;
 
 export type QuotaProviderType = 'antigravity' | 'claude' | 'codex' | 'kimi' | 'xai';
@@ -53,6 +53,13 @@ const TRUTHY_TEXT_VALUES = new Set(['true', '1', 'yes', 'y', 'on']);
 const FALSY_TEXT_VALUES = new Set(['false', '0', 'no', 'n', 'off']);
 const AUTH_FILE_WEBSOCKET_PROVIDERS = new Set(['codex', 'xai']);
 const AUTH_FILE_USING_API_PROVIDERS = new Set(['xai']);
+const AUTH_FILE_MANUAL_REFRESH_PROVIDERS = new Set([
+  'antigravity',
+  'claude',
+  'codex',
+  'kimi',
+  'xai',
+]);
 
 const AUTH_FILE_ICONS: Record<string, AuthFileIconAsset> = {
   antigravity: iconAntigravity,
@@ -61,7 +68,7 @@ const AUTH_FILE_ICONS: Record<string, AuthFileIconAsset> = {
   codex: iconCodex,
   gemini: iconGemini,
   xai: { light: iconGrok, dark: iconGrokDark },
-  kimi: { light: iconKimiLight, dark: iconKimiDark },
+  kimi: { light: iconKimiDark, dark: iconKimiLight },
   qwen: iconQwen,
   vertex: iconVertex,
 };
@@ -80,6 +87,9 @@ export const resolveQuotaErrorMessage = (
 };
 
 export const normalizeProviderKey = normalizeOAuthProviderKey;
+
+export const supportsAuthFileManualRefresh = (provider: unknown): boolean =>
+  AUTH_FILE_MANUAL_REFRESH_PROVIDERS.has(normalizeProviderKey(String(provider ?? '')));
 
 export const buildOAuthProviderOptions = (values: Iterable<unknown>): string[] => {
   const extraProviders = new Set<string>();
@@ -130,6 +140,14 @@ export const getAuthFileIcon = (type: string, resolvedTheme: ResolvedTheme): str
       ? iconEntry.dark
       : iconEntry.light;
 };
+
+const THEME_SURFACE_ICON_PROVIDERS = new Set(['kimi']);
+
+export const isThemeSurfaceIconProvider = (type: string): boolean =>
+  THEME_SURFACE_ICON_PROVIDERS.has(normalizeProviderKey(type));
+
+export const getThemeSurfaceIconBackground = (resolvedTheme: ResolvedTheme): string =>
+  resolvedTheme === 'dark' ? '#ffffff' : '#000000';
 
 export const parsePriorityValue = (value: unknown): number | undefined => {
   if (typeof value === 'number') {

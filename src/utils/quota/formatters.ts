@@ -54,20 +54,6 @@ export function createStatusError(message: string, status?: number): Error & { s
   return error;
 }
 
-export function getStatusFromError(err: unknown): number | undefined {
-  if (typeof err === 'object' && err !== null && 'status' in err) {
-    const rawStatus = (err as { status?: unknown }).status;
-    if (typeof rawStatus === 'number' && Number.isFinite(rawStatus)) {
-      return rawStatus;
-    }
-    const asNumber = Number(rawStatus);
-    if (Number.isFinite(asNumber) && asNumber > 0) {
-      return asNumber;
-    }
-  }
-  return undefined;
-}
-
 export function formatKimiResetHint(t: TFunction, hint?: string): string {
   if (!hint) return '';
   return t('kimi_quota.reset_hint', { hint });

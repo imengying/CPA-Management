@@ -6,15 +6,16 @@ import {
   normalizeStringValue,
   parseAntigravityPayload,
 } from '@/utils/quota';
+import { isRecord } from '@/utils/helpers';
 
-export type AntigravitySubscriptionPlan = 'free' | 'pro' | 'ultra' | 'ultra-lite' | 'unknown';
+type AntigravitySubscriptionPlan = 'free' | 'pro' | 'ultra' | 'ultra-lite' | 'unknown';
 
-export type AntigravitySubscriptionTier = {
+type AntigravitySubscriptionTier = {
   id: string | null;
   name: string | null;
 };
 
-export type AntigravitySubscriptionCredit = {
+type AntigravitySubscriptionCredit = {
   creditType: string | null;
   creditAmount: number | string | null;
   minimumCreditAmountForUsage: number | string | null;
@@ -45,9 +46,6 @@ const PLAN_BY_TIER_ID = new Map<string, AntigravitySubscriptionPlan>([
   ['g1-ultra-tier', 'ultra'],
   ['g1-ultra-lite-tier', 'ultra-lite'],
 ]);
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
 
 const normalizeTier = (value: unknown): AntigravitySubscriptionTier | null => {
   if (!isRecord(value)) return null;

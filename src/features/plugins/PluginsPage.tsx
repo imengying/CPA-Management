@@ -19,7 +19,7 @@ import {
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { pluginsApi } from '@/services/api';
 import { useAuthStore, useConfigStore, useNotificationStore } from '@/stores';
-import { getErrorMessage, isRecord } from '@/utils/helpers';
+import { getErrorMessage, getErrorStatus, isRecord } from '@/utils/helpers';
 import type { PluginConfigField, PluginListEntry, PluginListResponse } from '@/types';
 import {
   buildPluginConfigDraft,
@@ -47,8 +47,6 @@ function PluginCardLogo({ src }: { src: string }) {
     <IconPlug size={18} />
   );
 }
-
-const hasStatus = (error: unknown, status: number) => isRecord(error) && error.status === status;
 
 const hasRestartRequired = (value: unknown) => isRecord(value) && value.restart_required === true;
 
@@ -91,7 +89,7 @@ export function PluginsPage() {
       setData(plugins);
     } catch (err: unknown) {
       setError(
-        hasStatus(err, 404)
+        getErrorStatus(err) === 404
           ? t('plugin_management.unsupported_backend')
           : getErrorMessage(err, t('plugin_management.load_failed'))
       );
@@ -186,7 +184,7 @@ export function PluginsPage() {
       setEditingPlugin(null);
       setDraft(null);
       showNotification(
-        hasStatus(err, 404)
+        getErrorStatus(err) === 404
           ? t('plugin_management.config_not_found')
           : `${t('plugin_management.config_load_failed')}: ${getErrorMessage(
               err,

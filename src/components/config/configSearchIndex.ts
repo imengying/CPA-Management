@@ -6,13 +6,7 @@
 // JSX in <FieldAnchor fieldId="..."> using the same `fieldId`).
 
 export type VisualSectionId =
-  | 'connectivity'
-  | 'network'
-  | 'logging'
-  | 'quota'
-  | 'streaming'
-  | 'advanced'
-  | 'payload';
+  'connectivity' | 'network' | 'logging' | 'quota' | 'streaming' | 'advanced' | 'payload';
 
 export interface ConfigFieldSearchEntry {
   /** Stable anchor id; matches FieldAnchor's `fieldId` and the rendered DOM id. */
@@ -423,15 +417,6 @@ const CONFIG_FIELD_SEARCH_INDEX: ConfigFieldSearchEntry[] = [
     labelKey: L('sections.headers.beta_features'),
     qualifierKey: L('sections.headers.codex_title'),
     yamlKeys: ['codex-header-defaults', 'beta-features'],
-    keywords: ['codex'],
-  },
-  {
-    fieldId: 'codexIdentityConfuse',
-    sectionId: 'advanced',
-    labelKey: L('sections.headers.codex_identity_confuse'),
-    qualifierKey: L('sections.headers.codex_title'),
-    hintKey: L('sections.headers.codex_identity_confuse_desc'),
-    yamlKeys: ['codex-header-defaults', 'identity-confuse'],
     keywords: ['codex'],
   },
   // ── payload (coarse: one entry per rule group) ──────────────────────────────

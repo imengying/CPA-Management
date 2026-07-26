@@ -5,6 +5,7 @@ import { useNotificationStore } from '@/stores';
 import type { AuthFileItem, OAuthModelAliasEntry } from '@/types';
 import type { AuthFileModelItem, OAuthConfigLoadError } from '@/features/authFiles/constants';
 import { normalizeProviderKey } from '@/features/authFiles/constants';
+import { getErrorStatus } from '@/utils/helpers';
 
 type ViewMode = 'diagram' | 'list';
 
@@ -141,10 +142,7 @@ export function useAuthFilesOauth(options: UseAuthFilesOauthOptions): UseAuthFil
       setExcludedError(null);
     } catch (err: unknown) {
       if (requestId !== excludedLoadRequestRef.current) return;
-      const status =
-        typeof err === 'object' && err !== null && 'status' in err
-          ? (err as { status?: unknown }).status
-          : undefined;
+      const status = getErrorStatus(err);
 
       if (status === 404) {
         setExcluded({});
@@ -172,10 +170,7 @@ export function useAuthFilesOauth(options: UseAuthFilesOauthOptions): UseAuthFil
       setModelAliasError(null);
     } catch (err: unknown) {
       if (requestId !== modelAliasLoadRequestRef.current) return;
-      const status =
-        typeof err === 'object' && err !== null && 'status' in err
-          ? (err as { status?: unknown }).status
-          : undefined;
+      const status = getErrorStatus(err);
 
       if (status === 404) {
         setModelAlias({});

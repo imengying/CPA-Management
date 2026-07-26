@@ -63,10 +63,6 @@
     "title": "CPA Manager",
     "subtitle": "Центр управления"
   },
-  "auto_login": {
-    "title": "Автовход...",
-    "message": "Пытаемся подключиться к серверу, используя сохранённые данные"
-  },
   "login": {
     "subtitle": "Введите данные подключения, чтобы получить доступ к панели управления",
     "connection_title": "Адрес подключения",
@@ -189,6 +185,9 @@
     "refresh_not_available": "Н/Д",
     "refresh_just_now": "Только что",
     "download_button": "Скачать",
+    "manual_refresh_button": "Обновить учётные данные OAuth",
+    "manual_refresh_requested": "Запрошено обновление учётных данных для \"{{name}}\"",
+    "manual_refresh_failed": "Не удалось запросить обновление учётных данных для \"{{name}}\": {{message}}",
     "delete_button": "Удалить",
     "delete_confirm": "Удалить файл",
     "delete_all_confirm": "Удалить все файлы авторизации? Это действие нельзя отменить!",
@@ -223,9 +222,11 @@
     "pagination_info": "Страница {{current}} / {{total}} · {{count}} файлов",
     "search_label": "Поиск конфигов",
     "search_placeholder": "Фильтр по имени, типу или провайдеру, поддерживается wildcard *",
-    "problem_filter_only": "Показывать только проблемные учётные данные",
-    "disabled_filter_only": "Показывать только отключённые учётные данные",
-    "enabled_filter_only": "Показывать только исправные учётные данные",
+    "problem_filter_label": "Фильтр статуса",
+    "problem_filter_all": "Все",
+    "problem_filter_enabled": "Вкл.",
+    "problem_filter_problem": "Пробл.",
+    "problem_filter_disabled": "Откл.",
     "display_options_label": "Параметры отображения",
     "compact_mode_label": "Компактный режим",
     "sort_label": "Сортировка",
@@ -711,12 +712,6 @@
     "failure_short": "✗",
     "no_requests": "Нет запросов"
   },
-  "service_health": {
-    "title": "Состояние сервиса",
-    "window": "Последние 7 дней",
-    "oldest": "Старые",
-    "newest": "Новые"
-  },
   "logs": {
     "refresh_button": "Обновить журналы",
     "clear_button": "Очистить журналы",
@@ -950,9 +945,7 @@
           "timeout": "Timeout",
           "stabilize_device": "Стабилизировать профиль устройства",
           "stabilize_device_desc": "Фиксировать OS/Arch и стабилизировать программный отпечаток для учётных данных/API-ключа",
-          "beta_features": "Beta Features",
-          "codex_identity_confuse": "Codex identity-confuse",
-          "codex_identity_confuse_desc": "При fill-first routing или session affinity переопределяет Codex prompt_cache_key и installation identity под выбранную auth-запись"
+          "beta_features": "Beta Features"
         },
         "network": {
           "title": "Сетевые настройки",
@@ -1346,7 +1339,10 @@
   },
   "sidebar": {
     "toggle_expand": "Развернуть боковую панель",
-    "toggle_collapse": "Свернуть боковую панель"
+    "toggle_collapse": "Свернуть боковую панель",
+    "expand": "Развернуть",
+    "collapse": "Свернуть",
+    "auth_files_count": "Файлов аутентификации: {{count}}"
   },
   "footer": {
     "api_version": "Версия CLI Proxy API",

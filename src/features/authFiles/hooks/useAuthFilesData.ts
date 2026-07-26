@@ -7,22 +7,21 @@ import type { AuthFileItem } from '@/types';
 import { formatFileSize } from '@/utils/format';
 import { MAX_AUTH_FILE_SIZE } from '@/utils/constants';
 import { downloadBlob } from '@/utils/download';
+import { notifyAuthFilesChanged } from '@/features/authFiles/authFilesEvents';
+import type { AuthFilesStatusFilterMode } from '@/features/authFiles/uiState';
 import {
   getTypeLabel,
   hasAuthFileStatusMessage,
   isRuntimeOnlyAuthFile,
   normalizeProviderKey,
+  supportsAuthFileManualRefresh,
 } from '@/features/authFiles/constants';
 
 type DeleteAllOptions = {
   filter: string;
-  problemOnly: boolean;
-  disabledOnly: boolean;
-  enabledOnly: boolean;
+  statusFilterMode: AuthFilesStatusFilterMode;
   onResetFilterToAll: () => void;
-  onResetProblemOnly: () => void;
-  onResetDisabledOnly: () => void;
-  onResetEnabledOnly: () => void;
+  onResetStatusFilter: () => void;
 };
 
 export type UseAuthFilesDataResult = {
@@ -35,6 +34,7 @@ export type UseAuthFilesDataResult = {
   deleting: string | null;
   deletingAll: boolean;
   statusUpdating: Record<string, boolean>;
+  manualRefreshing: Record<string, boolean>;
   batchStatusUpdating: boolean;
   fileInputRef: RefObject<HTMLInputElement | null>;
   loadFiles: () => Promise<void>;
@@ -43,6 +43,7 @@ export type UseAuthFilesDataResult = {
   handleDelete: (name: string) => void;
   handleDeleteAll: (options: DeleteAllOptions) => void;
   handleDownload: (name: string) => Promise<void>;
+  handleManualRefresh: (item: AuthFileItem) => Promise<void>;
   handleStatusToggle: (item: AuthFileItem, enabled: boolean) => Promise<void>;
   toggleSelect: (name: string) => void;
   selectAllVisible: (visibleFiles: AuthFileItem[]) => void;
@@ -64,10 +65,12 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [deletingAll, setDeletingAll] = useState(false);
   const [statusUpdating, setStatusUpdating] = useState<Record<string, boolean>>({});
+  const [manualRefreshing, setManualRefreshing] = useState<Record<string, boolean>>({});
   const [batchStatusUpdating, setBatchStatusUpdating] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const manualRefreshPendingRef = useRef<Set<string>>(new Set());
   const batchStatusPendingRef = useRef(false);
   const hasLoadedFilesRef = useRef(false);
   const selectionCount = selectedFiles.size;
@@ -237,6 +240,7 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
             `${t('auth_files.upload_success')}${suffix}`,
             result.failed.length ? 'warning' : 'success'
           );
+          notifyAuthFilesChanged();
           await loadFiles();
         }
 
@@ -268,6 +272,7 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
             const result = await authFilesApi.deleteFile(name);
             showNotification(t('auth_files.delete_success'), 'success');
             applyDeletedFiles(result.files.length > 0 ? result.files : [name]);
+            if (result.deleted > 0) notifyAuthFilesChanged();
           } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : '';
             showNotification(`${t('notification.delete_failed')}: ${errorMessage}`, 'error');
@@ -282,20 +287,12 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
 
   const handleDeleteAll = useCallback(
     (deleteAllOptions: DeleteAllOptions) => {
-      const {
-        filter,
-        problemOnly,
-        disabledOnly,
-        enabledOnly,
-        onResetFilterToAll,
-        onResetProblemOnly,
-        onResetDisabledOnly,
-        onResetEnabledOnly,
-      } = deleteAllOptions;
+      const { filter, statusFilterMode, onResetFilterToAll, onResetStatusFilter } =
+        deleteAllOptions;
       const isFiltered = filter !== 'all';
-      const isProblemOnly = problemOnly === true;
-      const isDisabledOnly = disabledOnly === true;
-      const isEnabledOnly = enabledOnly === true;
+      const isProblemOnly = statusFilterMode === 'problem';
+      const isDisabledOnly = statusFilterMode === 'disabled';
+      const isEnabledOnly = statusFilterMode === 'enabled';
       const typeLabel = isFiltered ? getTypeLabel(t, filter) : t('auth_files.filter_all');
       let confirmMessage = t('auth_files.delete_all_confirm');
       if (isDisabledOnly || isEnabledOnly) {
@@ -321,6 +318,7 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
               showNotification(t('auth_files.delete_all_success'), 'success');
               setFiles((prev) => prev.filter((file) => isRuntimeOnlyAuthFile(file)));
               deselectAll();
+              notifyAuthFilesChanged();
             } else {
               const filesToDelete = files.filter((file) => {
                 if (isRuntimeOnlyAuthFile(file)) return false;
@@ -355,6 +353,7 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
               const failed = result.failed.length;
 
               applyDeletedFiles(result.files);
+              if (result.deleted > 0) notifyAuthFilesChanged();
 
               if (failed === 0 && (isDisabledOnly || isEnabledOnly)) {
                 showNotification(
@@ -402,14 +401,8 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
               if (isFiltered) {
                 onResetFilterToAll();
               }
-              if (isProblemOnly) {
-                onResetProblemOnly();
-              }
-              if (isDisabledOnly) {
-                onResetDisabledOnly();
-              }
-              if (isEnabledOnly) {
-                onResetEnabledOnly();
+              if (statusFilterMode !== 'all') {
+                onResetStatusFilter();
               }
             }
           } catch (err: unknown) {
@@ -437,6 +430,42 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
       } catch (err: unknown) {
         const errorMessage = err instanceof Error ? err.message : '';
         showNotification(`${t('notification.download_failed')}: ${errorMessage}`, 'error');
+      }
+    },
+    [showNotification, t]
+  );
+
+  const handleManualRefresh = useCallback(
+    async (item: AuthFileItem) => {
+      const name = item.name.trim();
+      const provider = item.type ?? item.provider;
+      if (
+        !name ||
+        item.disabled === true ||
+        isRuntimeOnlyAuthFile(item) ||
+        !supportsAuthFileManualRefresh(provider) ||
+        manualRefreshPendingRef.current.has(name)
+      ) {
+        return;
+      }
+
+      manualRefreshPendingRef.current.add(name);
+      setManualRefreshing((prev) => ({ ...prev, [name]: true }));
+
+      try {
+        await authFilesApi.requestManualRefresh(name);
+        showNotification(t('auth_files.manual_refresh_requested', { name }), 'info');
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : t('notification.update_failed');
+        showNotification(t('auth_files.manual_refresh_failed', { name, message }), 'error');
+      } finally {
+        manualRefreshPendingRef.current.delete(name);
+        setManualRefreshing((prev) => {
+          if (!prev[name]) return prev;
+          const next = { ...prev };
+          delete next[name];
+          return next;
+        });
       }
     },
     [showNotification, t]
@@ -626,6 +655,7 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
           try {
             const result = await authFilesApi.deleteFiles(uniqueNames);
             applyDeletedFiles(result.files);
+            if (result.deleted > 0) notifyAuthFilesChanged();
 
             if (result.failed.length === 0) {
               showNotification(
@@ -662,6 +692,7 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
     deleting,
     deletingAll,
     statusUpdating,
+    manualRefreshing,
     batchStatusUpdating,
     fileInputRef,
     loadFiles,
@@ -670,6 +701,7 @@ export function useAuthFilesData(): UseAuthFilesDataResult {
     handleDelete,
     handleDeleteAll,
     handleDownload,
+    handleManualRefresh,
     handleStatusToggle,
     toggleSelect,
     selectAllVisible,
