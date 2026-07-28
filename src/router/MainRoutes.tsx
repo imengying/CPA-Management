@@ -1,4 +1,4 @@
-import { Navigate, useRoutes, type Location, type RouteObject } from 'react-router-dom';
+import { Navigate, useRoutes, type Location, type RouteObject } from 'react-router';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { ProvidersWorkbenchPage } from '@/features/providers/ProvidersWorkbenchPage';
 import { AuthFilesPage } from '@/pages/AuthFilesPage';

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Outlet, RouterProvider, createHashRouter } from 'react-router-dom';
+import { Outlet, createHashRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
 import { LoginPage } from '@/pages/LoginPage';
 import { NotificationContainer } from '@/components/common/NotificationContainer';
 import { ConfirmationModal } from '@/components/common/ConfirmationModal';
