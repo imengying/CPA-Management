@@ -32,6 +32,34 @@ export function formatFileSize(bytes: number): string {
   return `${(bytes / Math.pow(k, i)).toFixed(2)} ${units[i]}`;
 }
 
+const COMPACT_SUFFIXES = ['', 'K', 'M', 'B', 'T'] as const;
+
+export function formatCompactNumber(value: number): string {
+  if (!Number.isFinite(value)) return '0';
+
+  const sign = value < 0 ? '-' : '';
+  let scaled = Math.abs(value);
+  let tier = 0;
+
+  while (scaled >= 1000 && tier < COMPACT_SUFFIXES.length - 1) {
+    scaled /= 1000;
+    tier += 1;
+  }
+
+  let rendered = tier === 0 ? Math.round(scaled) : Number(scaled.toFixed(scaled < 100 ? 1 : 0));
+  if (rendered >= 1000 && tier < COMPACT_SUFFIXES.length - 1) {
+    rendered = 1;
+    tier += 1;
+  }
+
+  return `${sign}${rendered}${COMPACT_SUFFIXES[tier]}`;
+}
+
+export function formatPercent(value: number, fractionDigits = 1): string {
+  if (!Number.isFinite(value)) return '—';
+  return `${value.toFixed(fractionDigits).replace(/\.0+$/, '')}%`;
+}
+
 /**
  * 将 Unix 时间戳（秒/毫秒/微秒/纳秒）格式化为本地时间字符串
  */
@@ -72,6 +100,12 @@ function parseDateValue(value: unknown): Date | null {
       : (parseTimestamp(value) ?? new Date(String(value)));
 
   return Number.isNaN(date.getTime()) ? null : date;
+}
+
+export function formatDateValue(value: unknown, locale?: string): string {
+  const date = parseDateValue(value);
+  if (!date) return '';
+  return locale ? date.toLocaleDateString(locale) : date.toLocaleDateString();
 }
 
 export function formatDateTimeValue(value: unknown, locale?: string): string {
