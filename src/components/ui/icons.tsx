@@ -45,19 +45,6 @@ export function IconKey({ size = 20, ...props }: IconProps) {
   );
 }
 
-export function IconBot({ size = 20, ...props }: IconProps) {
-  return (
-    <svg {...baseSvgProps} width={size} height={size} {...props}>
-      <path d="M12 8V4H8" />
-      <rect width="16" height="12" x="4" y="8" rx="2" />
-      <path d="M2 14h2" />
-      <path d="M20 14h2" />
-      <path d="M15 13v2" />
-      <path d="M9 13v2" />
-    </svg>
-  );
-}
-
 export function IconModelCluster({ size = 20, ...props }: IconProps) {
   return (
     <svg {...baseSvgProps} width={size} height={size} {...props}>
@@ -84,18 +71,6 @@ export function IconFilterAll({ size = 20, ...props }: IconProps) {
       <path d="M8.5 15.5 10.75 13.25" />
       <path d="M15.5 15.5 13.25 13.25" />
       <circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
-export function IconFileText({ size = 20, ...props }: IconProps) {
-  return (
-    <svg {...baseSvgProps} width={size} height={size} {...props}>
-      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-      <path d="M10 9H8" />
-      <path d="M16 13H8" />
-      <path d="M16 17H8" />
     </svg>
   );
 }

@@ -748,12 +748,10 @@ export function MainLayout() {
         }
       >
         <span className="nav-icon">{item.icon}</span>
-        {showSidebarLabels ? (
-          <span className="nav-text">
-            <span className="nav-label">{itemLabel}</span>
-            {itemMeta ? <span className="nav-meta">{itemMeta}</span> : null}
-          </span>
-        ) : null}
+        <span className="nav-text" aria-hidden={!showSidebarLabels}>
+          <span className="nav-label">{itemLabel}</span>
+          {itemMeta ? <span className="nav-meta">{itemMeta}</span> : null}
+        </span>
       </NavLink>
     );
   };
@@ -799,17 +797,13 @@ export function MainLayout() {
           }
         >
           <span className="nav-icon">{item.icon}</span>
-          {showSidebarLabels && (
-            <>
-              <span className="nav-text">
-                <span className="nav-label">{item.label}</span>
-                {item.meta ? <span className="nav-meta">{item.meta}</span> : null}
-              </span>
-              <span className="nav-drawer-caret" aria-hidden="true">
-                <IconChevronDown size={14} />
-              </span>
-            </>
-          )}
+          <span className="nav-text" aria-hidden={!showSidebarLabels}>
+            <span className="nav-label">{item.label}</span>
+            {item.meta ? <span className="nav-meta">{item.meta}</span> : null}
+          </span>
+          <span className="nav-drawer-caret" aria-hidden="true">
+            <IconChevronDown size={14} />
+          </span>
         </button>
         {isOpen ? (
           <div className="nav-sub-list">
@@ -991,17 +985,18 @@ export function MainLayout() {
             <span className="sidebar-brand-logo-wrap" aria-hidden="true">
               <img src={logoUrl} alt="" className="sidebar-brand-logo" />
             </span>
-            {showSidebarLabels && <span className="sidebar-brand-title">CPAMC</span>}
+            <span className="sidebar-brand-title" aria-hidden={!showSidebarLabels}>
+              CPAMC
+            </span>
           </div>
 
           <div className="nav-section">
             {navGroups.map((group, index) => (
               <div className="nav-group" key={group.id}>
-                {showSidebarLabels ? (
-                  <div className="nav-group-label">{t(group.labelKey)}</div>
-                ) : (
-                  index > 0 && <div className="nav-group-divider" aria-hidden="true" />
-                )}
+                <div className="nav-group-label" aria-hidden={!showSidebarLabels}>
+                  {t(group.labelKey)}
+                </div>
+                {index > 0 && <div className="nav-group-divider" aria-hidden="true" />}
                 {group.items.map((item) => renderNavItem(item))}
               </div>
             ))}

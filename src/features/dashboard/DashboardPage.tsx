@@ -1,15 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import {
-  IconBot,
-  IconFileText,
-  IconSettings,
-  IconScrollText,
-  IconSidebarQuota,
-  IconSidebarSystem,
-  IconRefreshCw,
-} from '@/components/ui/icons';
+import { IconRefreshCw } from '@/components/ui/icons';
 import { useAuthStore, useNotificationStore } from '@/stores';
 import { versionApi } from '@/services/api';
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
@@ -17,7 +9,6 @@ import { formatCompactNumber, formatDateValue, formatPercent } from '@/utils/for
 import { isRecord } from '@/utils/helpers';
 import type { Config } from '@/types';
 import { useDashboardOverview } from './hooks/useDashboardOverview';
-import { LiveWire } from './components/LiveWire';
 import { Meter } from './components/Meter';
 import { Sparkline } from './components/Sparkline';
 import { ThroughputChart } from './components/ThroughputChart';
@@ -27,8 +18,7 @@ import styles from './dashboard.module.scss';
 
 const DASH = '—';
 
-/** KPI 卡左上角色签：有语义色调的卡用状态色，其余保持中性 */
-const TILE_ACCENTS: Record<MeterTone, string> = {
+const STATUS_ACCENTS: Record<MeterTone, string> = {
   good: 'var(--viz-success)',
   warning: 'var(--amber-color)',
   critical: 'var(--viz-failure)',
@@ -161,7 +151,6 @@ export function DashboardPage() {
   const trafficRef = useRevealOnScroll<HTMLElement>();
   const fleetRef = useRevealOnScroll<HTMLElement>();
   const detailRef = useRevealGroup<HTMLElement>();
-  const ctaRef = useRevealGroup<HTMLElement>();
 
   const animatedTotal = useCountUp(traffic.total, connected);
 
@@ -172,11 +161,6 @@ export function DashboardPage() {
     if (minutes === 0) return t('dashboard.window_h', { hours });
     return t('dashboard.window_hm', { hours, minutes });
   }, [traffic.windowMinutes, t]);
-
-  const heroSparkPoints = useMemo(
-    () => traffic.buckets.map((bucket) => bucket.success + bucket.failed),
-    [traffic.buckets]
-  );
 
   const routingStrategy = useMemo(() => {
     const raw = config?.routingStrategy?.trim() ?? '';
@@ -205,7 +189,7 @@ export function DashboardPage() {
       critical: 'hero_verdict_critical',
       idle: 'hero_verdict_idle',
     };
-    return { key: keyByTone[successRateTone], accent: TILE_ACCENTS[successRateTone] };
+    return { key: keyByTone[successRateTone], accent: STATUS_ACCENTS[successRateTone] };
   }, [connected, connectionStatus, traffic.total, traffic.successRate, successRateTone]);
 
   /* 句号状态灯只在「有活着的流量」时呼吸；离线/静默时保持安静 */
@@ -306,45 +290,6 @@ export function DashboardPage() {
       ]
     : [];
 
-  const ctaCards = [
-    {
-      to: '/ai-providers',
-      icon: <IconBot size={20} />,
-      title: t('nav.ai_providers'),
-      description: t('dashboard.cta_providers_desc'),
-    },
-    {
-      to: '/auth-files',
-      icon: <IconFileText size={20} />,
-      title: t('nav.auth_files'),
-      description: t('dashboard.cta_auth_files_desc'),
-    },
-    {
-      to: '/config',
-      icon: <IconSettings size={20} />,
-      title: t('nav.config_management'),
-      description: t('dashboard.cta_config_desc'),
-    },
-    {
-      to: '/quota',
-      icon: <IconSidebarQuota size={20} />,
-      title: t('nav.quota_management'),
-      description: t('dashboard.cta_quota_desc'),
-    },
-    {
-      to: '/logs',
-      icon: <IconScrollText size={20} />,
-      title: t('nav.logs'),
-      description: t('dashboard.cta_logs_desc'),
-    },
-    {
-      to: '/system',
-      icon: <IconSidebarSystem size={20} />,
-      title: t('nav.system_info'),
-      description: t('dashboard.cta_system_desc'),
-    },
-  ];
-
   return (
     <div className={styles.page}>
       {/* ---------- Hero ---------- */}
@@ -420,28 +365,12 @@ export function DashboardPage() {
             </span>
           </div>
         </div>
-
-        <div className={styles.heroWire}>
-          <LiveWire
-            points={heroSparkPoints}
-            ariaLabel={t('dashboard.hero_spark_label', { window: windowLabel })}
-          />
-        </div>
       </section>
 
       {/* ---------- KPI ---------- */}
       <section className={styles.statsRow} ref={statsRef} aria-label={t('dashboard.stats_aria')}>
         {statTiles.map((tile) => (
-          <article
-            key={tile.key}
-            className={styles.statTile}
-            data-reveal
-            style={
-              {
-                '--tile-accent': tile.tone ? TILE_ACCENTS[tile.tone] : 'var(--border-hover)',
-              } as React.CSSProperties
-            }
-          >
+          <article key={tile.key} className={styles.statTile} data-reveal>
             <span className={styles.statLabel}>{tile.label}</span>
             <strong className={styles.statValue}>{tile.value}</strong>
             {tile.meter !== null && tile.meter !== undefined && (
@@ -647,26 +576,6 @@ export function DashboardPage() {
               →
             </span>
           </Link>
-        </div>
-      </section>
-
-      {/* ---------- CTA ---------- */}
-      <section className={styles.section} ref={ctaRef}>
-        <header className={styles.sectionHead} data-reveal>
-          <span className={styles.eyebrow}>{t('dashboard.cta_eyebrow')}</span>
-          <h2 className={styles.sectionTitle}>{t('dashboard.cta_title')}</h2>
-        </header>
-        <div className={styles.ctaGrid}>
-          {ctaCards.map((card) => (
-            <Link key={card.to} to={card.to} className={styles.ctaCard} data-reveal>
-              <span className={styles.ctaIcon}>{card.icon}</span>
-              <span className={styles.ctaTitle}>{card.title}</span>
-              <span className={styles.ctaDescription}>{card.description}</span>
-              <span className={styles.ctaArrow} aria-hidden="true">
-                →
-              </span>
-            </Link>
-          ))}
         </div>
       </section>
     </div>

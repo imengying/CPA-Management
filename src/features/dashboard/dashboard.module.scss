@@ -3,13 +3,14 @@
 .page {
   --viz-success: #0f9f6e;
   --viz-failure: #c45143;
+  --ease-out-strong: cubic-bezier(0.22, 1, 0.36, 1);
 
   width: 100%;
-  max-width: 1240px;
+  max-width: 1120px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 32px;
 }
 
 :global(html[data-theme='dark']) .page {
@@ -18,31 +19,31 @@
 }
 
 .hero {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--bg-primary);
-  overflow: hidden;
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+  align-items: center;
+  gap: 32px;
+  padding: 18px 0 8px;
 }
 
 .heroCopy {
   min-width: 0;
-  padding: 18px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .heroTitle {
   margin: 0;
   color: var(--text-primary);
-  font-size: 24px;
+  font-size: 36px;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.1;
   letter-spacing: 0;
+  text-wrap: balance;
   overflow-wrap: anywhere;
 }
 
@@ -59,8 +60,8 @@
   margin: 0;
   color: var(--text-secondary);
   font-family: $font-mono;
-  font-size: 12px;
-  line-height: 1.45;
+  font-size: 13px;
+  line-height: 1.5;
   letter-spacing: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -71,13 +72,13 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .primaryAction,
 .ghostAction {
-  min-height: 34px;
-  padding: 7px 12px;
+  min-height: 36px;
+  padding: 8px 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -88,9 +89,15 @@
   line-height: 1.2;
   text-decoration: none;
   transition:
+    transform $transition-fast,
     background-color $transition-fast,
     border-color $transition-fast,
     color $transition-fast;
+}
+
+.primaryAction:active,
+.ghostAction:active {
+  transform: scale(0.97);
 }
 
 .primaryAction {
@@ -105,13 +112,15 @@
 }
 
 .ghostAction {
-  border: 1px solid var(--border-color);
+  padding-right: 6px;
+  padding-left: 6px;
+  border: 1px solid transparent;
   background: transparent;
   color: var(--text-secondary);
 
   &:hover {
-    border-color: var(--border-hover);
-    background: var(--accent);
+    border-color: transparent;
+    background: transparent;
     color: var(--text-primary);
   }
 }
@@ -129,13 +138,13 @@
 
 .heroPanel {
   min-width: 0;
-  padding: 16px 18px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 5px;
-  border-left: 1px solid var(--border-color);
-  background: var(--bg-secondary);
+  gap: 6px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
 }
 
 .heroPanelTop {
@@ -146,10 +155,12 @@
 }
 
 .heroPanelLabel {
-  color: var(--text-secondary);
-  font-size: 12px;
-  font-weight: 650;
+  color: var(--text-tertiary);
+  font-family: $font-mono;
+  font-size: 11px;
+  font-weight: 700;
   letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 .liveBadge {
@@ -162,8 +173,11 @@
   border-radius: 9999px;
   background: color-mix(in srgb, var(--viz-success) 8%, transparent);
   color: var(--success-badge-text);
+  font-family: $font-mono;
   font-size: 10px;
   font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 .liveDot {
@@ -171,14 +185,15 @@
   height: 6px;
   border-radius: 50%;
   background: var(--viz-success);
+  animation: livePing 2s ease-out infinite;
 }
 
 .heroFigure {
   color: var(--text-primary);
   font-family: $font-mono;
-  font-size: 32px;
-  font-weight: 650;
-  line-height: 1.1;
+  font-size: 42px;
+  font-weight: 600;
+  line-height: 1.05;
   letter-spacing: 0;
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
@@ -187,12 +202,12 @@
 .heroPanelMeta {
   color: var(--text-secondary);
   font-family: $font-mono;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .ratioBar {
   height: 6px;
-  margin-top: 6px;
+  margin-top: 8px;
   display: flex;
   gap: 2px;
 }
@@ -214,10 +229,10 @@
 }
 
 .heroSplit {
-  padding-top: 8px;
+  padding-top: 10px;
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
   border-top: 1px solid var(--border-color);
   color: var(--text-secondary);
   font-size: 12px;
@@ -243,31 +258,29 @@
   border-radius: 2px;
 }
 
-.heroWire {
-  grid-column: 1 / -1;
-  height: 62px;
-  padding: 0 16px 8px;
-  border-top: 1px solid var(--border-color);
-  background: var(--bg-primary);
-  pointer-events: none;
-}
-
 .statsRow {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
+  gap: 12px;
 }
 
 .statTile {
-  min-height: 116px;
-  padding: 13px;
+  min-height: 128px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   background: var(--bg-primary);
-  box-shadow: inset 3px 0 0 var(--tile-accent, var(--border-hover));
+  transition: border-color $transition-fast;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--border-hover);
+    }
+  }
 }
 
 .statLabel {
@@ -279,30 +292,31 @@
 .statValue {
   color: var(--text-primary);
   font-family: $font-mono;
-  font-size: 24px;
-  font-weight: 650;
-  line-height: 1.15;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.1;
   letter-spacing: 0;
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
 
 .statMeter {
-  margin: 2px 0;
+  margin: 4px 0 2px;
 }
 
 .statHint {
   margin-top: auto;
   color: var(--text-tertiary);
-  font-size: 11px;
-  line-height: 1.4;
+  font-size: 12px;
+  line-height: 1.45;
   overflow-wrap: anywhere;
 }
 
 .section {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
 }
 
 .sectionHead,
@@ -310,44 +324,46 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 5px;
 }
 
 .eyebrow {
   color: var(--text-tertiary);
+  font-family: $font-mono;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 .sectionTitle,
 .panelTitle {
   margin: 0;
   color: var(--text-primary);
-  font-size: 17px;
-  font-weight: 700;
-  line-height: 1.3;
+  font-size: 22px;
+  font-weight: 650;
+  line-height: 1.2;
   letter-spacing: 0;
 }
 
 .panelTitle {
-  font-size: 16px;
+  font-size: 17px;
 }
 
 .sectionDescription {
-  max-width: 72ch;
+  max-width: 64ch;
   margin: 0;
   color: var(--text-secondary);
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .panel {
   min-width: 0;
-  padding: 14px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   background: var(--bg-primary);
@@ -357,7 +373,7 @@
   align-self: flex-start;
   margin-top: auto;
   color: var(--primary-active);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 650;
   text-decoration: none;
 }
@@ -366,7 +382,7 @@
   margin: 0;
   padding: 18px 0;
   color: var(--text-tertiary);
-  font-size: 12px;
+  font-size: 13px;
   text-align: center;
 }
 
@@ -379,10 +395,10 @@
 }
 
 .fleetRow {
-  min-height: 58px;
-  padding: 9px 0;
+  min-height: 64px;
+  padding: 12px 0;
   display: grid;
-  grid-template-columns: 28px minmax(120px, 1.2fr) minmax(90px, 1fr) 86px minmax(96px, 0.7fr);
+  grid-template-columns: 28px minmax(120px, 1.3fr) minmax(90px, 1fr) 92px minmax(96px, 0.7fr);
   align-items: center;
   gap: 12px;
   border-bottom: 1px solid var(--border-color);
@@ -395,7 +411,7 @@
 .fleetRank {
   color: var(--text-quaternary);
   font-family: $font-mono;
-  font-size: 11px;
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -414,8 +430,8 @@
 .fleetName {
   overflow: hidden;
   color: var(--text-primary);
-  font-size: 13px;
-  font-weight: 650;
+  font-size: 14px;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -423,7 +439,7 @@
 .fleetMeta,
 .fleetTotalLabel {
   color: var(--text-tertiary);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .fleetSpark {
@@ -439,8 +455,8 @@
 .fleetRateValue {
   color: var(--text-primary);
   font-family: $font-mono;
-  font-size: 13px;
-  font-weight: 650;
+  font-size: 14px;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
@@ -455,11 +471,11 @@
 .detailGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 12px;
 }
 
 .healthBar {
-  height: 9px;
+  height: 10px;
   display: flex;
   gap: 2px;
 }
@@ -479,7 +495,7 @@
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   list-style: none;
 }
 
@@ -500,10 +516,10 @@
 }
 
 .typeBreakdown {
-  padding-top: 10px;
+  padding-top: 12px;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
   border-top: 1px solid var(--border-color);
 }
 
@@ -512,19 +528,20 @@
   font-size: 11px;
   font-weight: 650;
   letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 .typeChip,
 .togglePill {
   min-height: 26px;
-  padding: 4px 8px;
+  padding: 5px 10px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   border: 1px solid var(--border-color);
   border-radius: 9999px;
   color: var(--text-secondary);
-  font-size: 11px;
+  font-size: 12px;
 
   b {
     color: var(--text-primary);
@@ -539,8 +556,8 @@
 }
 
 .specRow {
-  min-height: 36px;
-  padding: 7px 0;
+  min-height: 40px;
+  padding: 8px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -555,7 +572,7 @@
 .specLabel {
   flex: 0 1 auto;
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .specValueWrap {
@@ -571,8 +588,8 @@
   min-width: 0;
   overflow: hidden;
   color: var(--text-primary);
-  font-size: 12px;
-  font-weight: 650;
+  font-size: 13px;
+  font-weight: 600;
   text-align: right;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -631,77 +648,6 @@
   }
 }
 
-.ctaGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.ctaCard {
-  min-height: 92px;
-  padding: 12px;
-  display: grid;
-  grid-template-columns: 32px minmax(0, 1fr) auto;
-  grid-template-rows: auto auto;
-  align-items: center;
-  column-gap: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--bg-primary);
-  color: inherit;
-  text-decoration: none;
-  transition:
-    border-color $transition-fast,
-    background-color $transition-fast;
-
-  &:hover {
-    border-color: var(--border-hover);
-    background: var(--accent);
-  }
-}
-
-.ctaIcon {
-  grid-row: 1 / -1;
-  width: 32px;
-  height: 32px;
-  display: inline-grid;
-  place-items: center;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  color: var(--text-secondary);
-}
-
-.ctaTitle {
-  min-width: 0;
-  overflow: hidden;
-  color: var(--text-primary);
-  font-size: 13px;
-  font-weight: 650;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.ctaDescription {
-  min-width: 0;
-  overflow: hidden;
-  color: var(--text-tertiary);
-  font-size: 11px;
-  line-height: 1.35;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.ctaArrow {
-  grid-column: 3;
-  grid-row: 1 / -1;
-  color: var(--text-tertiary);
-  transition: transform $transition-fast;
-}
-
-.ctaCard:hover .ctaArrow {
-  transform: translateX(2px);
-}
-
 @keyframes periodBreath {
   0%,
   100% {
@@ -712,6 +658,17 @@
   }
 }
 
+@keyframes livePing {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--viz-success) 38%, transparent);
+  }
+
+  70%,
+  100% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -719,6 +676,12 @@
 }
 
 @media (max-width: 900px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    padding-top: 8px;
+  }
+
   .statsRow {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -726,22 +689,9 @@
   .detailGrid {
     grid-template-columns: minmax(0, 1fr);
   }
-
-  .ctaGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 680px) {
-  .hero {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .heroPanel {
-    border-top: 1px solid var(--border-color);
-    border-left: 0;
-  }
-
   .fleetRow {
     grid-template-columns: minmax(0, 1fr) auto;
     row-gap: 7px;
@@ -769,29 +719,27 @@
 
 @include mobile {
   .page {
-    gap: 12px;
+    gap: 20px;
   }
 
-  .heroCopy,
   .heroPanel {
-    padding: 14px;
+    padding: 16px;
   }
 
   .heroTitle {
-    font-size: 21px;
+    font-size: 28px;
   }
 
-  .statsRow,
-  .ctaGrid {
+  .statsRow {
     grid-template-columns: minmax(0, 1fr);
   }
 
   .statTile {
-    min-height: 104px;
+    min-height: 112px;
   }
 
   .panel {
-    padding: 12px;
+    padding: 16px;
   }
 
   .specRow {
@@ -805,6 +753,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .heroPeriodLive,
+  .liveDot,
   .specAction:disabled svg {
     animation: none;
   }
@@ -812,8 +761,7 @@
   .primaryAction,
   .ghostAction,
   .linkArrow,
-  .ctaCard,
-  .ctaArrow {
+  .statTile {
     transition: none;
   }
 }
