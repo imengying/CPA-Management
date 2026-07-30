@@ -2,10 +2,6 @@
 @use '../../styles/mixins' as *;
 
 .page {
-  --viz-success: #0f9f6e;
-  --viz-failure: #c45143;
-  --ease-out-strong: cubic-bezier(0.22, 1, 0.36, 1);
-
   width: 100%;
   max-width: 1120px;
   min-width: 0;
@@ -16,11 +12,6 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-:global(html[data-theme='dark']) .page {
-  --viz-success: #16a879;
-  --viz-failure: #cf5a4b;
 }
 
 .workbench {

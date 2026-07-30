@@ -36,6 +36,9 @@
   --error-color: #dc2626;
   --danger-color: var(--error-color);
   --info-color: var(--primary-color);
+  --viz-success: #0f9f6e;
+  --viz-failure: #c45143;
+  --ease-out-strong: cubic-bezier(0.22, 1, 0.36, 1);
 
   --warning-bg: rgba(217, 119, 6, 0.1);
   --warning-border: rgba(217, 119, 6, 0.3);
@@ -149,6 +152,8 @@
   --error-color: #f87171;
   --danger-color: var(--error-color);
   --info-color: var(--primary-color);
+  --viz-success: #16a879;
+  --viz-failure: #cf5a4b;
 
   --warning-bg: rgba(245, 158, 11, 0.16);
   --warning-border: rgba(245, 158, 11, 0.38);
