@@ -1,0 +1,161 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/quotaPresentation' as quotaPresentation;
+
+.quotaSection {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+@include quotaPresentation.card-body;
+@include quotaPresentation.card-details;
+
+.quotaMessage {
+  padding: 5px 4px;
+  color: var(--text-tertiary);
+  font-family: $font-mono;
+  font-size: 11.5px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+button.quotaMessageAction {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+
+  &:hover:not(:disabled) {
+    color: var(--text-primary);
+  }
+
+  &:disabled {
+    color: var(--text-quaternary);
+    cursor: not-allowed;
+    text-decoration: none;
+  }
+}
+
+.quotaError {
+  padding: 6px 8px;
+  border: 1px solid var(--failure-badge-border);
+  border-radius: 6px;
+  background: var(--bg-error-light);
+  color: var(--danger-color);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.quotaCardActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.quotaResetCreditButton {
+  white-space: nowrap;
+}
+
+.elitePlanValue {
+  position: relative;
+  min-height: 20px;
+  padding: 1px 7px 1px 20px;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(200, 226, 255, 0.78);
+  border-radius: 6px;
+  background:
+    conic-gradient(
+        from 195deg at 50% 30%,
+        #ffffff 0deg 40deg,
+        #0b1828 40deg 112deg,
+        #dceeff 112deg 172deg,
+        #16283f 172deg 240deg,
+        #a8cbe8 240deg 300deg,
+        #091421 300deg 360deg
+      )
+      no-repeat left center / 16px 100%,
+    linear-gradient(150deg, #1a2f4c, #122540 55%, #0a1728);
+  box-shadow:
+    0 1px 3px rgba(3, 10, 22, 0.35),
+    0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 0 10px rgba(140, 200, 255, 0.3);
+  color: #f2f8ff;
+  font-family: $font-mono;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-shadow: 0 1px 2px rgba(4, 12, 26, 0.6);
+  text-transform: none;
+  white-space: nowrap;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 4px;
+    width: 8px;
+    height: 8px;
+    transform: translateY(-50%) rotate(45deg);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: linear-gradient(135deg, #ffffff, #73b9ed 50%, #172b45 51%);
+    box-shadow: 0 0 6px rgba(216, 239, 255, 0.75);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      110deg,
+      transparent 0 12%,
+      rgba(255, 255, 255, 0.9) 17%,
+      transparent 22% 100%
+    );
+    opacity: 0;
+    pointer-events: none;
+    animation: gem-flash 11s var(--ease-out-strong, ease-out) infinite;
+    animation-delay: var(--gem-flash-delay, 0s);
+  }
+}
+
+:global([data-theme='dark']) .elitePlanValue {
+  border-color: rgba(214, 235, 255, 0.84);
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.42),
+    0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 0 12px rgba(150, 205, 255, 0.36);
+}
+
+@keyframes gem-flash {
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  1% {
+    opacity: 1;
+  }
+
+  4% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .elitePlanValue::after {
+    animation: none;
+    opacity: 0.18;
+  }
+}

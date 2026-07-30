@@ -207,9 +207,17 @@
     "logging_to_file_enable": "啟用記錄到檔案",
     "ws_auth_enable": "啟用 /ws/* 驗證",
     "routing_strategy_round_robin": "round-robin（輪詢）",
+    "routing_strategy_weighted_round_robin": "weighted-round-robin（加權輪詢）",
     "routing_strategy_fill_first": "fill-first（優先填充）"
   },
   "auth_files": {
+    "title": "驗證檔案管理",
+    "meta_total": "{{count}} 個憑證",
+    "meta_active": "{{count}} 個啟用",
+    "meta_problem": "{{count}} 個異常",
+    "batch_toolbar_label": "批次操作",
+    "empty_oauth_link": "前往 OAuth 登入",
+    "no_results_clear": "清除篩選",
     "title_section": "驗證檔案",
     "upload_button": "上傳檔案",
     "delete_all_button": "刪除全部",
@@ -278,6 +286,7 @@
     "sort_az": "A-Z 名稱",
     "sort_priority": "優先順序",
     "priority_display": "優先順序",
+    "weight_display": "WRR 權重",
     "page_size_label": "單頁數量",
     "page_size_unit": "個/頁",
     "view_mode_paged": "分頁顯示",
@@ -312,8 +321,6 @@
     "models_loading": "正在載入模型清單...",
     "models_empty": "該憑證暫無可用模型",
     "models_empty_desc": "該驗證憑證可能尚未被伺服器載入或沒有綁定任何模型",
-    "models_unsupported": "目前版本不支援此功能",
-    "models_unsupported_desc": "請更新 CLI Proxy API 到最新版本後重試",
     "models_excluded_badge": "已停用",
     "models_excluded_hint": "此 OAuth 模型已被停用",
     "status_toggle_label": "啟用",
@@ -347,6 +354,10 @@
     "priority_label": "優先順序（priority）",
     "priority_placeholder": "例如: 10 或 -1",
     "priority_hint": "僅支援整數；無效值會被忽略。數值越大優先順序越高。",
+    "weight_label": "調度權重（weight）",
+    "weight_hint": "預設值為 1；小於或等於 0 時不參與加權調度；最大值為 1,000,000。",
+    "weight_invalid_integer": "權重必須是整數。",
+    "weight_invalid_max": "權重不能超過 1,000,000。",
     "websockets_label": "WebSockets（websockets）",
     "websockets_hint": "為該憑證開啟 Responses API 的 websocket 傳輸。",
     "using_api_label": "使用官方 API（using_api）",
@@ -565,7 +576,7 @@
     "provider_hint": "預設選取目前篩選的供應商，也可直接輸入或選擇其他名稱。",
     "models_label": "停用的模型",
     "models_loading": "正在載入模型清單...",
-    "models_unsupported": "目前 CPA 版本不支援取得模型清單。",
+    "models_unavailable": "此供應商目前沒有可用的模型定義。",
     "models_loaded": "已載入 {{count}} 個模型，勾選要停用的模型。",
     "no_models_available": "該供應商暫無可用模型清單。",
     "custom_rule_label": "自訂模型規則",
@@ -592,9 +603,6 @@
     "provider_required": "請先填寫供應商名稱",
     "scope_all": "目前範圍：全域（顯示所有供應商）",
     "scope_provider": "目前範圍：{{provider}}",
-    "upgrade_required": "目前 CPA 版本不支援 OAuth 模型停用，請升級 CPA 版本",
-    "upgrade_required_title": "需要升級 CPA 版本",
-    "upgrade_required_desc": "目前伺服器版本不支援取得 OAuth 模型停用功能，請升級到最新版本的 CPA（CLI Proxy API）後重試。",
     "delete_title": "刪除模型停用"
   },
   "oauth_model_alias": {
@@ -605,7 +613,7 @@
     "provider_placeholder": "例如 codex / vertex",
     "provider_hint": "預設選取目前篩選的供應商，也可直接輸入或選擇其他名稱。",
     "model_source_loading": "正在載入模型清單...",
-    "model_source_unsupported": "目前 CPA 版本不支援取得模型清單（仍可手動輸入）。",
+    "model_source_unavailable": "模型定義暫時無法取得（仍可手動輸入）。",
     "model_source_loaded": "已載入 {{count}} 個模型，可在「原模型名稱」中下拉選擇；也可手動輸入。留空儲存將刪除該供應商記錄；開啟「保留原名」會在保留原模型名的同時新增別名。",
     "alias_label": "模型別名",
     "alias_name_placeholder": "原模型名稱",
@@ -656,9 +664,6 @@
     "view_mode_diagram": "概覽",
     "view_mode_list": "管理",
     "provider_required": "請先填寫供應商名稱",
-    "upgrade_required": "目前 CPA 版本不支援模型別名功能，請升級 CPA 版本",
-    "upgrade_required_title": "需要升級 CPA 版本",
-    "upgrade_required_desc": "目前伺服器版本不支援 OAuth 模型別名功能，請升級到最新版本的 CPA（CLI Proxy API）後重試。",
     "delete_title": "刪除模型別名"
   },
   "auth_login": {
@@ -1012,6 +1017,7 @@
           "routing_strategy": "路由策略",
           "routing_strategy_hint": "選擇憑證選擇策略",
           "strategy_round_robin": "輪詢（Round Robin）",
+          "strategy_weighted_round_robin": "加權輪詢（Weighted Round Robin）",
           "strategy_fill_first": "填充優先（Fill First）",
           "session_affinity_ttl": "會話黏性 TTL",
           "force_model_prefix": "強制模型前綴",
@@ -1418,6 +1424,7 @@
     },
     "providerNames": {
       "gemini": "Gemini",
+      "interactions": "Interactions API",
       "codex": "Codex",
       "xai": "xAI",
       "claude": "Claude",
@@ -1475,6 +1482,8 @@
       "proxyUrl": "代理 URL",
       "prefix": "前綴",
       "priority": "優先級",
+      "weight": "調度權重",
+      "weightHint": "預設 1 · ≤ 0 時不參與 · 最大 1,000,000",
       "disabled": "停用此條目",
       "disabledHint": "停用後不會被閘道使用",
       "websockets": "啟用 WebSockets",
@@ -1519,7 +1528,9 @@
       "validation": {
         "nameRequired": "名稱必填",
         "apiKeyRequired": "至少填寫一個 API 金鑰",
-        "baseUrlRequired": "服務位址必填"
+        "baseUrlRequired": "服務位址必填",
+        "weightInteger": "調度權重必須是整數",
+        "weightMax": "調度權重不能超過 {{max}}"
       }
     },
     "delete": {

@@ -18,12 +18,9 @@ import {
 } from '@/stores';
 import type { AuthFileItem } from '@/types';
 import { getErrorStatus } from '@/utils/helpers';
-import {
-  isRuntimeOnlyAuthFile,
-  resolveQuotaErrorMessage,
-  type QuotaProviderType,
-} from '@/features/authFiles/constants';
-import styles from '@/pages/AuthFilesPage.module.scss';
+import { isRuntimeOnlyAuthFile, type QuotaProviderType } from '@/features/authFiles/constants';
+import { resolveQuotaErrorMessage } from '@/utils/quota';
+import styles from '@/features/authFiles/components/AuthFileQuota.module.scss';
 
 type QuotaState = { status?: string; error?: string; errorStatus?: number } | undefined;
 

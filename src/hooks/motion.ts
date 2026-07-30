@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { animate } from 'motion/mini';
 
 /**
- * Premium 动效档位：入场 0.45s、减速曲线、无回弹。
+ * 共享动效档位：入场 0.45s、减速曲线、无回弹。
  * 与 PageTransition 保持同一套自定义 easing 写法。
  */
 const REVEAL_DISTANCE = 24;
@@ -14,7 +14,7 @@ const GROUP_MAX_TOTAL = 0.36;
 
 const easeOutQuart = (progress: number) => 1 - (1 - progress) ** 4;
 
-const prefersReducedMotion = (): boolean =>
+export const prefersReducedMotion = (): boolean =>
   typeof window !== 'undefined' &&
   typeof window.matchMedia === 'function' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;

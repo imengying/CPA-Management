@@ -3,7 +3,7 @@
  */
 
 export type ProviderBrand =
-  'gemini' | 'codex' | 'xai' | 'claude' | 'vertex' | 'openaiCompatibility';
+  'gemini' | 'interactions' | 'codex' | 'xai' | 'claude' | 'vertex' | 'openaiCompatibility';
 
 export const PROVIDER_SORT_BY_VALUES = ['name', 'priority', 'recent-success'] as const;
 export type ProviderSortBy = (typeof PROVIDER_SORT_BY_VALUES)[number];
@@ -13,6 +13,7 @@ export type SortDir = (typeof SORT_DIR_VALUES)[number];
 
 export type ProviderResourceSelector =
   | { brand: 'gemini'; apiKey: string; baseUrl?: string; index: number }
+  | { brand: 'interactions'; apiKey: string; baseUrl?: string; index: number }
   | { brand: 'codex'; apiKey: string; baseUrl?: string; index: number }
   | { brand: 'xai'; apiKey: string; baseUrl?: string; index: number }
   | { brand: 'claude'; apiKey: string; baseUrl?: string; index: number }
@@ -88,6 +89,7 @@ export interface ApiKeyEntryInput {
   apiKey: string;
   existingApiKey?: string;
   proxyUrl: string;
+  weight?: number;
   authIndex?: string;
 }
 
@@ -109,6 +111,7 @@ export interface ProviderEntryFormInput {
   disabled: boolean;
   disableCooling?: boolean;
   priority?: number;
+  weight?: number;
 
   /** 高级折叠区 */
   models: ModelEntryInput[];

@@ -5,7 +5,6 @@ import { useNotificationStore } from '@/stores';
 import type { AuthFileItem, OAuthModelAliasEntry } from '@/types';
 import type { AuthFileModelItem, OAuthConfigLoadError } from '@/features/authFiles/constants';
 import { normalizeProviderKey } from '@/features/authFiles/constants';
-import { getErrorStatus } from '@/utils/helpers';
 
 type ViewMode = 'diagram' | 'list';
 
@@ -50,8 +49,6 @@ export function useAuthFilesOauth(options: UseAuthFilesOauthOptions): UseAuthFil
     {}
   );
 
-  const excludedUnsupportedRef = useRef(false);
-  const mappingsUnsupportedRef = useRef(false);
   const excludedReadyRef = useRef(false);
   const modelAliasReadyRef = useRef(false);
   const excludedLoadRequestRef = useRef(0);
@@ -136,26 +133,14 @@ export function useAuthFilesOauth(options: UseAuthFilesOauthOptions): UseAuthFil
     try {
       const res = await authFilesApi.getOauthExcludedModels();
       if (requestId !== excludedLoadRequestRef.current) return;
-      excludedUnsupportedRef.current = false;
       excludedReadyRef.current = true;
       setExcluded(res || {});
       setExcludedError(null);
-    } catch (err: unknown) {
+    } catch {
       if (requestId !== excludedLoadRequestRef.current) return;
-      const status = getErrorStatus(err);
-
-      if (status === 404) {
-        setExcluded({});
-        setExcludedError('unsupported');
-        if (!excludedUnsupportedRef.current) {
-          excludedUnsupportedRef.current = true;
-          showNotification(t('oauth_excluded.upgrade_required'), 'warning');
-        }
-        return;
-      }
       setExcludedError('load');
     }
-  }, [showNotification, t]);
+  }, []);
 
   const loadModelAlias = useCallback(async () => {
     const requestId = ++modelAliasLoadRequestRef.current;
@@ -164,26 +149,14 @@ export function useAuthFilesOauth(options: UseAuthFilesOauthOptions): UseAuthFil
     try {
       const res = await authFilesApi.getOauthModelAlias();
       if (requestId !== modelAliasLoadRequestRef.current) return;
-      mappingsUnsupportedRef.current = false;
       modelAliasReadyRef.current = true;
       setModelAlias(res || {});
       setModelAliasError(null);
-    } catch (err: unknown) {
+    } catch {
       if (requestId !== modelAliasLoadRequestRef.current) return;
-      const status = getErrorStatus(err);
-
-      if (status === 404) {
-        setModelAlias({});
-        setModelAliasError('unsupported');
-        if (!mappingsUnsupportedRef.current) {
-          mappingsUnsupportedRef.current = true;
-          showNotification(t('oauth_model_alias.upgrade_required'), 'warning');
-        }
-        return;
-      }
       setModelAliasError('load');
     }
-  }, [showNotification, t]);
+  }, []);
 
   const showLoadRequired = useCallback(() => {
     showNotification(t('notification.refresh_failed'), 'error');
@@ -212,25 +185,8 @@ export function useAuthFilesOauth(options: UseAuthFilesOauthOptions): UseAuthFil
             await loadExcluded();
             showNotification(t('oauth_excluded.delete_success'), 'success');
           } catch (err: unknown) {
-            try {
-              const current = await authFilesApi.getOauthExcludedModels();
-              const next: Record<string, string[]> = {};
-              Object.entries(current).forEach(([key, models]) => {
-                if (normalizeProviderKey(key) === providerKey) return;
-                next[key] = models;
-              });
-              await authFilesApi.replaceOauthExcludedModels(next);
-              await loadExcluded();
-              showNotification(t('oauth_excluded.delete_success'), 'success');
-            } catch (fallbackErr: unknown) {
-              const errorMessage =
-                fallbackErr instanceof Error
-                  ? fallbackErr.message
-                  : err instanceof Error
-                    ? err.message
-                    : '';
-              showNotification(`${t('oauth_excluded.delete_failed')}: ${errorMessage}`, 'error');
-            }
+            const errorMessage = err instanceof Error ? err.message : '';
+            showNotification(`${t('oauth_excluded.delete_failed')}: ${errorMessage}`, 'error');
           }
         },
       });

@@ -8,7 +8,7 @@ import type { TFunction } from 'i18next';
 import { Button } from '@/components/ui/Button';
 import { IconRefreshCw } from '@/components/ui/icons';
 import type { AuthFileItem, ResolvedTheme, ThemeColors } from '@/types';
-import { TYPE_COLORS } from '@/utils/quota';
+import { TYPE_COLORS, resolveQuotaErrorMessage } from '@/utils/quota';
 import { QuotaProgressBar } from './QuotaProgressBar';
 import type { QuotaProgressBarProps } from './QuotaProgressBar';
 import styles from '@/pages/QuotaPage.module.scss';
@@ -145,13 +145,3 @@ export function QuotaCard<TState extends QuotaStatusState>({
     </div>
   );
 }
-
-const resolveQuotaErrorMessage = (
-  t: TFunction,
-  status: number | undefined,
-  fallback: string
-): string => {
-  if (status === 404) return t('common.quota_update_required');
-  if (status === 403) return t('common.quota_check_credential');
-  return fallback;
-};

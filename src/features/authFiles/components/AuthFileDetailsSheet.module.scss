@@ -1,0 +1,85 @@
+@use '../../../styles/variables' as *;
+
+.editor,
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fields {
+  gap: 14px;
+}
+
+.loading {
+  padding: 24px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.error {
+  padding: 8px 10px;
+  border: 1px solid var(--failure-badge-border);
+  border-radius: 8px;
+  background: var(--bg-error-light);
+  color: var(--danger-color);
+  font-size: 12.5px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.jsonWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  color: var(--text-tertiary);
+  font-family: $font-mono;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.textarea,
+.invalidPreview {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-family: $font-mono;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.textarea {
+  resize: vertical;
+
+  &:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-10);
+    outline: none;
+  }
+}
+
+.textareaInvalid {
+  border-color: var(--danger-color) !important;
+}
+
+.invalidPreview {
+  max-height: 240px;
+  border-style: dashed;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}

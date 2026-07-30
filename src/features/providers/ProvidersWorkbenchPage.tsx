@@ -8,6 +8,7 @@ import { useProviderRecentRequests } from '@/components/providers/hooks/useProvi
 import {
   getOpenAIProviderRecentWindowStats,
   getProviderRecentWindowStats,
+  getProviderUsageKey,
   type ProviderRecentUsageMap,
 } from '@/components/providers/utils';
 import type { OpenAIProviderConfig } from '@/types';
@@ -69,7 +70,7 @@ const getResourceRecentSuccess = (
   }
   return getProviderRecentWindowStats(
     usageByProvider,
-    resource.brand,
+    getProviderUsageKey(resource.brand),
     resource.apiKey ?? undefined,
     resource.baseUrl ?? undefined
   ).success;

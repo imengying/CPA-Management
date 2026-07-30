@@ -1,0 +1,78 @@
+@use '../../../styles/variables' as *;
+
+.list {
+  max-height: min(52dvh, 480px);
+  padding-right: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+}
+
+.item {
+  padding: 8px 10px;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast;
+
+  &:hover {
+    border-color: var(--border-color);
+    background: var(--bg-tertiary);
+  }
+}
+
+.itemExcluded {
+  opacity: 0.55;
+}
+
+.modelId {
+  color: var(--text-primary);
+  font-family: $font-mono;
+  font-size: 12.5px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.modelDisplayName {
+  overflow: hidden;
+  color: var(--text-tertiary);
+  font-size: 11.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modelType,
+.excludedBadge {
+  padding: 1px 6px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-tertiary);
+  font-family: $font-mono;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.excludedBadge {
+  margin-left: auto;
+  border-color: var(--failure-badge-border);
+  background: var(--failure-badge-bg);
+  color: var(--failure-badge-text);
+  font-family: inherit;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item {
+    transition: none;
+  }
+}

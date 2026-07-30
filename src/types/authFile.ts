@@ -31,8 +31,13 @@ export interface AuthFileItem {
   statusMessage?: string;
   lastRefresh?: string | number;
   modified?: number;
+  priority?: number;
+  weight?: number;
+  note?: string;
   success?: unknown;
   failed?: unknown;
+  successCount?: number;
+  failureCount?: number;
   recent_requests?: RecentRequestBucket[];
   recentRequests?: RecentRequestBucket[];
   [key: string]: unknown;

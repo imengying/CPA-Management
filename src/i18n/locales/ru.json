@@ -207,9 +207,17 @@
     "logging_to_file_enable": "Включить журналирование в файл",
     "ws_auth_enable": "Требовать аутентификацию для /ws/*",
     "routing_strategy_round_robin": "round-robin (цикл)",
+    "routing_strategy_weighted_round_robin": "weighted-round-robin (взвешенный цикл)",
     "routing_strategy_fill_first": "fill-first (приоритет)"
   },
   "auth_files": {
+    "title": "Управление файлами авторизации",
+    "meta_total": "{{count}} учётных данных",
+    "meta_active": "{{count}} активно",
+    "meta_problem": "{{count}} с проблемами",
+    "batch_toolbar_label": "Групповые действия",
+    "empty_oauth_link": "Подключить через OAuth",
+    "no_results_clear": "Сбросить фильтры",
     "title_section": "Файлы авторизации",
     "upload_button": "Загрузить файл",
     "delete_all_button": "Удалить всё",
@@ -278,6 +286,7 @@
     "sort_az": "A-Z Имя",
     "sort_priority": "Приоритет",
     "priority_display": "Приоритет",
+    "weight_display": "Вес WRR",
     "page_size_label": "На странице",
     "page_size_unit": "элементов",
     "view_mode_paged": "Постранично",
@@ -312,8 +321,6 @@
     "models_loading": "Загрузка списка моделей...",
     "models_empty": "Для этих учётных данных нет доступных моделей",
     "models_empty_desc": "Возможно, учётные данные ещё не загружены сервером или к ним не привязаны модели.",
-    "models_unsupported": "Функция не поддерживается в текущей версии",
-    "models_unsupported_desc": "Обновите CLI Proxy API до последней версии и повторите попытку",
     "models_excluded_badge": "Отключена",
     "models_excluded_hint": "Эта OAuth-модель отключена",
     "status_toggle_label": "Включено",
@@ -347,6 +354,10 @@
     "priority_label": "Приоритет (priority)",
     "priority_placeholder": "например: 10 или -1",
     "priority_hint": "Только целые числа. Некорректные значения игнорируются. Чем больше число, тем выше приоритет.",
+    "weight_label": "Вес планирования (weight)",
+    "weight_hint": "По умолчанию 1. Значения ≤ 0 исключают эти учётные данные из взвешенного планирования; максимум 1 000 000.",
+    "weight_invalid_integer": "Вес должен быть целым числом.",
+    "weight_invalid_max": "Вес не может превышать 1 000 000.",
     "websockets_label": "WebSockets (websockets)",
     "websockets_hint": "Включает websocket-транспорт Responses API для этих учётных данных.",
     "using_api_label": "Использовать официальный API (using_api)",
@@ -565,7 +576,7 @@
     "provider_hint": "По умолчанию используется текущий фильтр; выберите существующего провайдера или введите новое имя.",
     "models_label": "Отключаемые модели",
     "models_loading": "Загрузка моделей...",
-    "models_unsupported": "Текущая версия CPA не поддерживает загрузку списка моделей.",
+    "models_unavailable": "Для этого провайдера нет доступных определений моделей.",
     "models_loaded": "Загружено моделей: {{count}}. Отметьте модели, которые нужно отключить.",
     "no_models_available": "Для этого провайдера нет доступных моделей.",
     "custom_rule_label": "Пользовательское правило модели",
@@ -592,9 +603,6 @@
     "provider_required": "Сначала укажите провайдера",
     "scope_all": "Область: все провайдеры",
     "scope_provider": "Область: {{provider}}",
-    "upgrade_required": "Текущая версия CPA не поддерживает отключение OAuth-моделей. Пожалуйста, обновите систему.",
-    "upgrade_required_title": "Пожалуйста, обновите CLI Proxy API",
-    "upgrade_required_desc": "Текущая версия сервера не поддерживает получение отключения OAuth-моделей. Обновите CPA (CLI Proxy API) до последней версии и повторите попытку.",
     "delete_title": "Удалить отключение моделей"
   },
   "oauth_model_alias": {
@@ -605,7 +613,7 @@
     "provider_placeholder": "например: codex / vertex",
     "provider_hint": "По умолчанию используется текущий фильтр; выберите существующего провайдера или введите новое имя.",
     "model_source_loading": "Загрузка моделей...",
-    "model_source_unsupported": "Текущая версия CPA не поддерживает загрузку списка моделей (ручной ввод остаётся доступным).",
+    "model_source_unavailable": "Определения моделей недоступны (ручной ввод по-прежнему доступен).",
     "model_source_loaded": "Загружено моделей: {{count}}. Используйте выпадающий список \"Исходная модель\" или введите своё значение. Сохранение пустого списка удаляет провайдера. Включите \"Сохранить оригинал\", чтобы оставить исходное имя вместе с псевдонимом.",
     "alias_label": "Псевдонимы моделей",
     "alias_name_placeholder": "Исходное имя модели",
@@ -656,9 +664,6 @@
     "view_mode_diagram": "Диаграмма",
     "view_mode_list": "Список",
     "provider_required": "Сначала укажите провайдера",
-    "upgrade_required": "Эта функция требует более новой версии CLI Proxy API (CPA). Обновите систему.",
-    "upgrade_required_title": "Пожалуйста, обновите CLI Proxy API",
-    "upgrade_required_desc": "Текущая версия сервера не поддерживает API псевдонимов моделей OAuth. Обновите CLI Proxy API (CPA) до последней версии.",
     "delete_title": "Удалить псевдонимы моделей"
   },
   "auth_login": {
@@ -1012,6 +1017,7 @@
           "routing_strategy": "Стратегия маршрутизации",
           "routing_strategy_hint": "Выберите стратегию подбора учётных данных",
           "strategy_round_robin": "По кругу",
+          "strategy_weighted_round_robin": "Взвешенный круговой алгоритм",
           "strategy_fill_first": "Сначала заполнить",
           "session_affinity_ttl": "TTL привязки сессии",
           "force_model_prefix": "Принудительный префикс модели",
@@ -1418,6 +1424,7 @@
     },
     "providerNames": {
       "gemini": "Gemini",
+      "interactions": "Interactions API",
       "codex": "Codex",
       "xai": "xAI",
       "claude": "Claude",
@@ -1475,6 +1482,8 @@
       "proxyUrl": "Proxy URL",
       "prefix": "Префикс",
       "priority": "Приоритет",
+      "weight": "Вес планирования",
+      "weightHint": "По умолчанию 1 · ≤ 0 исключает запись · максимум 1 000 000",
       "disabled": "Отключить эту запись",
       "disabledHint": "Отключённые записи не используются шлюзом",
       "websockets": "Включить WebSockets",
@@ -1519,7 +1528,9 @@
       "validation": {
         "nameRequired": "Название обязательно",
         "apiKeyRequired": "Нужен хотя бы один API-ключ",
-        "baseUrlRequired": "Base URL обязателен"
+        "baseUrlRequired": "Base URL обязателен",
+        "weightInteger": "Вес планирования должен быть целым числом",
+        "weightMax": "Вес планирования не может превышать {{max}}"
       }
     },
     "delete": {

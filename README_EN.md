@@ -6,7 +6,7 @@ A single-file Web UI (React + TypeScript) for operating and troubleshooting the 
 
 **Main Project**: https://github.com/router-for-me/CLIProxyAPI<br>
 **Original WebUI Repository**: https://github.com/router-for-me/Cli-Proxy-API-Management-Center<br>
-**Supported Version**: CLIProxyAPI 7.2.49
+**Supported Version**: CLIProxyAPI 7.2.104 or later
 
 After the service starts, access the Web UI via `/management.html` on the API port.
 
@@ -129,7 +129,7 @@ The UI language is automatically detected from browser settings and can be manua
 - **Can’t connect / 401**: confirm the API address and management key; remote access may require enabling remote management in the server config.
 - **Repeated auth failures**: the server may temporarily block remote IPs.
 - **Logs page missing**: enable “Logging to file” in Basic Settings; the navigation item is shown only when file logging is enabled.
-- **Some features show “unsupported”**: confirm the corresponding endpoint is enabled and reachable (common for model lists per auth file, excluded models, logs).
+- **A feature fails to load**: confirm its endpoint is reachable and check the reverse proxy and server logs (common for auth-file model lists, excluded models, and logs).
 - **OpenAI provider test fails**: the test runs in the browser and depends on network/CORS of the provider endpoint; a failure here does not always mean the server cannot reach it.
 
 ## Development

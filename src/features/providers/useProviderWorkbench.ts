@@ -11,6 +11,7 @@ import {
   claudeToResource,
   codexToResource,
   geminiToResource,
+  interactionsToResource,
   openaiToResource,
   vertexToResource,
   xaiToResource,
@@ -109,7 +110,7 @@ const buildModelAliases = (
     .filter((m) => m.name);
 
 const buildProviderKeyConfig = (
-  brand: 'gemini' | 'codex' | 'xai' | 'claude' | 'vertex',
+  brand: 'gemini' | 'interactions' | 'codex' | 'xai' | 'claude' | 'vertex',
   input: ProviderEntryFormInput,
   existing?: ProviderKeyConfig | GeminiKeyConfig | null
 ): ProviderKeyConfig | GeminiKeyConfig => {
@@ -120,6 +121,7 @@ const buildProviderKeyConfig = (
   const next: ProviderKeyConfig = {
     apiKey: apiKeyChanged ? input.apiKey.trim() : (existing?.apiKey ?? ''),
     priority: input.priority,
+    weight: input.weight,
     prefix: input.prefix.trim() || undefined,
     baseUrl: input.baseUrl.trim() || undefined,
     proxyUrl: input.proxyUrl.trim() || undefined,
@@ -160,6 +162,7 @@ const buildOpenAIConfig = (
         return {
           apiKey: entry.apiKey.trim() || fallbackApiKey,
           proxyUrl: entry.proxyUrl.trim() || undefined,
+          weight: entry.weight,
           authIndex: entry.authIndex?.trim() || undefined,
         };
       })
@@ -254,6 +257,11 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
         case 'gemini':
           resources = (config.geminiApiKeys ?? []).map((c, i) => geminiToResource(c, i));
           break;
+        case 'interactions':
+          resources = (config.interactionsApiKeys ?? []).map((c, i) =>
+            interactionsToResource(c, i)
+          );
+          break;
         case 'codex':
           resources = (config.codexApiKeys ?? []).map((c, i) => codexToResource(c, i));
           break;
@@ -290,6 +298,10 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
         if (brand === 'gemini') {
           await providersApi.createGeminiKey(
             buildProviderKeyConfig('gemini', input) as GeminiKeyConfig
+          );
+        } else if (brand === 'interactions') {
+          await providersApi.createInteractionsKey(
+            buildProviderKeyConfig('interactions', input) as GeminiKeyConfig
           );
         } else if (brand === 'codex') {
           await providersApi.createCodexConfig(
@@ -330,6 +342,16 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
             selector.baseUrl,
             buildProviderKeyConfig(
               'gemini',
+              input,
+              resource.raw as GeminiKeyConfig
+            ) as GeminiKeyConfig
+          );
+        } else if (brand === 'interactions' && selector.brand === 'interactions') {
+          await providersApi.updateInteractionsKey(
+            selector.apiKey,
+            selector.baseUrl,
+            buildProviderKeyConfig(
+              'interactions',
               input,
               resource.raw as GeminiKeyConfig
             ) as GeminiKeyConfig
@@ -396,6 +418,8 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
         const sel = resource.selector;
         if (sel.brand === 'gemini') {
           await providersApi.deleteGeminiKey(sel.apiKey, sel.baseUrl);
+        } else if (sel.brand === 'interactions') {
+          await providersApi.deleteInteractionsKey(sel.apiKey, sel.baseUrl);
         } else if (sel.brand === 'codex') {
           await providersApi.deleteCodexConfig(sel.apiKey, sel.baseUrl);
         } else if (sel.brand === 'xai') {
@@ -427,6 +451,15 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
             ? withDisableAllModelsRule(current.excludedModels)
             : withoutDisableAllModelsRule(current.excludedModels);
           await providersApi.updateGeminiKey(selector.apiKey, selector.baseUrl, {
+            ...current,
+            excludedModels: excluded,
+          });
+        } else if (brand === 'interactions' && selector.brand === 'interactions') {
+          const current = resource.raw as GeminiKeyConfig;
+          const excluded = disabled
+            ? withDisableAllModelsRule(current.excludedModels)
+            : withoutDisableAllModelsRule(current.excludedModels);
+          await providersApi.updateInteractionsKey(selector.apiKey, selector.baseUrl, {
             ...current,
             excludedModels: excluded,
           });

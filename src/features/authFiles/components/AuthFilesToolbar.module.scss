@@ -1,0 +1,214 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+
+.search {
+  flex: 1 1 220px;
+  min-width: 180px;
+  max-width: 340px;
+
+  :global(.form-group) {
+    margin-bottom: 0;
+  }
+
+  :global(.input) {
+    height: 34px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+}
+
+.searchIcon {
+  color: var(--text-quaternary);
+}
+
+.segmented {
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.segment {
+  min-height: 28px;
+  padding: 5px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 550;
+  letter-spacing: 0;
+  line-height: 1.3;
+  white-space: nowrap;
+  transition:
+    color $transition-fast,
+    background-color $transition-fast;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: -2px;
+  }
+}
+
+.segmentActive {
+  background: var(--bg-primary);
+  box-shadow: var(--shadow);
+  color: var(--text-primary);
+  font-weight: 650;
+}
+
+.segmentProblem.segmentActive {
+  color: var(--danger-color);
+}
+
+.sort {
+  min-width: 120px;
+}
+
+.display {
+  position: relative;
+}
+
+.displayButton,
+.deleteAction {
+  height: 32px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 550;
+  letter-spacing: 0;
+  white-space: nowrap;
+  transition:
+    color $transition-fast,
+    border-color $transition-fast,
+    background-color $transition-fast;
+
+  &:hover:not(:disabled) {
+    border-color: var(--border-hover);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+}
+
+.displayButtonActive {
+  border-color: var(--border-hover);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: $z-dropdown;
+  min-width: 216px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--floating-surface);
+  box-shadow: var(--floating-shadow);
+}
+
+.popoverRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-secondary);
+  font-size: 12.5px;
+}
+
+.pageSizeInput {
+  width: 64px;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: $font-mono;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+
+  &:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-10);
+    outline: none;
+  }
+}
+
+.deleteAction {
+  margin-left: auto;
+  border-color: transparent;
+  background: transparent;
+  color: var(--danger-color);
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: var(--destructive-30);
+    background: var(--destructive-10);
+    color: var(--danger-color);
+  }
+}
+
+@media (max-width: 900px) {
+  .search {
+    flex-basis: 100%;
+    max-width: none;
+  }
+
+  .deleteAction {
+    margin-left: 0;
+  }
+}
+
+@include mobile {
+  .segmented {
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .segment,
+  .displayButton,
+  .deleteAction {
+    transition: none;
+  }
+}

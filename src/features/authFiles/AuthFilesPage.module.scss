@@ -1,0 +1,103 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.page {
+  --viz-success: #0f9f6e;
+  --viz-failure: #c45143;
+  --ease-out-strong: cubic-bezier(0.22, 1, 0.36, 1);
+
+  width: 100%;
+  max-width: 1120px;
+  min-width: 0;
+  margin: 0 auto;
+  padding-bottom: calc(
+    var(--auth-files-action-bar-height, 0px) + 16px + env(safe-area-inset-bottom, 0px)
+  );
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+:global(html[data-theme='dark']) .page {
+  --viz-success: #16a879;
+  --viz-failure: #cf5a4b;
+}
+
+.workbench {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.errorBanner {
+  padding: 9px 12px;
+  border: 1px solid var(--failure-badge-border);
+  border-radius: 8px;
+  background: var(--bg-error-light);
+  color: var(--danger-color);
+  font-size: 12.5px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  align-items: stretch;
+  gap: 16px;
+}
+
+.gridCompact {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+}
+
+.gridQuota {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+}
+
+.grid > *:nth-child(3n + 2) {
+  --gem-flash-delay: -3.7s;
+}
+
+.grid > *:nth-child(3n + 3) {
+  --gem-flash-delay: -7.1s;
+}
+
+.emptyActions,
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pagination {
+  gap: 14px;
+}
+
+.pageInfo {
+  color: var(--text-tertiary);
+  font-family: $font-mono;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.configGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@include mobile {
+  .page {
+    gap: 16px;
+  }
+}

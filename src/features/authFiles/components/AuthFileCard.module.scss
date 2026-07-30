@@ -1,0 +1,510 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.card {
+  position: relative;
+  min-width: 0;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  transition:
+    border-color $transition-fast,
+    background-color $transition-fast;
+
+  &:hover {
+    border-color: var(--border-hover);
+  }
+}
+
+.cardCompact {
+  padding: 12px;
+  gap: 10px;
+}
+
+.cardSelected {
+  border-color: color-mix(in srgb, var(--primary-color) 55%, var(--border-color));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 28%, transparent);
+}
+
+.cardDisabled {
+  background: color-mix(in srgb, var(--bg-primary) 70%, var(--bg-secondary));
+
+  .head,
+  .note,
+  .health,
+  .metaRow {
+    opacity: 0.56;
+  }
+}
+
+.cardEnter {
+  animation: card-in 0.42s var(--ease-out-strong, ease-out) both;
+  animation-delay: var(--card-delay, 0ms);
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.selection {
+  margin-top: 7px;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.avatarImage {
+  width: 20px;
+  height: 20px;
+  display: block;
+  object-fit: contain;
+}
+
+.avatarFallback {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.identity {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.badgeRow {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.typeBadge,
+.stateBadge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.typeBadge {
+  padding: 2px 7px;
+  text-transform: uppercase;
+}
+
+.stateBadge {
+  margin-left: auto;
+  padding: 2px 7px;
+  gap: 5px;
+  border: 1px solid transparent;
+  font-family: $font-mono;
+}
+
+.stateDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.stateActive {
+  border-color: var(--success-badge-border);
+  background: var(--success-badge-bg);
+  color: var(--success-badge-text);
+}
+
+.stateWarning {
+  border-color: var(--amber-30);
+  background: var(--amber-10);
+  color: var(--amber-text);
+}
+
+.stateDisabled,
+.stateVirtual {
+  border-color: var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-tertiary);
+}
+
+.stateVirtual {
+  border-style: dashed;
+}
+
+.fileName {
+  overflow: hidden;
+  color: var(--text-primary);
+  font-family: $font-mono;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.note {
+  margin: 0;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.warning {
+  padding: 7px 9px;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  border: 1px solid var(--warning-border);
+  border-radius: 8px;
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  font-size: 12px;
+  line-height: 1.45;
+
+  span {
+    min-width: 0;
+    display: -webkit-box;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+}
+
+.warningIcon {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.health {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.healthHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.healthLabel {
+  color: var(--text-tertiary);
+  font-family: $font-mono;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.healthCounts {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: $font-mono;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.countMuted {
+  color: var(--text-quaternary);
+}
+
+.countOkLive {
+  color: var(--viz-success);
+}
+
+.countFailLive {
+  color: var(--viz-failure);
+}
+
+.statusBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusBlocks {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  gap: 2px;
+}
+
+.statusBlockWrapper {
+  position: relative;
+  min-width: 3px;
+  flex: 1 1 0;
+}
+
+.statusBlock {
+  height: 14px;
+  border-radius: 2px;
+}
+
+.statusBlockIdle {
+  background: color-mix(in srgb, var(--text-quaternary) 26%, transparent);
+}
+
+.statusBlockActive .statusBlock {
+  outline: 1px solid var(--text-secondary);
+  outline-offset: 1px;
+}
+
+.statusRate {
+  min-width: 40px;
+  color: var(--text-quaternary);
+  font-family: $font-mono;
+  font-size: 11.5px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.statusRateHigh {
+  color: var(--viz-success);
+}
+
+.statusRateMedium {
+  color: var(--quota-medium-color);
+}
+
+.statusRateLow {
+  color: var(--viz-failure);
+}
+
+.statusTooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  z-index: 20;
+  min-width: 150px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transform: translateX(-50%);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--floating-surface);
+  box-shadow: var(--floating-shadow);
+  font-family: $font-mono;
+  font-size: 11px;
+  line-height: 1.5;
+  pointer-events: none;
+}
+
+.statusTooltipLeft {
+  left: 0;
+  transform: none;
+}
+
+.statusTooltipRight {
+  right: 0;
+  left: auto;
+  transform: none;
+}
+
+.tooltipTime,
+.tooltipStats,
+.tooltipRate {
+  color: var(--text-secondary);
+}
+
+.tooltipTime {
+  color: var(--text-tertiary);
+}
+
+.tooltipStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tooltipSuccess {
+  color: var(--viz-success);
+}
+
+.tooltipFailure {
+  color: var(--viz-failure);
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 7px;
+  color: var(--text-tertiary);
+  font-family: $font-mono;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.metaDivider {
+  color: var(--text-quaternary);
+  user-select: none;
+}
+
+.metaPriority,
+.metaWeight {
+  padding: 2px 6px;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 10px;
+  line-height: 1.35;
+  white-space: nowrap;
+
+  strong {
+    font-size: 11px;
+  }
+}
+
+.metaWeight {
+  border-color: var(--primary-30);
+  background: var(--primary-10);
+  color: var(--primary-active);
+}
+
+.actions {
+  margin-top: auto;
+  padding-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px solid var(--border-color);
+}
+
+.actionsMain,
+.utilityActions,
+.toggleWrap {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.actionsMain {
+  flex-wrap: wrap;
+}
+
+.utilityActions {
+  gap: 4px;
+}
+
+.actions :global(.btn > span) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  line-height: 1;
+}
+
+.actions :global(.btn svg) {
+  display: block;
+  flex-shrink: 0;
+}
+
+.card .actions .iconButton {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-secondary);
+
+  &:hover:not(:disabled) {
+    border-color: var(--border-hover);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+}
+
+.card .actions .iconButton:global(.btn-danger) {
+  border-color: var(--destructive-30);
+  color: var(--danger-color);
+
+  &:hover:not(:disabled) {
+    border-color: var(--destructive-30);
+    background: var(--destructive-10);
+    color: var(--danger-color);
+  }
+}
+
+.toggleWrap {
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.toggleLabel {
+  color: var(--text-tertiary);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+@include mobile {
+  .actions {
+    flex-wrap: wrap;
+  }
+
+  .actionsMain {
+    width: 100%;
+  }
+
+  .actionsMain > :global(.btn) {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .toggleWrap {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+
+  .cardEnter {
+    animation: none;
+  }
+}

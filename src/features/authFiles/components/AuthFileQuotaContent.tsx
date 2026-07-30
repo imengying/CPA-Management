@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AuthFileQuotaControls } from '@/features/authFiles/hooks/useAuthFileQuotaControls';
 import { QuotaProgressBar } from '@/components/quota/QuotaProgressBar';
-import styles from '@/pages/AuthFilesPage.module.scss';
+import styles from './AuthFileQuota.module.scss';
 
 export function AuthFileQuotaContent({
   controls,

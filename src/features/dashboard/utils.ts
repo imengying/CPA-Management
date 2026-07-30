@@ -51,6 +51,7 @@ export function buildTrafficWindow(bucketGroups: RecentRequestBucket[][]): Traff
 /** 供应商展示名。均为专有名词，不进入 i18n。 */
 const PROVIDER_LABELS: Record<string, string> = {
   gemini: 'Gemini',
+  'gemini-interactions': 'Interactions API',
   aistudio: 'AI Studio',
   codex: 'Codex',
   claude: 'Claude',

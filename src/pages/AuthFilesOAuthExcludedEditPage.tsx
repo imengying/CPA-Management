@@ -51,13 +51,12 @@ export function AuthFilesOAuthExcludedEditPage() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [initialLoadError, setInitialLoadError] = useState<string | null>(null);
   const [baselineReady, setBaselineReady] = useState(false);
-  const [excludedUnsupported, setExcludedUnsupported] = useState(false);
   const loadRequestRef = useRef(0);
 
   const [selectedModels, setSelectedModels] = useState<Set<string>>(new Set());
   const [modelsList, setModelsList] = useState<AuthFileModelItem[]>([]);
   const [modelsLoading, setModelsLoading] = useState(false);
-  const [modelsError, setModelsError] = useState<'unsupported' | null>(null);
+  const [modelsUnavailable, setModelsUnavailable] = useState(false);
   const [customRule, setCustomRule] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -167,7 +166,6 @@ export function AuthFilesOAuthExcludedEditPage() {
     setInitialLoading(true);
     setInitialLoadError(null);
     setBaselineReady(false);
-    setExcludedUnsupported(false);
 
     try {
       const [filesResult, excludedResult, aliasResult] = await Promise.allSettled([
@@ -192,14 +190,7 @@ export function AuthFilesOAuthExcludedEditPage() {
         return;
       }
 
-      const err = excludedResult.reason;
-      const status = getErrorStatus(err);
-
-      if (status === 404) {
-        setExcludedUnsupported(true);
-        return;
-      }
-      setInitialLoadError(getErrorMessage(err));
+      setInitialLoadError(getErrorMessage(excludedResult.reason));
     } catch (err: unknown) {
       if (requestId === loadRequestRef.current) {
         setInitialLoadError(getErrorMessage(err));
@@ -247,16 +238,16 @@ export function AuthFilesOAuthExcludedEditPage() {
     queueMicrotask(() => {
       if (cancelled) return;
 
-      if (!resolvedProviderKey || excludedUnsupported) {
+      if (!resolvedProviderKey) {
         setModelsList([]);
-        setModelsError(null);
+        setModelsUnavailable(false);
         setModelsLoading(false);
         return;
       }
 
       setModelsList([]);
       setModelsLoading(true);
-      setModelsError(null);
+      setModelsUnavailable(false);
 
       authFilesApi
         .getModelDefinitions(resolvedProviderKey)
@@ -267,15 +258,12 @@ export function AuthFilesOAuthExcludedEditPage() {
         .catch((err: unknown) => {
           if (cancelled) return;
           const status = getErrorStatus(err);
-
-          if (status === 400 || status === 404) {
-            setModelsList([]);
-            setModelsError('unsupported');
-            return;
+          setModelsList([]);
+          setModelsUnavailable(true);
+          if (status !== 400) {
+            const errorMessage = err instanceof Error ? err.message : t('common.unknown_error');
+            showNotification(`${t('notification.load_failed')}: ${errorMessage}`, 'error');
           }
-
-          const errorMessage = err instanceof Error ? err.message : '';
-          showNotification(`${t('notification.load_failed')}: ${errorMessage}`, 'error');
         })
         .finally(() => {
           if (cancelled) return;
@@ -286,7 +274,7 @@ export function AuthFilesOAuthExcludedEditPage() {
     return () => {
       cancelled = true;
     };
-  }, [excludedUnsupported, resolvedProviderKey, showNotification, t]);
+  }, [resolvedProviderKey, showNotification, t]);
 
   const applyProviderChange = useCallback(
     (value: string) => {
@@ -358,12 +346,7 @@ export function AuthFilesOAuthExcludedEditPage() {
     }
   }, [allowNextNavigation, effectiveRules, handleBack, isEditing, provider, showNotification, t]);
 
-  const canSave =
-    !disableControls &&
-    !saving &&
-    baselineReady &&
-    !excludedUnsupported &&
-    initialLoadError === null;
+  const canSave = !disableControls && !saving && baselineReady && initialLoadError === null;
 
   return (
     <div className={styles.page} ref={swipeRef}>
@@ -395,14 +378,7 @@ export function AuthFilesOAuthExcludedEditPage() {
         </div>
       ) : (
         <div className={styles.pageContent}>
-          {excludedUnsupported ? (
-            <Card>
-              <EmptyState
-                title={t('oauth_excluded.upgrade_required_title')}
-                description={t('oauth_excluded.upgrade_required_desc')}
-              />
-            </Card>
-          ) : initialLoadError !== null ? (
+          {initialLoadError !== null ? (
             <Card>
               <EmptyState
                 title={t('notification.refresh_failed')}
@@ -480,8 +456,8 @@ export function AuthFilesOAuthExcludedEditPage() {
                           <LoadingSpinner size={14} />
                           <span>{t('oauth_excluded.models_loading')}</span>
                         </>
-                      ) : modelsError === 'unsupported' ? (
-                        <span>{t('oauth_excluded.models_unsupported')}</span>
+                      ) : modelsUnavailable ? (
+                        <span>{t('oauth_excluded.models_unavailable')}</span>
                       ) : modelsList.length > 0 ? (
                         <span>
                           {t('oauth_excluded.models_loaded', { count: modelsList.length })}
@@ -588,8 +564,8 @@ export function AuthFilesOAuthExcludedEditPage() {
                   </div>
                 ) : resolvedProviderKey ? (
                   <div className={styles.emptyModels}>
-                    {modelsError === 'unsupported'
-                      ? t('oauth_excluded.models_unsupported')
+                    {modelsUnavailable
+                      ? t('oauth_excluded.models_unavailable')
                       : t('oauth_excluded.no_models_available')}
                   </div>
                 ) : (

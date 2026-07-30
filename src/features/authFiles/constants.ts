@@ -21,7 +21,7 @@ export type AuthFileModelItem = {
   owned_by?: string;
 };
 type AuthFileIconAsset = string | { light: string; dark: string };
-export type OAuthConfigLoadError = 'loading' | 'unsupported' | 'load' | null;
+export type OAuthConfigLoadError = 'loading' | 'load' | null;
 
 export type QuotaProviderType = 'antigravity' | 'claude' | 'codex' | 'kimi' | 'xai';
 
@@ -76,16 +76,6 @@ const AUTH_FILE_ICONS: Record<string, AuthFileIconAsset> = {
 export const clampCardPageSize = (value: number) =>
   Math.min(MAX_CARD_PAGE_SIZE, Math.max(MIN_CARD_PAGE_SIZE, Math.round(value)));
 
-export const resolveQuotaErrorMessage = (
-  t: TFunction,
-  status: number | undefined,
-  fallback: string
-): string => {
-  if (status === 404) return t('common.quota_update_required');
-  if (status === 403) return t('common.quota_check_credential');
-  return fallback;
-};
-
 export const normalizeProviderKey = normalizeOAuthProviderKey;
 
 export const supportsAuthFileManualRefresh = (provider: unknown): boolean =>
@@ -115,8 +105,24 @@ export const getAuthFileStatusMessage = (file: AuthFileItem): string => {
   return String(raw).trim();
 };
 
-export const hasAuthFileStatusMessage = (file: AuthFileItem): boolean =>
-  getAuthFileStatusMessage(file).length > 0;
+const HEALTHY_AUTH_FILE_STATUS_MESSAGES = new Set([
+  'ok',
+  'healthy',
+  'ready',
+  'success',
+  'available',
+]);
+
+export const hasAuthFileStatusWarning = (file: AuthFileItem): boolean => {
+  const message = getAuthFileStatusMessage(file);
+  return Boolean(message) && !HEALTHY_AUTH_FILE_STATUS_MESSAGES.has(message.toLowerCase());
+};
+
+export const isProblemAuthFile = (file: AuthFileItem): boolean => {
+  const status = typeof file.status === 'string' ? file.status.trim().toLowerCase() : '';
+  if (file.disabled === true || status === 'disabled') return false;
+  return file.unavailable === true || status === 'error' || hasAuthFileStatusWarning(file);
+};
 
 export const getTypeLabel = (t: TFunction, type: string): string => {
   const providerKey = normalizeProviderKey(type);
