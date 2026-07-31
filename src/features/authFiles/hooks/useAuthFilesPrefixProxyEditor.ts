@@ -19,6 +19,10 @@ import {
   validateCredentialWeightText,
   type CredentialWeightError,
 } from '@/utils/credentialWeight';
+import {
+  normalizeExcludedRules,
+  parseExcludedRulesText,
+} from '@/components/excludedModels/excludedModelRules';
 
 type AuthFileHeaders = Record<string, string>;
 type AuthFileHeadersErrorKey =
@@ -49,7 +53,6 @@ export type PrefixProxyEditorState = {
   loading: boolean;
   saving: boolean;
   error: string | null;
-  originalText: string;
   rawText: string;
   invalidContentPreview: string;
   json: Record<string, unknown> | null;
@@ -132,25 +135,10 @@ const credentialWeightErrorKey = (error: CredentialWeightError): AuthFileWeightE
 const normalizeTextField = (value: unknown): string =>
   typeof value === 'string' ? value.trim() : '';
 
-const normalizeExcludedModels = (value: unknown): string[] => {
-  if (!Array.isArray(value)) return [];
-  const seen = new Set<string>();
-  const result: string[] = [];
-
-  value.forEach((item) => {
-    if (typeof item !== 'string') return;
-    const model = item.trim();
-    const key = model.toLowerCase();
-    if (!model || seen.has(key)) return;
-    seen.add(key);
-    result.push(model);
-  });
-
-  return result;
-};
-
-const parseExcludedModelsText = (value: string): string[] =>
-  normalizeExcludedModels(value.split(/\r?\n/));
+const normalizeExcludedModels = (value: unknown): string[] =>
+  Array.isArray(value)
+    ? normalizeExcludedRules(value.filter((item): item is string => typeof item === 'string'))
+    : [];
 
 const readExcludedModels = (value: Record<string, unknown>): string[] =>
   normalizeExcludedModels(
@@ -176,14 +164,10 @@ const buildInvalidContentPreview = (text: string): string => {
 const buildInvalidAuthFileContentState = (
   text: string,
   resolveError: (key: AuthFileContentErrorKey) => string
-): Pick<
-  PrefixProxyEditorState,
-  'loading' | 'error' | 'rawText' | 'originalText' | 'invalidContentPreview'
-> => ({
+): Pick<PrefixProxyEditorState, 'loading' | 'error' | 'rawText' | 'invalidContentPreview'> => ({
   loading: false,
   error: resolveError(getAuthFileContentErrorKey(text)),
   rawText: text,
-  originalText: text,
   invalidContentPreview: buildInvalidContentPreview(text),
 });
 
@@ -326,7 +310,7 @@ export const buildAuthFileFieldsPatch = (
 
   if (editor.excludedModelsTouched) {
     const originalExcludedModels = readExcludedModels(original);
-    const nextExcludedModels = parseExcludedModelsText(editor.excludedModelsText);
+    const nextExcludedModels = parseExcludedRulesText(editor.excludedModelsText);
     if (JSON.stringify(nextExcludedModels) !== JSON.stringify(originalExcludedModels)) {
       patch[getExcludedModelsField(original)] = nextExcludedModels;
     }
@@ -476,7 +460,6 @@ export function useAuthFilesPrefixProxyEditor(
       loading: true,
       saving: false,
       error: null,
-      originalText: '',
       rawText: '',
       invalidContentPreview: '',
       json: null,
@@ -557,7 +540,6 @@ export function useAuthFilesPrefixProxyEditor(
         return {
           ...prev,
           loading: false,
-          originalText,
           rawText: originalText,
           invalidContentPreview: '',
           json,

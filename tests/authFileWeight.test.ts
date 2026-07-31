@@ -10,7 +10,6 @@ const makeEditor = (json: Record<string, unknown>, weight: string): PrefixProxyE
   loading: false,
   saving: false,
   error: null,
-  originalText: JSON.stringify(json),
   rawText: JSON.stringify(json),
   invalidContentPreview: '',
   json,

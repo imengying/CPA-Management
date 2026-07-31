@@ -90,13 +90,7 @@ const normalizeExcludedModels = (input: unknown): string[] => {
   return normalized;
 };
 
-const normalizePrefix = (value: unknown): string | undefined => {
-  if (value === undefined || value === null) return undefined;
-  const trimmed = String(value).trim();
-  return trimmed ? trimmed : undefined;
-};
-
-const normalizeAuthIndex = (value: unknown): string | undefined => {
+const normalizeOptionalString = (value: unknown): string | undefined => {
   if (value === undefined || value === null) return undefined;
   const trimmed = String(value).trim();
   return trimmed ? trimmed : undefined;
@@ -111,7 +105,7 @@ const normalizeApiKeyEntry = (entry: unknown): ApiKeyEntry | null => {
 
   const proxyUrl = record?.['proxy-url'];
   const weight = readCredentialWeight(record?.weight);
-  const authIndex = normalizeAuthIndex(record?.['auth-index']);
+  const authIndex = normalizeOptionalString(record?.['auth-index']);
 
   const result: ApiKeyEntry = {
     apiKey: trimmed,
@@ -139,7 +133,7 @@ const normalizeProviderKeyConfig = (item: unknown): ProviderKeyConfig | null => 
       config.priority = parsed;
     }
   }
-  const prefix = normalizePrefix(record?.prefix);
+  const prefix = normalizeOptionalString(record?.prefix);
   if (prefix) config.prefix = prefix;
   const baseUrl = record?.['base-url'];
   const proxyUrl = record?.['proxy-url'];
@@ -155,7 +149,7 @@ const normalizeProviderKeyConfig = (item: unknown): ProviderKeyConfig | null => 
   if (models.length) config.models = models;
   const excludedModels = normalizeExcludedModels(record?.['excluded-models']);
   if (excludedModels.length) config.excludedModels = excludedModels;
-  const authIndex = normalizeAuthIndex(record?.['auth-index']);
+  const authIndex = normalizeOptionalString(record?.['auth-index']);
   if (authIndex) config.authIndex = authIndex;
 
   const cloakRaw = record?.cloak;
@@ -209,7 +203,7 @@ const normalizeGeminiKeyConfig = (item: unknown): GeminiKeyConfig | null => {
       config.priority = parsed;
     }
   }
-  const prefix = normalizePrefix(record?.prefix);
+  const prefix = normalizeOptionalString(record?.prefix);
   if (prefix) config.prefix = prefix;
   const baseUrl = record?.['base-url'];
   if (baseUrl) config.baseUrl = String(baseUrl);
@@ -223,7 +217,7 @@ const normalizeGeminiKeyConfig = (item: unknown): GeminiKeyConfig | null => {
   if (headers) config.headers = headers;
   const excludedModels = normalizeExcludedModels(record?.['excluded-models']);
   if (excludedModels.length) config.excludedModels = excludedModels;
-  const authIndex = normalizeAuthIndex(record?.['auth-index']);
+  const authIndex = normalizeOptionalString(record?.['auth-index']);
   if (authIndex) config.authIndex = authIndex;
   return config;
 };
@@ -258,13 +252,13 @@ const normalizeOpenAIProvider = (
   if (disabled !== undefined) result.disabled = disabled;
   const disableCooling = normalizeBoolean(provider['disable-cooling']);
   if (disableCooling !== undefined) result.disableCooling = disableCooling;
-  const prefix = normalizePrefix(provider.prefix);
+  const prefix = normalizeOptionalString(provider.prefix);
   if (prefix) result.prefix = prefix;
   if (headers) result.headers = headers;
   if (models.length) result.models = models;
   if (priority !== undefined) result.priority = Number(priority);
   if (testModel) result.testModel = String(testModel);
-  const authIndex = normalizeAuthIndex(provider['auth-index']);
+  const authIndex = normalizeOptionalString(provider['auth-index']);
   if (authIndex) result.authIndex = authIndex;
   if (sourceIndex !== undefined) result.sourceIndex = sourceIndex;
   return result;
