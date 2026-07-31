@@ -1,15 +1,6 @@
 @use 'sass:color';
 @use './variables.scss' as *;
 
-.page-heading {
-  margin: 0;
-  color: var(--text-primary);
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: 0;
-}
-
 .btn {
   display: inline-flex;
   align-items: center;

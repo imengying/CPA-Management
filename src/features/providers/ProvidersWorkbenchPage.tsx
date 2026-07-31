@@ -12,8 +12,6 @@ import {
   type ProviderRecentUsageMap,
 } from '@/components/providers/utils';
 import type { OpenAIProviderConfig } from '@/types';
-import { formatDateTimeValue } from '@/utils/format';
-import { ProviderHeaderCard } from './components/ProviderHeaderCard';
 import { ProviderCategoryList } from './components/ProviderCategoryList';
 import { ProviderResourcePanel } from './components/ProviderResourcePanel';
 import type { ProviderPanelControls } from './components/ProviderResourcePanel';
@@ -79,7 +77,7 @@ const getResourceRecentSuccess = (
 };
 
 export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPageProps = {}) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const connectionStatus = useAuthStore((s) => s.connectionStatus);
   const { showNotification, showConfirmation } = useNotificationStore();
 
@@ -232,27 +230,6 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
     updateActiveFilterState,
   ]);
 
-  const totalResources = useMemo(
-    () => groups.reduce((sum, group) => sum + group.resources.length, 0),
-    [groups]
-  );
-  const totalActive = useMemo(
-    () =>
-      groups.reduce(
-        (sum, group) => sum + group.resources.filter((resource) => !resource.disabled).length,
-        0
-      ),
-    [groups]
-  );
-  const providerFamilies = useMemo(
-    () => groups.filter((group) => group.resources.length > 0).length,
-    [groups]
-  );
-  const updatedAtLabel = workbench.snapshot
-    ? formatDateTimeValue(workbench.snapshot.fetchedAt, i18n.language) ||
-      workbench.snapshot.fetchedAt
-    : t('providersPage.header.notLoaded');
-
   const openCreate = useCallback(() => {
     const brand = activeBrand;
     setSheetState({ open: true, brand, mode: 'create', resource: null });
@@ -351,10 +328,8 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
     return (
       <div className={styles.page}>
         <Skeleton height={82} />
-        <div className={styles.layout}>
-          <Skeleton height={420} />
-          <Skeleton height={420} />
-        </div>
+        <Skeleton height={58} />
+        <Skeleton height={420} />
       </div>
     );
   }
@@ -362,19 +337,12 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
   if (!activeGroup) {
     return (
       <div className={styles.page}>
-        <ProviderHeaderCard
-          totalActive={totalActive}
-          totalResources={totalResources}
-          providerFamilies={providerFamilies}
-          updatedAtLabel={updatedAtLabel}
-          isFetching={workbench.isFetching}
-          isNewDisabled
-          showNewAction={!fixedBrand}
-          onRefresh={() => void handleRefresh()}
-          onNew={() => {}}
-        />
-        {workbench.errorMessage ? (
-          <div className={styles.errorBanner}>{workbench.errorMessage}</div>
+        {!fixedBrand && groups.length > 0 ? (
+          <ProviderCategoryList
+            groups={groups}
+            activeBrand={activeBrand}
+            onSelect={handleSelectBrand}
+          />
         ) : null}
       </div>
     );
@@ -382,47 +350,32 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
 
   return (
     <div className={styles.page}>
-      <ProviderHeaderCard
-        totalActive={totalActive}
-        totalResources={totalResources}
-        providerFamilies={providerFamilies}
-        updatedAtLabel={updatedAtLabel}
-        isFetching={workbench.isFetching}
-        showNewAction={!fixedBrand}
-        isNewDisabled={disableMutations}
-        onRefresh={() => void handleRefresh()}
-        onNew={openCreate}
-      />
-
-      {workbench.errorMessage ? (
-        <div className={styles.errorBanner}>{workbench.errorMessage}</div>
+      {!fixedBrand ? (
+        <ProviderCategoryList
+          groups={groups}
+          activeBrand={activeGroup.id}
+          onSelect={handleSelectBrand}
+        />
       ) : null}
 
-      <div className={`${styles.layout} ${fixedBrand ? styles.layoutSingle : ''}`.trim()}>
-        {!fixedBrand ? (
-          <ProviderCategoryList
-            groups={groups}
-            activeBrand={activeGroup.id}
-            onSelect={handleSelectBrand}
-          />
-        ) : null}
-
-        <ProviderResourcePanel
-          group={activeGroup}
-          filter={filter}
-          onFilterChange={(value) => updateActiveFilterState({ filter: value })}
-          filteredResources={visibleResources}
-          selectedId={sheetState.open ? (sheetState.resource?.id ?? null) : null}
-          disableMutations={disableMutations}
-          usageByProvider={usageByProvider}
-          toolbarControls={toolbarControls}
-          onView={openView}
-          onEdit={openEdit}
-          onDelete={handleDelete}
-          onToggleDisabled={handleToggleDisabled}
-          onCreate={openCreate}
-        />
-      </div>
+      <ProviderResourcePanel
+        group={activeGroup}
+        filter={filter}
+        onFilterChange={(value) => updateActiveFilterState({ filter: value })}
+        filteredResources={visibleResources}
+        selectedId={sheetState.open ? (sheetState.resource?.id ?? null) : null}
+        isFetching={workbench.isFetching}
+        disableMutations={disableMutations}
+        showCreateAction={!fixedBrand}
+        usageByProvider={usageByProvider}
+        toolbarControls={toolbarControls}
+        onRefresh={() => void handleRefresh()}
+        onView={openView}
+        onEdit={openEdit}
+        onDelete={handleDelete}
+        onToggleDisabled={handleToggleDisabled}
+        onCreate={openCreate}
+      />
 
       {!fixedBrand ? (
         <ProviderSheet

@@ -34,7 +34,6 @@ export function VaultHeader(props: VaultHeaderProps) {
   return (
     <header className={styles.header} ref={revealRef}>
       <div className={styles.copy} data-reveal>
-        <h1 className={styles.title}>{t('auth_files.title')}</h1>
         <p className={styles.meta}>
           <span>{t('auth_files.meta_total', { count: totalCount })}</span>
           <span className={styles.metaDot} aria-hidden="true">

@@ -872,14 +872,6 @@
     },
     "visual": {
       "quick_jump": "快速跳转",
-      "mode": {
-        "simple": "简单",
-        "full": "完整",
-        "label": "编辑模式",
-        "more_settings": "切换到完整模式，查看全部 {{total}} 个配置分区",
-        "validation_banner": "部分高级配置项存在校验错误，已阻止保存。请切换到完整模式进行修复。",
-        "switch_to_full": "切换完整模式"
-      },
       "search": {
         "placeholder": "搜索配置项（标签或 YAML 键名）",
         "no_results": "没有匹配的配置项"
@@ -1432,11 +1424,7 @@
   "providersPage": {
     "header": {
       "title": "AI 提供商",
-      "issueCount": "{{count}} 个问题",
-      "activeResources": "{{active}}/{{total}} 个活跃资源",
-      "providerFamilies": "{{count}} 个提供商",
-      "updatedAt": "更新于 {{time}}",
-      "notLoaded": "未加载"
+      "issueCount": "{{count}} 个问题"
     },
     "actions": {
       "refresh": "刷新",

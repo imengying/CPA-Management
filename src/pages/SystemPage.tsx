@@ -137,7 +137,6 @@ export function SystemPage() {
 
   return (
     <div className={styles.container}>
-      <h1 className="page-heading">{t('nav.system_info')}</h1>
       <div className={styles.content}>
         <section className={styles.quickLinksSection}>
           <h2 className={styles.sectionTitle}>{t('system_info.quick_links_title')}</h2>

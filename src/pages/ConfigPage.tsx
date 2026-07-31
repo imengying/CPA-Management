@@ -568,7 +568,6 @@ export function ConfigPage() {
 
   return (
     <div className={styles.container}>
-      <h1 className="page-heading">{t('nav.config_management')}</h1>
       <div className={styles.tabBar}>
         <button
           type="button"

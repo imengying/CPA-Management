@@ -989,7 +989,6 @@ export function PluginStorePage() {
 
   return (
     <div className={styles.page}>
-      <h1 className="page-heading">{t('nav.plugin_store')}</h1>
       {/* ── Security Banner ── */}
       <div className={styles.securityBanner} role="note">
         <IconShield size={20} />

@@ -583,6 +583,21 @@ export function MainLayout() {
   ];
   const navItems = navGroups.flatMap((group) => flattenNavItems(group.items));
   const navOrder = navItems.map((item) => item.path);
+  const normalizedCurrentPath = (() => {
+    const trimmed =
+      location.pathname.length > 1 && location.pathname.endsWith('/')
+        ? location.pathname.slice(0, -1)
+        : location.pathname;
+    return trimmed === '/dashboard' ? '/' : trimmed;
+  })();
+  const currentNavItem =
+    navItems.find((item) => item.path === normalizedCurrentPath) ??
+    navItems.find(
+      (item) => item.path !== '/' && normalizedCurrentPath.startsWith(`${item.path}/`)
+    ) ??
+    navItems[0];
+  const currentPageTitle =
+    currentNavItem?.label ?? (currentNavItem?.labelKey ? t(currentNavItem.labelKey) : '');
   const getRouteOrder = (pathname: string) => {
     const trimmedPath =
       pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
@@ -831,6 +846,10 @@ export function MainLayout() {
           >
             {sidebarOpen ? headerIcons.close : headerIcons.menu}
           </Button>
+
+          <div className="header-current-page">
+            <h1 className="header-current-title">{currentPageTitle}</h1>
+          </div>
         </div>
 
         <div className="header-actions">

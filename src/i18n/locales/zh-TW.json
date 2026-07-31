@@ -872,14 +872,6 @@
     },
     "visual": {
       "quick_jump": "快速跳轉",
-      "mode": {
-        "simple": "簡單",
-        "full": "完整",
-        "label": "編輯模式",
-        "more_settings": "切換到完整模式，檢視全部 {{total}} 個設定分區",
-        "validation_banner": "部分進階設定項存在驗證錯誤，已阻止儲存。請切換到完整模式進行修正。",
-        "switch_to_full": "切換完整模式"
-      },
       "search": {
         "placeholder": "搜尋設定項（標籤或 YAML 鍵名）",
         "no_results": "沒有符合的設定項"
@@ -1432,11 +1424,7 @@
   "providersPage": {
     "header": {
       "title": "AI 提供商",
-      "issueCount": "{{count}} 個問題",
-      "activeResources": "{{active}}/{{total}} 個活躍資源",
-      "providerFamilies": "{{count}} 個提供商",
-      "updatedAt": "更新於 {{time}}",
-      "notLoaded": "未載入"
+      "issueCount": "{{count}} 個問題"
     },
     "actions": {
       "refresh": "重新整理",

@@ -24,9 +24,6 @@ export function QuotaHeader(props: QuotaHeaderProps) {
   return (
     <header className={styles.header}>
       <div className={styles.copy}>
-        <h1 className={styles.title} data-reveal>
-          {t('quota_management.title')}
-        </h1>
         <p className={styles.meta} data-reveal>
           <span className={styles.metaTotal}>
             {t('quota_management.meta_credentials', { count: totalCount })}

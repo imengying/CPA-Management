@@ -1,15 +1,10 @@
 @use '../../../styles/mixins' as *;
 @use '../../../styles/variables' as *;
 
-.stack {
+.providerBar {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-width: 0;
-  align-self: start;
-}
-
-.aside {
+  align-items: center;
+  gap: 8px;
   min-width: 0;
   padding: 10px;
   border: 1px solid var(--border);
@@ -18,30 +13,38 @@
 }
 
 .eyebrow {
-  margin: 3px 8px 8px;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0 4px 0 0;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 650;
   letter-spacing: 0;
   color: var(--muted-foreground);
+  white-space: nowrap;
 }
 
 .list {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  align-items: stretch;
+  gap: 6px;
+  min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 1px;
+  scrollbar-width: thin;
 }
 
 .item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  width: 100%;
-  min-width: 0;
-  padding: 9px 10px;
+  justify-content: flex-start;
+  gap: 8px;
+  flex: 0 0 auto;
+  min-width: 118px;
+  max-width: 170px;
+  padding: 7px 9px;
   border-radius: 8px;
-  border: 1px solid transparent;
-  background: transparent;
+  border: 1px solid var(--border);
+  background: var(--background);
   cursor: pointer;
   text-align: left;
   color: var(--foreground);
@@ -51,8 +54,8 @@
     color $transition-fast;
 
   &:hover:not(.active) {
-    background: color-mix(in srgb, var(--accent) 68%, transparent);
-    border-color: var(--border);
+    background: var(--muted);
+    border-color: var(--border-hover);
   }
 
   &:focus-visible {
@@ -70,14 +73,14 @@
 .itemLeft {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   min-width: 0;
   flex: 1;
 }
 
 .logo {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border-radius: 8px;
   flex-shrink: 0;
   object-fit: contain;
@@ -137,43 +140,18 @@
   }
 }
 
-.badge {
-  min-width: 26px;
-  padding: 2px 7px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--background);
-  color: var(--muted-foreground);
-  font-family: $font-mono;
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-}
-
-.badgeEmpty {
-  border-color: var(--amber-30);
-  background: var(--amber-10);
-  color: var(--amber-text);
-}
-
-@media (max-width: 1279px) {
-  .stack,
-  .aside {
-    width: 100%;
+@media (max-width: 768px) {
+  .providerBar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .list {
-    flex-direction: row;
-    gap: 5px;
-    overflow-x: auto;
-    padding-bottom: 1px;
-    scrollbar-width: thin;
+    width: 100%;
   }
 
   .item {
-    flex: 0 0 164px;
+    min-width: 118px;
   }
 }
