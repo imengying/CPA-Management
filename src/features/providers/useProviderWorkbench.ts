@@ -17,6 +17,7 @@ import {
   xaiToResource,
 } from './adapters';
 import { PROVIDER_BRAND_ORDER } from './descriptors';
+import { buildThinkingFromLevels } from './thinkingLevels';
 import type {
   ProviderBrand,
   ProviderEntryFormInput,
@@ -73,7 +74,7 @@ const parseThinkingJson = (value: string | undefined): Record<string, unknown> |
   return parsed as Record<string, unknown>;
 };
 
-const buildExcludedModels = (
+export const buildExcludedModels = (
   textValue: string,
   disabled: boolean,
   brand: ProviderBrand
@@ -91,7 +92,7 @@ const buildExcludedModels = (
 
 const buildModelAliases = (
   models: ProviderEntryFormInput['models'] | undefined,
-  includeOpenAIFields = false
+  includeImage = false
 ): ModelAlias[] =>
   (models ?? [])
     .map((m) => {
@@ -100,10 +101,12 @@ const buildModelAliases = (
         alias: m.alias?.trim() || undefined,
         priority: m.priority,
         testModel: m.testModel,
+        thinking: m.thinkingLevelsTouched
+          ? buildThinkingFromLevels(m.thinkingLevels)
+          : parseThinkingJson(m.thinkingJson),
       };
-      if (includeOpenAIFields) {
+      if (includeImage) {
         entry.image = m.image === true;
-        entry.thinking = parseThinkingJson(m.thinkingJson);
       }
       return entry;
     })

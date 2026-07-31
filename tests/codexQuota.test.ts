@@ -53,7 +53,7 @@ describe('Codex current usage payload', () => {
     expect(windows.map(({ usedPercent }) => usedPercent)).toEqual([1, 0]);
   });
 
-  test('distinguishes total reset credits from credits currently applicable', () => {
+  test('shows reset support when total credits remain but none currently apply', () => {
     const summary = normalizeCodexResetCreditsPayload(
       CURRENT_CODEX_USAGE_PAYLOAD.rate_limit_reset_credits
     );
@@ -66,10 +66,10 @@ describe('Codex current usage payload', () => {
       rateLimitResetCreditsAvailableCount: summary.availableCount,
       rateLimitResetCreditsApplicableAvailableCount: summary.applicableAvailableCount,
     };
-    expect(CODEX_CONFIG.canResetQuota?.(quota)).toBeFalse();
+    expect(CODEX_CONFIG.canResetQuota?.(quota)).toBeTrue();
   });
 
-  test('falls back for payloads without an applicable count', () => {
+  test('keeps reset support for payloads without an applicable count', () => {
     const quota: CodexQuotaState = {
       status: 'success',
       windows: [],

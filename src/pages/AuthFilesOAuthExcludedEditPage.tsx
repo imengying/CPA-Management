@@ -4,10 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { SelectionCheckbox } from '@/components/ui/SelectionCheckbox';
 import { AutocompleteInput } from '@/components/ui/AutocompleteInput';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { IconChevronLeft, IconInfo, IconX } from '@/components/ui/icons';
+import { IconChevronLeft, IconInfo } from '@/components/ui/icons';
+import {
+  ExcludedModelsPicker,
+  normalizeExcludedRules,
+  type ExcludedModelsCatalogState,
+} from '@/components/excludedModels';
 import { useEdgeSwipeBack } from '@/hooks/useEdgeSwipeBack';
 import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
 import { useAuthStore, useNotificationStore } from '@/stores';
@@ -19,13 +23,6 @@ import {
   type AuthFileModelItem,
 } from '@/features/authFiles/constants';
 import { getStringSetSignature, isOAuthEditorDirty } from '@/features/authFiles/oauthEditorState';
-import {
-  getCustomOAuthExcludedRules,
-  getEffectiveOAuthExcludedRules,
-  hasOAuthExcludedRule,
-  normalizeOAuthExcludedRules,
-  updateOAuthExcludedRule,
-} from '@/features/authFiles/oauthExcludedRules';
 import type { AuthFileItem, OAuthModelAliasEntry } from '@/types';
 import { getErrorMessage, getErrorStatus } from '@/utils/helpers';
 import styles from './AuthFilesOAuthExcludedEditPage.module.scss';
@@ -51,13 +48,14 @@ export function AuthFilesOAuthExcludedEditPage() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [initialLoadError, setInitialLoadError] = useState<string | null>(null);
   const [baselineReady, setBaselineReady] = useState(false);
+  const [excludedUnsupported, setExcludedUnsupported] = useState(false);
   const loadRequestRef = useRef(0);
+  const modelsRequestRef = useRef(0);
 
   const [selectedModels, setSelectedModels] = useState<Set<string>>(new Set());
   const [modelsList, setModelsList] = useState<AuthFileModelItem[]>([]);
   const [modelsLoading, setModelsLoading] = useState(false);
-  const [modelsUnavailable, setModelsUnavailable] = useState(false);
-  const [customRule, setCustomRule] = useState('');
+  const [modelsError, setModelsError] = useState<'unsupported' | 'error' | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -93,26 +91,26 @@ export function AuthFilesOAuthExcludedEditPage() {
     return Object.prototype.hasOwnProperty.call(excluded, resolvedProviderKey);
   }, [excluded, resolvedProviderKey]);
   const baselineModelsSignature = useMemo(
-    () => getStringSetSignature(normalizeOAuthExcludedRules(excluded[resolvedProviderKey] ?? [])),
+    () => getStringSetSignature(normalizeExcludedRules(excluded[resolvedProviderKey] ?? [])),
     [excluded, resolvedProviderKey]
   );
-  const effectiveRules = useMemo(
-    () => getEffectiveOAuthExcludedRules(selectedModels, customRule),
-    [customRule, selectedModels]
-  );
+  const effectiveRules = useMemo(() => normalizeExcludedRules(selectedModels), [selectedModels]);
   const effectiveRulesSignature = useMemo(
     () => getStringSetSignature(effectiveRules),
     [effectiveRules]
   );
   const contentDirty = baselineModelsSignature !== effectiveRulesSignature;
-  const customRules = useMemo(
-    () =>
-      getCustomOAuthExcludedRules(
-        selectedModels,
-        modelsList.map((model) => model.id)
-      ),
-    [modelsList, selectedModels]
+  const candidates = useMemo(
+    () => modelsList.map((model) => ({ id: model.id, displayName: model.display_name })),
+    [modelsList]
   );
+  const catalogState: ExcludedModelsCatalogState = modelsLoading
+    ? 'loading'
+    : modelsError === 'unsupported'
+      ? 'unavailable'
+      : modelsError === 'error'
+        ? 'error'
+        : 'ready';
   const isDirty = isOAuthEditorDirty(
     initialProviderKey,
     provider,
@@ -166,6 +164,7 @@ export function AuthFilesOAuthExcludedEditPage() {
     setInitialLoading(true);
     setInitialLoadError(null);
     setBaselineReady(false);
+    setExcludedUnsupported(false);
 
     try {
       const [filesResult, excludedResult, aliasResult] = await Promise.allSettled([
@@ -190,6 +189,10 @@ export function AuthFilesOAuthExcludedEditPage() {
         return;
       }
 
+      if (getErrorStatus(excludedResult.reason) === 404) {
+        setExcludedUnsupported(true);
+        return;
+      }
       setInitialLoadError(getErrorMessage(excludedResult.reason));
     } catch (err: unknown) {
       if (requestId === loadRequestRef.current) {
@@ -220,61 +223,62 @@ export function AuthFilesOAuthExcludedEditPage() {
       if (cancelled) return;
       if (!resolvedProviderKey) {
         setSelectedModels(new Set());
-        setCustomRule('');
         return;
       }
       const existing = excluded[resolvedProviderKey] ?? [];
-      setSelectedModels(new Set(normalizeOAuthExcludedRules(existing)));
-      setCustomRule('');
+      setSelectedModels(new Set(normalizeExcludedRules(existing)));
     });
     return () => {
       cancelled = true;
     };
   }, [excluded, resolvedProviderKey]);
 
-  useEffect(() => {
-    let cancelled = false;
+  const loadModels = useCallback(
+    async (providerKey: string) => {
+      const requestId = ++modelsRequestRef.current;
 
-    queueMicrotask(() => {
-      if (cancelled) return;
-
-      if (!resolvedProviderKey) {
+      if (!providerKey || excludedUnsupported) {
         setModelsList([]);
-        setModelsUnavailable(false);
+        setModelsError(null);
         setModelsLoading(false);
         return;
       }
 
       setModelsList([]);
       setModelsLoading(true);
-      setModelsUnavailable(false);
+      setModelsError(null);
 
-      authFilesApi
-        .getModelDefinitions(resolvedProviderKey)
-        .then((models) => {
-          if (cancelled) return;
-          setModelsList(models);
-        })
-        .catch((err: unknown) => {
-          if (cancelled) return;
-          const status = getErrorStatus(err);
-          setModelsList([]);
-          setModelsUnavailable(true);
-          if (status !== 400) {
-            const errorMessage = err instanceof Error ? err.message : t('common.unknown_error');
-            showNotification(`${t('notification.load_failed')}: ${errorMessage}`, 'error');
-          }
-        })
-        .finally(() => {
-          if (cancelled) return;
+      try {
+        const models = await authFilesApi.getModelDefinitions(providerKey);
+        if (requestId !== modelsRequestRef.current) return;
+        setModelsList(models);
+      } catch (err: unknown) {
+        if (requestId !== modelsRequestRef.current) return;
+        const status = getErrorStatus(err);
+        if (status === 400 || status === 404) {
+          setModelsError('unsupported');
+          return;
+        }
+        setModelsError('error');
+        showNotification(
+          `${t('notification.load_failed')}: ${getErrorMessage(err) || t('common.unknown_error')}`,
+          'error'
+        );
+      } finally {
+        if (requestId === modelsRequestRef.current) {
           setModelsLoading(false);
-        });
-    });
+        }
+      }
+    },
+    [excludedUnsupported, showNotification, t]
+  );
 
+  useEffect(() => {
+    void loadModels(resolvedProviderKey);
     return () => {
-      cancelled = true;
+      modelsRequestRef.current += 1;
     };
-  }, [resolvedProviderKey, showNotification, t]);
+  }, [loadModels, resolvedProviderKey]);
 
   const applyProviderChange = useCallback(
     (value: string) => {
@@ -310,15 +314,9 @@ export function AuthFilesOAuthExcludedEditPage() {
     [applyProviderChange, contentDirty, resolvedProviderKey, showConfirmation, unsavedChangesDialog]
   );
 
-  const toggleModel = useCallback((modelId: string, checked: boolean) => {
-    setSelectedModels((prev) => new Set(updateOAuthExcludedRule(prev, modelId, checked)));
+  const handleRulesChange = useCallback((next: string[]) => {
+    setSelectedModels(new Set(next));
   }, []);
-
-  const handleAddCustomRule = useCallback(() => {
-    if (!customRule.trim()) return;
-    setSelectedModels(new Set(effectiveRules));
-    setCustomRule('');
-  }, [customRule, effectiveRules]);
 
   const handleSave = useCallback(async () => {
     const normalizedProvider = normalizeProviderKey(provider);
@@ -346,7 +344,12 @@ export function AuthFilesOAuthExcludedEditPage() {
     }
   }, [allowNextNavigation, effectiveRules, handleBack, isEditing, provider, showNotification, t]);
 
-  const canSave = !disableControls && !saving && baselineReady && initialLoadError === null;
+  const canSave =
+    !disableControls &&
+    !saving &&
+    baselineReady &&
+    !excludedUnsupported &&
+    initialLoadError === null;
 
   return (
     <div className={styles.page} ref={swipeRef}>
@@ -378,7 +381,14 @@ export function AuthFilesOAuthExcludedEditPage() {
         </div>
       ) : (
         <div className={styles.pageContent}>
-          {initialLoadError !== null ? (
+          {excludedUnsupported ? (
+            <Card>
+              <EmptyState
+                title={t('oauth_excluded.upgrade_required_title')}
+                description={t('oauth_excluded.upgrade_required_desc')}
+              />
+            </Card>
+          ) : initialLoadError !== null ? (
             <Card>
               <EmptyState
                 title={t('notification.refresh_failed')}
@@ -446,127 +456,26 @@ export function AuthFilesOAuthExcludedEditPage() {
 
               <Card className={styles.settingsCard}>
                 <div className={styles.settingsHeader}>
-                  <div className={styles.settingsHeaderTitle}>
+                  <div className={styles.settingsHeaderTitle} id="oauth-excluded-models-label">
                     {t('oauth_excluded.models_label')}
                   </div>
-                  {resolvedProviderKey && (
-                    <div className={styles.modelsHint}>
-                      {modelsLoading ? (
-                        <>
-                          <LoadingSpinner size={14} />
-                          <span>{t('oauth_excluded.models_loading')}</span>
-                        </>
-                      ) : modelsUnavailable ? (
-                        <span>{t('oauth_excluded.models_unavailable')}</span>
-                      ) : modelsList.length > 0 ? (
-                        <span>
-                          {t('oauth_excluded.models_loaded', { count: modelsList.length })}
-                        </span>
-                      ) : (
-                        <span>{t('oauth_excluded.no_models_available')}</span>
-                      )}
-                    </div>
-                  )}
                 </div>
 
-                <div className={styles.customRuleSection}>
-                  <div className={styles.customRuleHeader}>
-                    <label className={styles.settingsLabel} htmlFor="oauth-excluded-custom-rule">
-                      {t('oauth_excluded.custom_rule_label')}
-                    </label>
-                    <div className={styles.settingsDesc}>
-                      {t('oauth_excluded.custom_rule_hint')}
-                    </div>
-                  </div>
-                  <div className={styles.customRuleRow}>
-                    <input
-                      id="oauth-excluded-custom-rule"
-                      className={`input ${styles.customRuleInput}`}
-                      value={customRule}
-                      onChange={(event) => setCustomRule(event.target.value)}
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter') {
-                          event.preventDefault();
-                          handleAddCustomRule();
-                        }
-                      }}
-                      placeholder={t('oauth_excluded.custom_rule_placeholder')}
-                      disabled={!resolvedProviderKey || disableControls || saving}
-                    />
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="secondary"
-                      onClick={handleAddCustomRule}
-                      disabled={
-                        !resolvedProviderKey || !customRule.trim() || disableControls || saving
+                {resolvedProviderKey ? (
+                  <div className={styles.settingsSection}>
+                    <ExcludedModelsPicker
+                      value={effectiveRules}
+                      onChange={handleRulesChange}
+                      candidates={candidates}
+                      catalogState={catalogState}
+                      onRetryCatalog={
+                        modelsError === 'error'
+                          ? () => void loadModels(resolvedProviderKey)
+                          : undefined
                       }
-                    >
-                      {t('oauth_excluded.custom_rule_add')}
-                    </Button>
-                  </div>
-
-                  {customRules.length > 0 && (
-                    <div className={styles.customRuleList}>
-                      <div className={styles.customRuleListLabel}>
-                        {t('oauth_excluded.custom_rules_label')}
-                      </div>
-                      <div className={styles.customRuleChips}>
-                        {customRules.map((rule) => (
-                          <span key={rule.toLowerCase()} className={styles.customRuleChip}>
-                            <span>{rule}</span>
-                            <button
-                              type="button"
-                              className={styles.customRuleRemove}
-                              onClick={() => toggleModel(rule, false)}
-                              disabled={disableControls || saving}
-                              aria-label={t('oauth_excluded.custom_rule_remove', { rule })}
-                            >
-                              <IconX size={13} />
-                            </button>
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {modelsLoading ? (
-                  <div className={styles.loadingModels}>
-                    <LoadingSpinner size={16} />
-                    <span>{t('common.loading')}</span>
-                  </div>
-                ) : modelsList.length > 0 ? (
-                  <div className={styles.modelList}>
-                    {modelsList.map((model) => {
-                      const checked = hasOAuthExcludedRule(selectedModels, model.id);
-                      return (
-                        <SelectionCheckbox
-                          key={model.id}
-                          checked={checked}
-                          disabled={disableControls || saving}
-                          onChange={(value) => toggleModel(model.id, value)}
-                          className={styles.modelItem}
-                          labelClassName={styles.modelText}
-                          label={
-                            <>
-                              <span className={styles.modelId}>{model.id}</span>
-                              {model.display_name && model.display_name !== model.id && (
-                                <span className={styles.modelDisplayName}>
-                                  {model.display_name}
-                                </span>
-                              )}
-                            </>
-                          }
-                        />
-                      );
-                    })}
-                  </div>
-                ) : resolvedProviderKey ? (
-                  <div className={styles.emptyModels}>
-                    {modelsUnavailable
-                      ? t('oauth_excluded.models_unavailable')
-                      : t('oauth_excluded.no_models_available')}
+                      disabled={disableControls || saving}
+                      labelledBy="oauth-excluded-models-label"
+                    />
                   </div>
                 ) : (
                   <div className={styles.emptyModels}>{t('oauth_excluded.provider_required')}</div>

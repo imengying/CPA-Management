@@ -16,6 +16,7 @@ import {
   supportsAuthFileWebsockets,
 } from '@/features/authFiles/constants';
 import { MAX_CREDENTIAL_WEIGHT } from '@/utils/credentialWeight';
+import { AuthFileExcludedModelsField } from './AuthFileExcludedModelsField';
 import styles from './AuthFileDetailsSheet.module.scss';
 
 const DERIVED_INFO_KEYS = [
@@ -218,6 +219,12 @@ export function AuthFileDetailsSheet(props: AuthFileDetailsSheetProps) {
                       <div className="hint">{t('auth_files.using_api_hint')}</div>
                     </div>
                   )}
+                  <AuthFileExcludedModelsField
+                    fileName={editor.fileName}
+                    value={editor.excludedModelsText}
+                    disabled={disableControls || editor.saving || !editor.json}
+                    onChange={(value) => onChange('excludedModelsText', value)}
+                  />
                   <div className="form-group">
                     <label>{t('auth_files.headers_label')}</label>
                     <textarea

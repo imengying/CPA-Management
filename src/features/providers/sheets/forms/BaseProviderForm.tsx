@@ -10,10 +10,18 @@ import {
 } from '@/components/ui/icons';
 import { Collapsible } from '@/components/ui/Collapsible';
 import { Select } from '@/components/ui/Select';
+import {
+  DISABLE_ALL_RULE,
+  ExcludedModelsPicker,
+  formatExcludedRulesText,
+  parseExcludedRulesText,
+  type ExcludedModelsCatalogState,
+} from '@/components/excludedModels';
 import { hasDisableAllModelsRule } from '@/components/providers/utils';
 import type { GeminiKeyConfig, OpenAIProviderConfig, ProviderKeyConfig } from '@/types';
 import type { ModelInfo } from '@/utils/models';
 import { PROVIDER_DESCRIPTORS } from '../../descriptors';
+import { readThinkingLevels } from '../../thinkingLevels';
 import type {
   ApiKeyEntryInput,
   ModelEntryInput,
@@ -29,6 +37,8 @@ import { ConnectivityStatusIcon } from './ConnectivityStatusIcon';
 import { ModelEntriesEditor } from './ModelEntriesEditor';
 import styles from './sharedForm.module.scss';
 import { MAX_CREDENTIAL_WEIGHT } from '@/utils/credentialWeight';
+
+const DISABLE_ALL_RULES = [DISABLE_ALL_RULE];
 
 interface BaseProviderFormProps {
   brand: ProviderBrand;
@@ -115,6 +125,7 @@ function buildInitialForm(
             testModel: m.testModel,
             image: m.image === true,
             thinkingJson: formatJsonObject(m.thinking),
+            thinkingLevels: readThinkingLevels(m.thinking),
           }))
         : [emptyModel()],
       headers: cfg.headers
@@ -157,6 +168,8 @@ function buildInitialForm(
           alias: m.alias ?? '',
           priority: m.priority,
           testModel: m.testModel,
+          thinkingJson: formatJsonObject(m.thinking),
+          thinkingLevels: readThinkingLevels(m.thinking),
         }))
       : [emptyModel()],
     headers: cfg.headers
@@ -426,6 +439,31 @@ export function BaseProviderForm({
       form.apiKeyEntries && form.apiKeyEntries.length ? form.apiKeyEntries : [emptyApiKeyEntry()],
     [form.apiKeyEntries]
   );
+  const excludedRules = useMemo(
+    () => parseExcludedRulesText(form.excludedModelsText),
+    [form.excludedModelsText]
+  );
+  const excludedCandidates = useMemo(() => {
+    const byKey = new Map<string, { id: string; displayName?: string }>();
+    discovery.models.forEach((model) => {
+      const id = model.name?.trim();
+      if (id) byKey.set(id.toLowerCase(), { id, displayName: model.alias || undefined });
+    });
+    form.models.forEach((model) => {
+      const id = model.name?.trim();
+      if (id && !byKey.has(id.toLowerCase())) byKey.set(id.toLowerCase(), { id });
+    });
+    return [...byKey.values()].sort((left, right) =>
+      left.id.localeCompare(right.id, undefined, { sensitivity: 'base' })
+    );
+  }, [discovery.models, form.models]);
+  const excludedCatalogState: ExcludedModelsCatalogState = discovery.loading
+    ? 'loading'
+    : discovery.error
+      ? 'error'
+      : excludedCandidates.length === 0
+        ? 'unavailable'
+        : 'ready';
   const actualApiKeyEntries = form.apiKeyEntries ?? [];
   const supportsDisableCooling =
     brand === 'gemini' ||
@@ -434,7 +472,7 @@ export function BaseProviderForm({
     brand === 'xai' ||
     brand === 'claude' ||
     brand === 'openaiCompatibility';
-  const supportsOpenAIModelOptions = brand === 'openaiCompatibility';
+  const supportsModelImage = brand === 'openaiCompatibility';
   const singleConnectivity =
     brand === 'codex' || brand === 'xai'
       ? { status: connectivity.codexStatus, run: connectivity.runCodex }
@@ -855,7 +893,8 @@ export function BaseProviderForm({
             ) : null}
             <ModelEntriesEditor
               models={modelsList}
-              extendedOptions={supportsOpenAIModelOptions}
+              supportsImage={supportsModelImage}
+              supportsThinking
               mutating={mutating}
               removeDisabled={modelsList.length <= 1}
               onUpdate={updateModelEntry}
@@ -869,14 +908,15 @@ export function BaseProviderForm({
       {descriptor.supportsExcludedModels ? (
         <Collapsible label={t('providersPage.form.excludedSection')}>
           <div className={styles.field}>
-            <span className={styles.labelHint}>{t('providersPage.form.excludedHint')}</span>
-            <textarea
-              className={styles.textarea}
-              rows={4}
-              value={form.excludedModelsText}
-              onChange={(e) => updateField('excludedModelsText', e.target.value)}
+            <ExcludedModelsPicker
+              value={excludedRules}
+              onChange={(next) => updateField('excludedModelsText', formatExcludedRulesText(next))}
+              candidates={excludedCandidates}
+              catalogState={excludedCatalogState}
+              onRetryCatalog={discovery.available ? () => void discovery.fetch() : undefined}
               disabled={mutating}
-              placeholder="model-1&#10;model-2"
+              reservedRules={DISABLE_ALL_RULES}
+              reservedRuleMessage={t('providersPage.form.excludedDisabledNote')}
             />
           </div>
         </Collapsible>

@@ -39,7 +39,10 @@
 }
 
 .heroPeriod {
+  display: inline;
+  margin-inline-start: clamp(4px, 0.08em, 7px);
   color: inherit;
+  letter-spacing: 0;
 }
 
 .heroPeriodLive {

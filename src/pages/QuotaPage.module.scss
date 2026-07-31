@@ -243,14 +243,6 @@
 
 @include quotaPresentation.elite-plan-value;
 
-.codexGrid > *:nth-child(3n + 2) {
-  --gem-flash-delay: -3.7s;
-}
-
-.codexGrid > *:nth-child(3n + 3) {
-  --gem-flash-delay: -7.1s;
-}
-
 .fileCard {
   background: var(--card);
   border: 1px solid var(--border);
