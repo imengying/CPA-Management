@@ -70,6 +70,9 @@ export function ProviderCategoryList({ groups, activeBrand, onSelect }: Provider
                 </span>
               </span>
             </span>
+            <span className={`${styles.badge} ${total === 0 ? styles.badgeEmpty : ''}`}>
+              {total}
+            </span>
           </button>
         );
       })}
@@ -77,9 +80,11 @@ export function ProviderCategoryList({ groups, activeBrand, onSelect }: Provider
   );
 
   return (
-    <section className={styles.providerBar} aria-label={t('providersPage.categories.title')}>
-      <p className={styles.eyebrow}>{t('providersPage.categories.title')}</p>
-      {renderGroups(groups)}
-    </section>
+    <div className={styles.stack}>
+      <aside className={styles.aside} aria-label={t('providersPage.categories.title')}>
+        <p className={styles.eyebrow}>{t('providersPage.categories.title')}</p>
+        {renderGroups(groups)}
+      </aside>
+    </div>
   );
 }

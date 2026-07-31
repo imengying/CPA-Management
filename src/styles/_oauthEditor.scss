@@ -11,7 +11,7 @@
 
   .topBar {
     position: sticky;
-    top: 0;
+    top: var(--header-height, 50px);
     z-index: 5;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
@@ -19,8 +19,8 @@
     gap: $spacing-md;
     min-height: 44px;
     padding: $spacing-sm $spacing-md;
-    border-bottom: 1px solid var(--border);
-    background: var(--background);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
   }
 
   .topBarTitle {
@@ -188,12 +188,12 @@
   .tagActive {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
-    color: #fff;
+    color: var(--primary-contrast);
 
     &:hover {
       background-color: var(--primary-color);
       border-color: var(--primary-color);
-      color: #fff;
+      color: var(--primary-contrast);
     }
   }
 }

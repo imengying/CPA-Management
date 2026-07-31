@@ -2,6 +2,9 @@
 
 .container {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .cardTitle {
@@ -49,14 +52,14 @@
   margin: 0;
   font-size: 13px;
   line-height: 1.5;
-  color: var(--muted-foreground);
+  color: var(--text-secondary);
 }
 
 .cardHintSecondary {
   margin: 0;
   font-size: 12px;
   line-height: 1.5;
-  color: var(--muted-foreground);
+  color: var(--text-tertiary);
 }
 
 .callbackSection {
@@ -72,8 +75,8 @@
 }
 
 .authUrlBox {
-  background: var(--background);
-  border: 1px dashed var(--border);
+  background: var(--bg-secondary);
+  border: 1px dashed var(--border-color);
   border-radius: 8px;
   padding: 12px;
   display: flex;
@@ -82,13 +85,13 @@
 }
 
 .authUrlLabel {
-  color: var(--muted-foreground);
+  color: var(--text-secondary);
   font-size: 13px;
 }
 
 .authUrlValue {
   font-weight: 700;
-  color: var(--foreground);
+  color: var(--text-primary);
   word-break: break-all;
   overflow-wrap: anywhere;
   line-height: 1.5;
@@ -133,20 +136,20 @@
   flex: 1;
   min-width: 220px;
   padding: 10px 12px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   font-size: 13px;
 }
 
 .fileNamePlaceholder {
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
 }
 
 .connectionBox {
-  background: var(--background);
-  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 12px;
   display: flex;
@@ -158,7 +161,7 @@
   margin: 0;
   font-size: 13px;
   font-weight: 600;
-  color: var(--foreground);
+  color: var(--text-primary);
 }
 
 .keyValueList {
@@ -180,12 +183,19 @@
 }
 
 .keyValueKey {
-  color: var(--muted-foreground);
+  color: var(--text-secondary);
   font-size: 13px;
 }
 
 .keyValueValue {
-  color: var(--foreground);
+  color: var(--text-primary);
   word-break: break-all;
   overflow-wrap: anywhere;
+}
+
+@include mobile {
+  .fileName {
+    width: 100%;
+    min-width: 0;
+  }
 }

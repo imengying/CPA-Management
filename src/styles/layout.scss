@@ -3,7 +3,9 @@
 :root {
   --navbar-height: 50px;
   --header-height: var(--navbar-height);
-  --shell-gutter: 24px;
+  --page-inline-gutter: clamp(14px, 2vw, 28px);
+  --page-top-gap: 14px;
+  --page-bottom-gap: 28px;
   --sidebar-panel-width: 210px;
   --sidebar-collapsed-width: 66px;
   --sidebar-active-width: var(--sidebar-panel-width);
@@ -104,23 +106,6 @@
     align-items: center;
     gap: 14px;
     padding: 0 16px;
-  }
-
-  .header-current-page {
-    min-width: 0;
-    display: inline-flex;
-    align-items: center;
-    color: var(--muted-foreground);
-    font-size: 16px;
-    font-weight: 650;
-    line-height: 1;
-  }
-
-  .header-current-title {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .header-actions {
@@ -819,7 +804,8 @@
   z-index: 2;
   flex: 1 0 auto;
   min-height: 100%;
-  padding: calc(var(--header-height) + 14px) clamp(14px, 2vw, 28px) 28px;
+  padding: calc(var(--header-height) + var(--page-top-gap)) var(--page-inline-gutter)
+    var(--page-bottom-gap);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -850,7 +836,9 @@
 
 @media (max-width: $breakpoint-mobile) {
   :root {
-    --shell-gutter: 12px;
+    --page-inline-gutter: 12px;
+    --page-top-gap: 12px;
+    --page-bottom-gap: 20px;
     --sidebar-panel-width: min(280px, calc(100vw - 24px));
     --sidebar-active-width: 0px;
     --floating-control-size: 34px;
@@ -871,10 +859,6 @@
 
     .header-menu-btn {
       display: inline-flex;
-    }
-
-    .header-current-page {
-      font-size: 14px;
     }
 
     .header-actions {
@@ -1054,7 +1038,8 @@
   }
 
   .main-content {
-    padding: calc(var(--header-height) + 12px) 12px 20px;
+    padding: calc(var(--header-height) + var(--page-top-gap)) var(--page-inline-gutter)
+      var(--page-bottom-gap);
 
     &.main-content-plugin-resource {
       min-height: 0;

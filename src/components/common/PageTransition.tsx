@@ -31,6 +31,7 @@ const IOS_ENTER_FROM_X_PERCENT_BACKWARD = -22;
 const IOS_BACKGROUND_SCALE = 0.96;
 const IOS_BACKGROUND_OPACITY = 0.5;
 const IOS_SHADOW_VALUE = '-20px 0 36px rgba(0, 0, 0, 0.20)';
+const ANIMATION_COMPLETION_BUFFER_MS = 200;
 
 // easeOutQuart: powerful but elegant deceleration for hero entrances.
 const easeOutQuart = (progress: number) => 1 - (1 - progress) ** 4;
@@ -54,6 +55,9 @@ const clearLayerStyles = (element: HTMLElement | null) => {
   element.style.removeProperty('opacity');
   element.style.removeProperty('box-shadow');
 };
+
+const getLayerKey = (location: Location) =>
+  `${location.key}:${location.pathname}${location.search}${location.hash}`;
 
 type Layer = {
   key: string;
@@ -80,11 +84,12 @@ export function PageTransition({
   const enterScrollOffsetRef = useRef(0);
   const scrollPositionsRef = useRef(new Map<string, number>());
   const nextLayersRef = useRef<Layer[] | null>(null);
+  const locationLayerKey = getLayerKey(location);
 
   const [isAnimating, setIsAnimating] = useState(false);
   const [layers, setLayers] = useState<Layer[]>(() => [
     {
-      key: location.key,
+      key: getLayerKey(location),
       location,
       status: 'current',
     },
@@ -102,14 +107,23 @@ export function PageTransition({
 
   useLayoutEffect(() => {
     if (isAnimating) return;
-    if (location.key === currentLayerKey) return;
-    if (currentLayerPathname === location.pathname) return;
+    if (locationLayerKey === currentLayerKey) return;
+    if (currentLayerPathname === location.pathname) {
+      setLayers((prev) =>
+        prev
+          .filter((layer) => layer.status === 'current' || layer.key !== locationLayerKey)
+          .map((layer) =>
+            layer.status === 'current' ? { ...layer, key: locationLayerKey, location } : layer
+          )
+      );
+      return;
+    }
     const scrollContainer = resolveScrollContainer();
     const exitScrollOffset = scrollContainer?.scrollTop ?? 0;
     exitScrollOffsetRef.current = exitScrollOffset;
     scrollPositionsRef.current.set(currentLayerKey, exitScrollOffset);
 
-    enterScrollOffsetRef.current = scrollPositionsRef.current.get(location.key) ?? 0;
+    enterScrollOffsetRef.current = scrollPositionsRef.current.get(locationLayerKey) ?? 0;
     const resolveOrderIndex = (pathname?: string) => {
       if (!getRouteOrder || !pathname) return null;
       const index = getRouteOrder(pathname);
@@ -130,7 +144,7 @@ export function PageTransition({
 
     // When using iOS-style stacking, history POP within the same "section" can have equal route order.
     // In that case, prefer treating navigation to an existing layer as a backward (pop) transition.
-    if (nextVariant === 'ios' && layers.some((layer) => layer.key === location.key)) {
+    if (nextVariant === 'ios' && layers.some((layer) => layer.key === locationLayerKey)) {
       nextDirection = 'backward';
     }
 
@@ -161,7 +175,7 @@ export function PageTransition({
         .filter((_, idx) => idx !== resolvedCurrentIndex)
         .map((layer): Layer => ({ ...layer, status: 'stacked' }));
 
-      const nextCurrent: Layer = { key: location.key, location, status: 'current' };
+      const nextCurrent: Layer = { key: locationLayerKey, location, status: 'current' };
 
       if (!previousCurrent) {
         nextLayersRef.current = [nextCurrent];
@@ -177,7 +191,7 @@ export function PageTransition({
           return [...previousStack, exitingLayer, nextCurrent];
         }
 
-        const targetIndex = prev.findIndex((layer) => layer.key === location.key);
+        const targetIndex = prev.findIndex((layer) => layer.key === locationLayerKey);
         if (targetIndex !== -1) {
           const targetStack: Layer[] = prev.slice(0, targetIndex + 1).map((layer, idx): Layer => {
             const isTarget = idx === targetIndex;
@@ -213,6 +227,7 @@ export function PageTransition({
   }, [
     isAnimating,
     location,
+    locationLayerKey,
     currentLayerKey,
     currentLayerPathname,
     getRouteOrder,
@@ -247,9 +262,15 @@ export function PageTransition({
     const exitToY = isForward ? -VERTICAL_EXIT_DISTANCE : VERTICAL_EXIT_DISTANCE;
     const exitBaseY = enterScrollOffset - exitScrollOffset;
     const reduceMotion = prefersReducedMotion();
+    const transitionDuration = reduceMotion
+      ? REDUCED_MOTION_DURATION
+      : transitionVariant === 'ios'
+        ? IOS_TRANSITION_DURATION
+        : Math.max(VERTICAL_ENTER_DURATION, VERTICAL_EXIT_DURATION);
     const activeAnimations: AnimationPlaybackControlsWithThen[] = [];
     let cancelled = false;
     let completed = false;
+    let completionTimeout: ReturnType<typeof setTimeout> | undefined;
     const completeTransition = () => {
       if (completed) return;
       completed = true;
@@ -392,16 +413,27 @@ export function PageTransition({
     if (!activeAnimations.length) {
       completeTransition();
     } else {
+      // Some background browsers leave Web Animations' `finished` promise pending indefinitely.
+      completionTimeout = setTimeout(
+        () => {
+          activeAnimations.forEach((animation) => animation.stop());
+          completeTransition();
+        },
+        transitionDuration * 1000 + ANIMATION_COMPLETION_BUFFER_MS
+      );
+
       void Promise.all(
         activeAnimations.map((animation) => animation.finished.catch(() => undefined))
       ).then(() => {
         if (cancelled) return;
+        clearTimeout(completionTimeout);
         completeTransition();
       });
     }
 
     return () => {
       cancelled = true;
+      clearTimeout(completionTimeout);
       activeAnimations.forEach((animation) => animation.stop());
     };
   }, [isAnimating, resolveScrollContainer]);

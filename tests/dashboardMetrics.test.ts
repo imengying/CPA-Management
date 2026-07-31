@@ -123,7 +123,7 @@ describe('providerLabel', () => {
   test('uses the brand spelling for known providers', () => {
     expect(providerLabel('xai', 'Unattributed')).toBe('xAI');
     expect(providerLabel('aistudio', 'Unattributed')).toBe('AI Studio');
-    expect(providerLabel('gemini-interactions', 'Unattributed')).toBe('Interactions API');
+    expect(providerLabel('gemini-interactions', 'Unattributed')).toBe('Interactions');
     expect(providerLabel('openai-compatibility', 'Unattributed')).toBe('OpenAI');
   });
 

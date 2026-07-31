@@ -448,6 +448,7 @@ export function PluginsPage() {
 
   return (
     <div className={styles.page}>
+      <h1 className="page-heading">{t('nav.plugins')}</h1>
       {/* ── Alerts ── */}
       {error ? <div className={styles.errorBox}>{error}</div> : null}
 

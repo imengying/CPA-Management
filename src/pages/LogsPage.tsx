@@ -643,6 +643,7 @@ export function LogsPage() {
 
   return (
     <div className={styles.container}>
+      <h1 className="page-heading">{t('nav.logs')}</h1>
       <div className={styles.tabBar}>
         <button
           type="button"

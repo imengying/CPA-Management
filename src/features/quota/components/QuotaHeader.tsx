@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/Button';
 import { IconRefreshCw } from '@/components/ui/icons';
 import { useCountUp } from '@/hooks/motion';
 import styles from './QuotaHeader.module.scss';
@@ -12,13 +13,7 @@ export type QuotaHeaderProps = {
   onRefreshAll: () => void;
 };
 
-/**
- * 额度页头部：标题领衔 + ▍mono 遥测 meta 行 + 墨色药丸「刷新全部」。
- * 与凭证库头部同语汇（无 eyebrow —— ▍游标挂在 meta 行开头）。
- *
- * 入场：三处 `data-reveal` 交给页面壳的 useRevealGroup 统一编排
- * （标题 0ms → meta 70ms → 动作 140ms → tabs 210ms）。
- */
+/** 额度页头部；入场顺序由页面壳的 useRevealGroup 统一编排。 */
 export function QuotaHeader(props: QuotaHeaderProps) {
   const { totalCount, loadedCount, attentionCount, refreshing, disableControls, onRefreshAll } =
     props;
@@ -55,15 +50,15 @@ export function QuotaHeader(props: QuotaHeaderProps) {
         </p>
       </div>
       <div className={styles.actions} data-reveal>
-        <button
-          type="button"
-          className={styles.primaryAction}
+        <Button
+          size="sm"
           onClick={onRefreshAll}
           disabled={disableControls || refreshing}
+          loading={refreshing}
         >
-          <IconRefreshCw size={14} className={refreshing ? styles.spinning : undefined} />
+          {!refreshing ? <IconRefreshCw size={14} /> : null}
           {t('quota_management.refresh_all_credentials')}
-        </button>
+        </Button>
       </div>
     </header>
   );

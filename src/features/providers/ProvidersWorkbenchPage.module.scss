@@ -4,14 +4,47 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
   width: 100%;
+  min-width: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+.layout {
+  display: grid;
+  align-items: start;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.layoutSingle {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.errorBanner {
+  padding: 9px 12px;
+  border: 1px solid var(--failure-badge-border);
+  border-radius: 8px;
+  background: var(--bg-error-light);
+  color: var(--danger-color);
+  font-size: 12.5px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 1280px) {
+  .layout {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+
+  .layoutSingle {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
   .page {
-    gap: 8px;
+    gap: 16px;
   }
 }

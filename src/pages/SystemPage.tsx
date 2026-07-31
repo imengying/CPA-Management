@@ -137,8 +137,10 @@ export function SystemPage() {
 
   return (
     <div className={styles.container}>
+      <h1 className="page-heading">{t('nav.system_info')}</h1>
       <div className={styles.content}>
-        <Card title={t('system_info.quick_links_title')}>
+        <section className={styles.quickLinksSection}>
+          <h2 className={styles.sectionTitle}>{t('system_info.quick_links_title')}</h2>
           <div className={styles.quickLinks}>
             <a
               href="https://github.com/router-for-me/CLIProxyAPI"
@@ -194,7 +196,7 @@ export function SystemPage() {
               </div>
             </a>
           </div>
-        </Card>
+        </section>
 
         <Card
           title={t('system_info.models_title')}

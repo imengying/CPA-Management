@@ -15,7 +15,7 @@
   padding: 15px 16px;
   border-radius: 8px;
   border: 1px solid var(--border-color);
-  background: color-mix(in srgb, var(--bg-primary) 82%, transparent);
+  background: var(--bg-primary);
   transition: border-color var(--dur-hover, 200ms) var(--ease-out-strong, ease-out);
 }
 

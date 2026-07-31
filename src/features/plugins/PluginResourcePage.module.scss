@@ -25,7 +25,8 @@
   min-height: 100%;
   align-items: center;
   justify-content: center;
-  padding: 70px clamp(20px, 3vw, 48px) 40px;
+  padding: calc(var(--header-height) + var(--page-top-gap)) var(--page-inline-gutter)
+    var(--page-bottom-gap);
   background: var(--bg-secondary);
 }
 

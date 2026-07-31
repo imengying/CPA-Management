@@ -1,5 +1,8 @@
 .container {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .content {
@@ -62,6 +65,20 @@
   font-size: 12px;
 }
 
+.quickLinksSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionTitle {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
 .quickLinks {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -73,22 +90,18 @@
   align-items: center;
   gap: $spacing-md;
   padding: $spacing-md $spacing-lg;
-  background: var(--background);
-  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   text-decoration: none;
   color: inherit;
-  transition: all 0.2s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 
   &:hover {
-    background: var(--muted);
-    border-color: var(--border);
-    transform: none;
-    box-shadow: none;
-  }
-
-  &:active {
-    transform: translateY(0);
+    background: var(--bg-secondary);
+    border-color: var(--border-hover);
   }
 }
 
@@ -99,16 +112,16 @@
   width: 44px;
   height: 44px;
   border-radius: 8px;
-  background-color: var(--muted);
-  color: var(--foreground);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
   flex-shrink: 0;
 
   &.github {
-    background-color: var(--muted);
+    background-color: var(--bg-secondary);
   }
 
   &.docs {
-    background-color: var(--muted);
+    background-color: var(--bg-secondary);
   }
 }
 
@@ -123,7 +136,7 @@
   gap: $spacing-xs;
   font-size: 15px;
   font-weight: 600;
-  color: var(--foreground);
+  color: var(--text-primary);
   margin-bottom: 2px;
 
   svg {
@@ -134,7 +147,7 @@
 
 .linkDesc {
   font-size: 13px;
-  color: var(--muted-foreground);
+  color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -143,5 +156,14 @@
 @media (max-width: 520px) {
   .quickLinks {
     grid-template-columns: 1fr;
+  }
+
+  .linkCard {
+    padding: $spacing-md;
+  }
+
+  .linkDesc {
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 }

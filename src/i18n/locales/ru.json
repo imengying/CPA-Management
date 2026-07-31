@@ -872,6 +872,14 @@
     },
     "visual": {
       "quick_jump": "Быстрый переход",
+      "mode": {
+        "simple": "Простой",
+        "full": "Полный",
+        "label": "Режим редактора",
+        "more_settings": "Переключитесь в полный режим, чтобы увидеть все разделы ({{total}})",
+        "validation_banner": "В некоторых дополнительных параметрах есть ошибки проверки, сохранение заблокировано. Переключитесь в полный режим, чтобы исправить их.",
+        "switch_to_full": "Перейти в полный режим"
+      },
       "search": {
         "placeholder": "Поиск настроек (по названию или ключу YAML)",
         "no_results": "Нет подходящих настроек"
@@ -1424,7 +1432,11 @@
   "providersPage": {
     "header": {
       "title": "AI Провайдеры",
-      "issueCount": "{{count}} проблем"
+      "issueCount": "{{count}} проблем",
+      "activeResources": "{{active}}/{{total}} активных",
+      "providerFamilies": "{{count}} семейств",
+      "updatedAt": "Обновлено {{time}}",
+      "notLoaded": "Не загружено"
     },
     "actions": {
       "refresh": "Обновить",
@@ -1446,7 +1458,7 @@
     },
     "providerNames": {
       "gemini": "Gemini",
-      "interactions": "Interactions API",
+      "interactions": "Interactions",
       "codex": "Codex",
       "xai": "xAI",
       "claude": "Claude",

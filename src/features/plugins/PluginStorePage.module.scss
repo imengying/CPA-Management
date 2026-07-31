@@ -626,9 +626,9 @@
   flex-direction: column;
   gap: $spacing-md;
   padding: $spacing-md;
-  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
-  border-radius: $radius-lg;
-  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
 }
 
 .skeletonHeader {
