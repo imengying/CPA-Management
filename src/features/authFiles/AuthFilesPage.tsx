@@ -26,7 +26,6 @@ import {
   isProblemAuthFile,
   isRuntimeOnlyAuthFile,
   normalizeProviderKey,
-  parsePriorityValue,
   type QuotaProviderType,
 } from '@/features/authFiles/constants';
 import { AuthFileCard } from '@/features/authFiles/components/AuthFileCard';
@@ -38,6 +37,11 @@ import { OAuthExcludedCard } from '@/features/authFiles/components/OAuthExcluded
 import { OAuthModelAliasCard } from '@/features/authFiles/components/OAuthModelAliasCard';
 import { ProviderTabs } from '@/features/authFiles/components/ProviderTabs';
 import { VaultHeader } from '@/features/authFiles/components/VaultHeader';
+import {
+  buildWildcardSearch,
+  matchesAuthFileSearch,
+  sortAuthFiles,
+} from '@/features/authFiles/logic';
 import { useAuthFilesData } from '@/features/authFiles/hooks/useAuthFilesData';
 import { useAuthFilesModels } from '@/features/authFiles/hooks/useAuthFilesModels';
 import { useAuthFilesOauth } from '@/features/authFiles/hooks/useAuthFilesOauth';
@@ -57,14 +61,6 @@ const DEFAULT_REGULAR_PAGE_SIZE = 9;
 const DEFAULT_COMPACT_PAGE_SIZE = 12;
 const SKELETON_CARD_COUNT = 6;
 const CARD_ENTRANCE_BUDGET_MS = 360;
-
-const escapeWildcardSearchSegment = (value: string) =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-const buildWildcardSearch = (value: string): RegExp | null => {
-  if (!value.includes('*')) return null;
-  return new RegExp(value.split('*').map(escapeWildcardSearchSegment).join('.*'), 'i');
-};
 
 type AuthFilesPageInitialState = {
   filter: string;
@@ -350,35 +346,14 @@ export function AuthFilesPage() {
   const normalizedSearch = search.trim();
   const wildcardSearch = useMemo(() => buildWildcardSearch(normalizedSearch), [normalizedSearch]);
   const filtered = useMemo(() => {
-    const normalizedTerm = normalizedSearch.toLowerCase();
     return filesMatchingStatus.filter((file) => {
       const type = normalizeProviderKey(String(file.type ?? file.provider ?? ''));
       if (normalizedFilter !== 'all' && type !== normalizedFilter) return false;
-      if (!normalizedSearch) return true;
-      return [file.name, file.type, file.provider].some((value) => {
-        const content = String(value ?? '');
-        return wildcardSearch
-          ? wildcardSearch.test(content)
-          : content.toLowerCase().includes(normalizedTerm);
-      });
+      return matchesAuthFileSearch(file, normalizedSearch, wildcardSearch);
     });
   }, [filesMatchingStatus, normalizedFilter, normalizedSearch, wildcardSearch]);
 
-  const sorted = useMemo(() => {
-    const copy = [...filtered];
-    if (sortMode === 'az') return copy.sort((a, b) => a.name.localeCompare(b.name));
-    if (sortMode === 'priority') {
-      return copy.sort(
-        (a, b) =>
-          (parsePriorityValue(b.priority) ?? 0) - (parsePriorityValue(a.priority) ?? 0)
-      );
-    }
-    return copy.sort((a, b) => {
-      const providerA = normalizeProviderKey(String(a.provider ?? a.type ?? 'unknown'));
-      const providerB = normalizeProviderKey(String(b.provider ?? b.type ?? 'unknown'));
-      return providerA.localeCompare(providerB) || a.name.localeCompare(b.name);
-    });
-  }, [filtered, sortMode]);
+  const sorted = useMemo(() => sortAuthFiles(filtered, sortMode), [filtered, sortMode]);
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
   const currentPage = Math.min(page, totalPages);

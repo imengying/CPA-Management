@@ -231,6 +231,9 @@ const normalizeAuthFileEntry = (entry: AuthFileEntry): AuthFileEntry => {
     typeof entry.statusMessage === 'string' ? entry.statusMessage.trim() : '';
   const statusMessage = readTextField(entry, 'status_message') || declaredStatusMessage;
   const note = readTextField(entry, 'note');
+  const email = readTextField(entry, 'email');
+  // account/account_type are intentionally excluded: API-key credentials may expose the key there.
+  const projectId = readTextField(entry, 'project_id');
   const modified = readDateField(entry);
 
   return {
@@ -245,6 +248,8 @@ const normalizeAuthFileEntry = (entry: AuthFileEntry): AuthFileEntry => {
     priority: readIntegerField(entry['priority']),
     weight: readIntegerField(entry['weight']),
     ...(note ? { note } : {}),
+    ...(email ? { email } : {}),
+    ...(projectId ? { projectId } : {}),
   };
 };
 

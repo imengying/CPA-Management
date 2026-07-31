@@ -34,6 +34,7 @@
   background: color-mix(in srgb, var(--bg-primary) 70%, var(--bg-secondary));
 
   .head,
+  .fileName,
   .note,
   .health,
   .metaRow {
@@ -155,15 +156,29 @@
   border-style: dashed;
 }
 
-.fileName {
-  overflow: hidden;
+.account {
   color: var(--text-primary);
-  font-family: $font-mono;
   font-size: 13px;
   font-weight: 600;
+  line-height: 1.35;
   letter-spacing: 0;
+  @include text-ellipsis;
+}
+
+.accountMono {
+  font-family: $font-mono;
+}
+
+.fileName {
+  margin: -4px 0 0;
+  overflow: hidden;
+  color: var(--text-tertiary);
+  font-family: $font-mono;
+  font-size: 11px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  @include text-ellipsis-multiline(2);
 }
 
 .note {

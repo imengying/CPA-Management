@@ -1,8 +1,9 @@
-import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AuthFileQuotaControls } from '@/features/authFiles/hooks/useAuthFileQuotaControls';
-import { QuotaProgressBar } from '@/components/quota/QuotaProgressBar';
+import { bindQuotaClasses } from '@/features/quota/types';
 import styles from './AuthFileQuota.module.scss';
+
+const compactQuotaClasses = bindQuotaClasses(styles, 'AuthFileQuota.module.scss');
 
 export function AuthFileQuotaContent({
   controls,
@@ -45,10 +46,7 @@ export function AuthFileQuotaContent({
           })}
         </div>
       ) : quota ? (
-        (config.renderQuotaItems(quota, t, {
-          styles,
-          QuotaProgressBar,
-        }) as ReactNode)
+        <config.Body quota={quota} classes={compactQuotaClasses} />
       ) : (
         <div className={styles.quotaMessage}>{t(`${config.i18nPrefix}.idle`)}</div>
       )}

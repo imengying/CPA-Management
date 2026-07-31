@@ -27,6 +27,7 @@ const DERIVED_INFO_KEYS = [
   'authIndex',
   'statusMessage',
   'modified',
+  'projectId',
 ];
 
 export type AuthFileDetailsSheetProps = {

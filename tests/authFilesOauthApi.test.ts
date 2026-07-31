@@ -4,13 +4,39 @@ import { apiClient } from '../src/services/api/client';
 
 const originalPatch = apiClient.patch;
 const originalDelete = apiClient.delete;
+const originalGet = apiClient.get;
 
 afterEach(() => {
+  apiClient.get = originalGet;
   apiClient.patch = originalPatch;
   apiClient.delete = originalDelete;
 });
 
-describe('auth files OAuth API contract', () => {
+describe('auth files API contract', () => {
+  test('normalizes account identity fields without deriving from account', async () => {
+    apiClient.get = (async () => ({
+      files: [
+        {
+          name: 'vertex-a.json',
+          email: '  user@example.com  ',
+          project_id: '  project-a  ',
+          account: 'sk-live-abcd',
+          account_type: 'api_key',
+        },
+      ],
+    })) as typeof apiClient.get;
+
+    const result = await authFilesApi.list();
+
+    expect(result.files[0]).toMatchObject({
+      email: 'user@example.com',
+      projectId: 'project-a',
+      project_id: '  project-a  ',
+      account: 'sk-live-abcd',
+    });
+    expect(result.files[0]?.accountType).toBeUndefined();
+  });
+
   test('saves normalized aliases without dropping the payload', async () => {
     let request: { url: string; data: unknown } | null = null;
     apiClient.patch = (async (url: string, data?: unknown) => {

@@ -27,6 +27,20 @@ describe('Kimi quota ordering', () => {
     expect(rows[0]?.labelParams).toEqual({ duration: '5h' });
     expect(rows[1]?.labelKey).toBe('kimi_quota.weekly_limit');
   });
+
+  test('supports protobuf week units', () => {
+    const rows = buildKimiQuotaRows({
+      limits: [
+        {
+          detail: { used: '1', limit: '10' },
+          window: { duration: '2', timeUnit: 'TIME_UNIT_WEEK' },
+        },
+      ],
+    });
+
+    expect(rows[0]?.labelParams).toEqual({ duration: '2w' });
+    expect(rows[0]?.periodHours).toBe(2 * 7 * 24);
+  });
 });
 
 describe('Kimi quota reset formatting', () => {

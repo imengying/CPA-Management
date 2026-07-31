@@ -9,7 +9,7 @@ import iconKimiDark from '@/assets/icons/kimi-dark.svg';
 import iconKimiLight from '@/assets/icons/kimi-light.svg';
 import iconQwen from '@/assets/icons/qwen.svg';
 import iconVertex from '@/assets/icons/vertex.svg';
-import type { AuthFileItem, ResolvedTheme, ThemeColors } from '@/types';
+import type { AuthFileItem, QuotaProviderType, ResolvedTheme, ThemeColors } from '@/types';
 import { TYPE_COLORS } from '@/utils/quota/constants';
 import { normalizeOAuthProviderKey } from '@/utils/providerKeys';
 import { parseTimestamp } from '@/utils/timestamp';
@@ -23,7 +23,7 @@ export type AuthFileModelItem = {
 type AuthFileIconAsset = string | { light: string; dark: string };
 export type OAuthConfigLoadError = 'loading' | 'load' | null;
 
-export type QuotaProviderType = 'antigravity' | 'claude' | 'codex' | 'kimi' | 'xai';
+export type { QuotaProviderType } from '@/types';
 
 export const QUOTA_PROVIDER_TYPES = new Set<QuotaProviderType>([
   'antigravity',

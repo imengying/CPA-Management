@@ -71,12 +71,17 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    min-width: 0;
     font-size: 12px;
     color: var(--text-secondary);
     white-space: nowrap;
 
     @include mobile {
       justify-content: flex-start;
+      flex-wrap: wrap;
+      width: 100%;
+      white-space: normal;
+      overflow-wrap: anywhere;
     }
   }
 
@@ -93,24 +98,56 @@
     color: var(--text-secondary);
   }
 
+  .quotaBar {
+    height: 6px;
+    overflow: hidden;
+    border-radius: $radius-full;
+    background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+  }
+
+  .quotaBarFill {
+    height: 100%;
+    border-radius: $radius-full;
+    transform-origin: left center;
+    transition: width 360ms var(--ease-out-strong, ease);
+    animation: quota-meter-fill 480ms var(--ease-out-strong, ease-out) both;
+    animation-delay: calc(var(--meter-index, 0) * 40ms);
+  }
+
+  .quotaBarFillHigh {
+    background: var(--viz-success);
+  }
+
+  .quotaBarFillMedium {
+    background: var(--quota-medium-color);
+  }
+
+  .quotaBarFillLow {
+    background: var(--viz-failure);
+  }
+
   .quotaMessage {
     font-size: 12px;
     color: var(--text-tertiary);
     text-align: center;
     padding: $spacing-sm 0;
   }
+
+  @keyframes quota-meter-fill {
+    from {
+      transform: scaleX(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .quotaBarFill {
+      transition: none;
+      animation: none;
+    }
+  }
 }
 
 @mixin card-details {
-  .quotaError {
-    font-size: 12px;
-    color: var(--danger-color);
-    background-color: rgba($error-color, 0.08);
-    border: 1px solid var(--danger-color);
-    border-radius: $radius-sm;
-    padding: $spacing-xs $spacing-sm;
-  }
-
   .codexPlan {
     display: flex;
     align-items: center;
@@ -210,21 +247,17 @@
   }
 }
 
-@mixin elite-plan-value($compact: false) {
+@mixin compact-elite-plan-value {
   .elitePlanValue {
     display: inline;
     flex: 0 0 auto;
     color: #526379;
-    font-size: 12px;
+    font-family: $font-mono;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 0;
     text-transform: none;
     white-space: nowrap;
-
-    @if $compact {
-      font-family: $font-mono;
-      font-size: 11px;
-    }
   }
 
   :global([data-theme='dark']) .elitePlanValue {

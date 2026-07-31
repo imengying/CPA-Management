@@ -38,6 +38,7 @@ import {
   supportsAuthFileManualRefresh,
   type QuotaProviderType,
 } from '@/features/authFiles/constants';
+import { deriveAuthFileIdentity } from '@/features/authFiles/identity';
 import { AuthFileQuotaContent } from '@/features/authFiles/components/AuthFileQuotaContent';
 import type { AuthFileStatusBarData } from '@/features/authFiles/hooks/useAuthFilesStatusBarCache';
 import { useAuthFileQuotaControls } from '@/features/authFiles/hooks/useAuthFileQuotaControls';
@@ -121,6 +122,7 @@ export function AuthFileCard(props: AuthFileCardProps) {
   const priorityValue = parsePriorityValue(file.priority ?? file['priority']);
   const weightValue = parsePriorityValue(file.weight ?? file['weight']);
   const noteValue = typeof file.note === 'string' ? file.note.trim() : '';
+  const identity = deriveAuthFileIdentity(file);
 
   const stateLabel = isRuntimeOnly
     ? t('auth_files.type_virtual')
@@ -206,11 +208,20 @@ export function AuthFileCard(props: AuthFileCardProps) {
               {stateLabel}
             </span>
           </div>
-          <span className={styles.fileName} title={file.name}>
-            {file.name}
+          <span
+            className={`${styles.account} ${identity.kind === 'fileName' ? styles.accountMono : ''}`}
+            title={identity.primary}
+          >
+            {identity.primary}
           </span>
         </div>
       </header>
+
+      {identity.secondary && (
+        <p className={styles.fileName} title={file.name}>
+          {identity.secondary}
+        </p>
+      )}
 
       {!compact && noteValue && (
         <p className={styles.note} title={noteValue}>

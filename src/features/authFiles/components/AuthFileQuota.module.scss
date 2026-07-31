@@ -64,4 +64,4 @@ button.quotaMessageAction {
   white-space: nowrap;
 }
 
-@include quotaPresentation.elite-plan-value($compact: true);
+@include quotaPresentation.compact-elite-plan-value;
