@@ -221,7 +221,9 @@
 
 .iconLink {
   display: inline-flex;
+  width: 30px;
   min-height: 30px;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--border-color);
@@ -241,11 +243,6 @@
     background: var(--bg-hover);
     color: var(--primary-color);
   }
-}
-
-.iconLink {
-  width: 30px;
-  flex: 0 0 auto;
 }
 
 // ─── Skeleton ───────────────────────────────────────────

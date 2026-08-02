@@ -1,61 +1,50 @@
-@use '../../../styles/mixins' as *;
 @use '../../../styles/variables' as *;
 
 .providerBar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   min-width: 0;
-  padding: 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--card);
-}
-
-.eyebrow {
-  flex: 0 0 auto;
-  margin: 0;
-  padding: 0 4px 0 0;
-  font-size: 12px;
-  font-weight: 650;
-  letter-spacing: 0;
-  color: var(--muted-foreground);
-  white-space: nowrap;
 }
 
 .list {
   display: flex;
   align-items: stretch;
-  gap: 6px;
+  gap: 2px;
   min-width: 0;
   overflow-x: auto;
-  padding-bottom: 1px;
-  scrollbar-width: thin;
+  border-bottom: 1px solid var(--border-color);
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .item {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 8px;
   flex: 0 0 auto;
-  min-width: 118px;
-  max-width: 170px;
-  padding: 7px 9px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--background);
+  min-height: 38px;
+  padding: 8px 12px 11px;
+  border: 0;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
   cursor: pointer;
   text-align: left;
-  color: var(--foreground);
+  color: var(--text-secondary);
   transition:
     background-color $transition-fast,
-    border-color $transition-fast,
     color $transition-fast;
 
-  &:hover:not(.active) {
-    background: var(--muted);
-    border-color: var(--border-hover);
+  &::after {
+    content: '';
+    position: absolute;
+    right: 10px;
+    bottom: -1px;
+    left: 10px;
+    height: 2px;
+    border-radius: $radius-full;
+    background: transparent;
   }
 
   &:focus-visible {
@@ -64,28 +53,37 @@
   }
 
   &.active {
-    border-color: var(--primary-30);
-    background: var(--primary-10);
-    color: var(--primary-color);
+    color: var(--text-primary);
+
+    &::after {
+      background: var(--text-primary);
+    }
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .item:hover:not(.active) {
+    background: color-mix(in srgb, var(--bg-tertiary) 55%, transparent);
+    color: var(--text-primary);
   }
 }
 
 .itemLeft {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   min-width: 0;
   flex: 1;
 }
 
 .logo {
-  width: 24px;
-  height: 24px;
-  border-radius: 8px;
+  width: 17px;
+  height: 17px;
+  border-radius: 4px;
   flex-shrink: 0;
   object-fit: contain;
-  background: var(--muted);
-  padding: 2px;
+  background: transparent;
+  padding: 0;
 }
 
 .logoTransparent {
@@ -113,45 +111,47 @@
 }
 
 .itemText {
-  display: flex;
-  flex-direction: column;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   min-width: 0;
 }
 
 .itemTitle {
   font-size: 13px;
-  font-weight: 600;
-  line-height: 1.25;
+  font-weight: 550;
+  line-height: 1.4;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  .active & {
+    font-weight: 650;
+  }
 }
 
 .itemSubtitle {
-  margin-top: 2px;
-  font-size: 12px;
-  line-height: 1.25;
-  color: var(--muted-foreground);
-  font-weight: 400;
+  min-width: 18px;
+  padding: 0 6px;
+  border-radius: $radius-full;
+  background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+  color: var(--text-tertiary);
+  font-family: $font-mono;
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  line-height: 1.6;
+  text-align: center;
+  white-space: nowrap;
 
   .active & {
-    color: var(--primary-color);
-    opacity: 0.85;
+    background: color-mix(in srgb, var(--text-primary) 10%, transparent);
+    color: var(--text-primary);
   }
 }
 
-@media (max-width: 768px) {
-  .providerBar {
-    align-items: stretch;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .list {
-    width: 100%;
-  }
-
+@media (prefers-reduced-motion: reduce) {
   .item {
-    min-width: 118px;
+    transition: none;
   }
 }

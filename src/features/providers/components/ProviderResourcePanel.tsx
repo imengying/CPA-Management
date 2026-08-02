@@ -1,5 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { IconLoader2, IconPlus, IconRefreshCw, IconSearch } from '@/components/ui/icons';
+import { Button } from '@/components/ui/Button';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Input } from '@/components/ui/Input';
+import { IconPlus, IconRefreshCw, IconSearch } from '@/components/ui/icons';
 import type { ProviderRecentUsageMap } from '@/components/providers/utils';
 import type { ProviderGroup, ProviderResource } from '../types';
 import { ProviderResourceTable } from './ProviderResourceTable';
@@ -61,16 +64,14 @@ export function ProviderResourcePanel({
   return (
     <section className={styles.panel}>
       <div className={styles.toolbar}>
-        <div className={styles.searchWrap}>
-          <span className={styles.searchIcon} aria-hidden="true">
-            <IconSearch size={16} />
-          </span>
-          <input
+        <div className={styles.search}>
+          <Input
             type="search"
-            className={styles.searchInput}
             value={filter}
             onChange={(event) => onFilterChange(event.target.value)}
             placeholder={t('providersPage.table.filterPlaceholder')}
+            aria-label={t('providersPage.table.filterPlaceholder')}
+            rightElement={<IconSearch className={styles.searchIcon} size={16} />}
           />
         </div>
 
@@ -87,46 +88,40 @@ export function ProviderResourcePanel({
               onSelectedModelsChange={toolbarControls.onSelectedModelsChange}
             />
           ) : null}
-          <button
-            type="button"
-            className={`${styles.actionButton} ${styles.actionButtonOutline}`}
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={onRefresh}
             disabled={isFetching}
+            loading={isFetching}
             aria-label={
               isFetching ? t('providersPage.actions.syncing') : t('providersPage.actions.refresh')
             }
           >
-            <span className={`${styles.buttonIcon} ${isFetching ? styles.spin : ''}`.trim()}>
-              {isFetching ? <IconLoader2 size={16} /> : <IconRefreshCw size={16} />}
-            </span>
-            <span>
-              {isFetching ? t('providersPage.actions.syncing') : t('providersPage.actions.refresh')}
-            </span>
-          </button>
+            {!isFetching ? <IconRefreshCw size={14} /> : null}
+            {isFetching ? t('providersPage.actions.syncing') : t('providersPage.actions.refresh')}
+          </Button>
           {showCreateAction ? (
-            <button
-              type="button"
-              className={`${styles.actionButton} ${styles.actionButtonPrimary}`}
-              onClick={onCreate}
-              disabled={disableMutations}
-            >
-              <IconPlus size={16} />
-              <span>{t('providersPage.actions.new')}</span>
-            </button>
+            <Button size="sm" onClick={onCreate} disabled={disableMutations}>
+              <IconPlus size={15} />
+              {t('providersPage.actions.new')}
+            </Button>
           ) : null}
         </div>
       </div>
 
       {filteredResources.length === 0 ? (
-        <div className={styles.empty}>
-          <div>{emptyText}</div>
-          <div className={styles.emptyAction}>
-            <button type="button" className={styles.emptyActionButton} onClick={onCreate}>
-              <IconPlus size={16} />
-              <span>{createActionLabel}</span>
-            </button>
-          </div>
-        </div>
+        <EmptyState
+          title={emptyText}
+          action={
+            showCreateAction ? (
+              <Button size="sm" onClick={onCreate} disabled={disableMutations}>
+                <IconPlus size={15} />
+                {createActionLabel}
+              </Button>
+            ) : undefined
+          }
+        />
       ) : (
         <ProviderResourceTable
           resources={filteredResources}

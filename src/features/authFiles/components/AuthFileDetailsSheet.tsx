@@ -196,6 +196,16 @@ export function AuthFileDetailsSheet(props: AuthFileDetailsSheetProps) {
                     disabled={disableControls || editor.saving}
                     onChange={(event) => onChange('weight', event.target.value)}
                   />
+                  <div className="form-group">
+                    <label>{t('auth_files.disable_cooling_label')}</label>
+                    <ToggleSwitch
+                      checked={editor.disableCooling}
+                      onChange={(value) => onChange('disableCooling', value)}
+                      disabled={disableControls || editor.saving}
+                      ariaLabel={t('auth_files.disable_cooling_label')}
+                    />
+                    <div className="hint">{t('auth_files.disable_cooling_hint')}</div>
+                  </div>
                   {supportsAuthFileWebsockets(editor.providerKey) && (
                     <div className="form-group">
                       <label>{t('auth_files.websockets_label')}</label>

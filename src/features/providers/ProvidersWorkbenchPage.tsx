@@ -327,8 +327,8 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
   if (!workbench.snapshot && workbench.isPending) {
     return (
       <div className={styles.page}>
-        <Skeleton height={82} />
-        <Skeleton height={58} />
+        <Skeleton height={43} />
+        <Skeleton height={34} />
         <Skeleton height={420} />
       </div>
     );
@@ -344,6 +344,11 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
             onSelect={handleSelectBrand}
           />
         ) : null}
+        {workbench.errorMessage ? (
+          <div className={styles.errorBanner} role="alert">
+            {workbench.errorMessage}
+          </div>
+        ) : null}
       </div>
     );
   }
@@ -356,6 +361,12 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
           activeBrand={activeGroup.id}
           onSelect={handleSelectBrand}
         />
+      ) : null}
+
+      {workbench.errorMessage ? (
+        <div className={styles.errorBanner} role="alert">
+          {workbench.errorMessage}
+        </div>
       ) : null}
 
       <ProviderResourcePanel

@@ -51,6 +51,7 @@ export function Sheet({
   const titleId = useId();
   const descId = useId();
   const sheetRef = useRef<HTMLDivElement | null>(null);
+  const bodyRef = useRef<HTMLDivElement | null>(null);
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
   const { isClosing, requestClose, shouldRender } = useDialogLifecycle({
     open,
@@ -59,6 +60,7 @@ export function Sheet({
     closeAnimationDuration: CLOSE_ANIMATION_DURATION,
     dialogRef: sheetRef,
     initialFocusRef: closeBtnRef,
+    scrollContainerRef: bodyRef,
     confirmClose,
   });
 
@@ -115,7 +117,9 @@ export function Sheet({
             ) : null}
           </div>
         )}
-        <div className={styles.body}>{children}</div>
+        <div ref={bodyRef} className={styles.body}>
+          {children}
+        </div>
         {footer ? <div className={styles.footer}>{footer}</div> : null}
       </div>
     </div>

@@ -3,6 +3,7 @@ import {
   buildAuthFileFieldsPatch,
   type PrefixProxyEditorState,
 } from '../src/features/authFiles/hooks/useAuthFilesPrefixProxyEditor';
+import { readAuthFileDisableCooling } from '../src/features/authFiles/constants';
 
 const makeEditor = (json: Record<string, unknown>, weight: string): PrefixProxyEditorState => ({
   fileName: 'credential.json',
@@ -19,6 +20,8 @@ const makeEditor = (json: Record<string, unknown>, weight: string): PrefixProxyE
   priority: '',
   weight,
   weightError: null,
+  disableCooling: false,
+  disableCoolingTouched: false,
   websockets: false,
   websocketsTouched: false,
   usingApi: false,
@@ -33,6 +36,55 @@ const makeEditor = (json: Record<string, unknown>, weight: string): PrefixProxyE
 });
 
 const resolveError = (key: string) => key;
+
+describe('auth-file disable cooling patch', () => {
+  test('reads canonical and legacy boolean-compatible metadata', () => {
+    expect(readAuthFileDisableCooling({ disable_cooling: 'true' })).toBe(true);
+    expect(readAuthFileDisableCooling({ 'disable-cooling': 1 })).toBe(true);
+    expect(
+      readAuthFileDisableCooling({ disable_cooling: 'invalid', 'disable-cooling': true })
+    ).toBe(true);
+    expect(readAuthFileDisableCooling({ disable_cooling: false, 'disable-cooling': true })).toBe(
+      false
+    );
+  });
+
+  test('writes the canonical field when enabling the credential override', () => {
+    const editor = {
+      ...makeEditor({}, ''),
+      disableCooling: true,
+      disableCoolingTouched: true,
+    };
+
+    expect(buildAuthFileFieldsPatch(editor, resolveError)).toEqual({ disable_cooling: true });
+  });
+
+  test('preserves the legacy field name when disabling the override', () => {
+    const editor = {
+      ...makeEditor({ 'disable-cooling': true }, ''),
+      disableCooling: false,
+      disableCoolingTouched: true,
+    };
+
+    expect(buildAuthFileFieldsPatch(editor, resolveError)).toEqual({ 'disable-cooling': false });
+  });
+
+  test('does not patch an untouched or unchanged override', () => {
+    expect(
+      buildAuthFileFieldsPatch(makeEditor({ disable_cooling: true }, ''), resolveError)
+    ).toEqual({});
+    expect(
+      buildAuthFileFieldsPatch(
+        {
+          ...makeEditor({ disable_cooling: 'true' }, ''),
+          disableCooling: true,
+          disableCoolingTouched: true,
+        },
+        resolveError
+      )
+    ).toEqual({});
+  });
+});
 
 describe('auth-file credential weight patch', () => {
   test('writes numeric weight and uses null to restore the default', () => {

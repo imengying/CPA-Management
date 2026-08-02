@@ -8,6 +8,7 @@ interface DialogLifecycleOptions {
   closeAnimationDuration: number;
   dialogRef: RefObject<HTMLElement | null>;
   initialFocusRef: RefObject<HTMLElement | null>;
+  scrollContainerRef?: RefObject<HTMLElement | null>;
   confirmClose?: () => boolean | Promise<boolean>;
 }
 
@@ -18,6 +19,7 @@ export function useDialogLifecycle({
   closeAnimationDuration,
   dialogRef,
   initialFocusRef,
+  scrollContainerRef,
   confirmClose,
 }: DialogLifecycleOptions) {
   const [isVisible, setIsVisible] = useState(false);
@@ -103,11 +105,14 @@ export function useDialogLifecycle({
     previouslyFocusedRef.current =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const focusTimer = window.setTimeout(() => {
+      if (scrollContainerRef?.current) scrollContainerRef.current.scrollTop = 0;
       const firstFocusable = getFocusableElements()[0];
-      (firstFocusable ?? initialFocusRef.current ?? dialogRef.current)?.focus();
+      (firstFocusable ?? initialFocusRef.current ?? dialogRef.current)?.focus({
+        preventScroll: true,
+      });
     }, 0);
     return () => window.clearTimeout(focusTimer);
-  }, [dialogRef, getFocusableElements, initialFocusRef, open]);
+  }, [dialogRef, getFocusableElements, initialFocusRef, open, scrollContainerRef]);
 
   useEffect(() => {
     if (shouldRender) return;

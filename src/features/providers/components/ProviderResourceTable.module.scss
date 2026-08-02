@@ -1,4 +1,3 @@
-@use '../../../styles/mixins' as *;
 @use '../../../styles/variables' as *;
 
 .providerTable {
@@ -74,11 +73,12 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 9px;
+  padding: 2px 7px;
   border-radius: 6px;
   border: 1px solid;
-  font-size: 12px;
-  font-weight: 500;
+  font-family: $font-mono;
+  font-size: 10.5px;
+  font-weight: 650;
   white-space: nowrap;
 }
 
@@ -131,26 +131,24 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 7px;
-  border-radius: 6px;
-  font-size: 12px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-family: $font-mono;
+  font-size: 11.5px;
   font-weight: 600;
   line-height: 1.4;
-  border: 1px solid transparent;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 
 .statSuccess {
-  background-color: var(--success-badge-bg);
-  color: var(--success-badge-text);
-  border-color: var(--success-badge-border);
+  color: var(--viz-success);
 }
 
 .statFailure {
-  background-color: var(--failure-badge-bg);
-  color: var(--failure-badge-text);
-  border-color: var(--failure-badge-border);
+  color: var(--viz-failure);
 }
 
 .statusActive {

@@ -78,7 +78,6 @@ export function ProviderCategoryList({ groups, activeBrand, onSelect }: Provider
 
   return (
     <section className={styles.providerBar} aria-label={t('providersPage.categories.title')}>
-      <p className={styles.eyebrow}>{t('providersPage.categories.title')}</p>
       {renderGroups(groups)}
     </section>
   );

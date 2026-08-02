@@ -1,17 +1,26 @@
-@use '../../styles/mixins' as *;
-@use '../../styles/variables' as *;
-
 .page {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
   width: 100%;
+  min-width: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+.errorBanner {
+  padding: 9px 12px;
+  border: 1px solid var(--failure-badge-border);
+  border-radius: 8px;
+  background: var(--bg-error-light);
+  color: var(--danger-color);
+  font-size: 12.5px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 768px) {
   .page {
-    gap: 8px;
+    gap: 12px;
   }
 }
