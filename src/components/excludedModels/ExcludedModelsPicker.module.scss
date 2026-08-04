@@ -39,7 +39,7 @@
   &:focus-visible {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.18);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 18%, transparent);
   }
 
   &:disabled {
@@ -182,7 +182,7 @@
   &:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.18);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 18%, transparent);
   }
 }
 
@@ -445,7 +445,7 @@
 
 /* 零命中是 warning 不是 error：规则可以合法地指向目录不认识的模型。 */
 .ruleMatchNone {
-  color: var(--warning-color, #{$warning-color});
+  color: var(--warning-color);
 }
 
 .ruleWarning {
@@ -453,7 +453,7 @@
   align-items: center;
   gap: 6px;
   margin: 0;
-  color: var(--warning-color, #{$warning-color});
+  color: var(--warning-color);
   font-size: 11px;
 }
 

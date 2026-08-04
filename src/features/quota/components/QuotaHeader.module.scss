@@ -1,40 +1,8 @@
-@use '../../../styles/mixins' as *;
+@use '../../../styles/workbenchHeader' as workbenchHeader;
 
 /* 额度页头部：与凭证库使用同一标题、遥测和操作布局。 */
 
-.header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px 24px;
-  flex-wrap: wrap;
-}
-
-.copy {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  min-width: 0;
-}
-
-.meta {
-  margin: 0;
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 4px 8px;
-  font-family: $font-mono;
-  font-size: 13px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0;
-  color: var(--text-secondary);
-}
-
-.metaDot {
-  color: var(--text-quaternary);
-  user-select: none;
-}
+@include workbenchHeader.layout;
 
 .metaTotal {
   color: var(--text-secondary);
@@ -50,32 +18,4 @@
 
 .metaAttention {
   color: var(--viz-failure);
-}
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.actions :global(.btn > span) {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-@include mobile {
-  .header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .actions {
-    width: 100%;
-  }
-
-  .actions :global(.btn) {
-    flex: 1 1 0;
-  }
 }

@@ -1,5 +1,6 @@
 @use '../../../styles/variables' as *;
 @use '../../../styles/mixins' as *;
+@use '../../../styles/providerStatusBar' as providerStatusBar;
 
 .card {
   position: relative;
@@ -262,28 +263,23 @@
   color: var(--viz-failure);
 }
 
+@include providerStatusBar.base;
+
 .statusBar {
   display: flex;
-  align-items: center;
   gap: 8px;
 }
 
 .statusBlocks {
-  min-width: 0;
   flex: 1;
-  display: flex;
-  gap: 2px;
 }
 
 .statusBlockWrapper {
-  position: relative;
   min-width: 3px;
-  flex: 1 1 0;
 }
 
 .statusBlock {
   height: 14px;
-  border-radius: 2px;
 }
 
 .statusBlockIdle {
@@ -295,58 +291,19 @@
   outline-offset: 1px;
 }
 
-.statusRate {
-  min-width: 40px;
-  color: var(--text-quaternary);
-  font-family: $font-mono;
-  font-size: 11.5px;
-  font-weight: 650;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-}
-
-.statusRateHigh {
-  color: var(--viz-success);
-}
-
-.statusRateMedium {
-  color: var(--quota-medium-color);
-}
-
-.statusRateLow {
-  color: var(--viz-failure);
-}
-
 .statusTooltip {
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
   z-index: 20;
   min-width: 150px;
   padding: 8px 10px;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  transform: translateX(-50%);
-  border: 1px solid var(--border-color);
   border-radius: 8px;
   background: var(--floating-surface);
   box-shadow: var(--floating-shadow);
   font-family: $font-mono;
   font-size: 11px;
   line-height: 1.5;
-  pointer-events: none;
-}
-
-.statusTooltipLeft {
-  left: 0;
-  transform: none;
-}
-
-.statusTooltipRight {
-  right: 0;
-  left: auto;
-  transform: none;
 }
 
 .tooltipTime,
@@ -360,7 +317,6 @@
 }
 
 .tooltipStats {
-  display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }

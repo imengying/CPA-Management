@@ -72,8 +72,8 @@
   }
 }
 
-.textareaInvalid {
-  border-color: var(--danger-color) !important;
+.textareaInvalid:global(.input) {
+  border-color: var(--danger-color);
 }
 
 .invalidPreview {

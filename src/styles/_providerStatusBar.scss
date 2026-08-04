@@ -1,0 +1,68 @@
+@use './variables' as *;
+
+@mixin base {
+  .statusBar {
+    align-items: center;
+  }
+
+  .statusBlocks {
+    min-width: 0;
+    display: flex;
+    gap: 2px;
+  }
+
+  .statusBlockWrapper {
+    position: relative;
+    flex: 1 1 0;
+  }
+
+  .statusBlock {
+    border-radius: 2px;
+  }
+
+  .statusTooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid var(--border-color);
+    pointer-events: none;
+  }
+
+  .statusTooltipLeft {
+    left: 0;
+    transform: none;
+  }
+
+  .statusTooltipRight {
+    right: 0;
+    left: auto;
+    transform: none;
+  }
+
+  .tooltipStats {
+    display: flex;
+  }
+
+  .statusRate {
+    min-width: 40px;
+    color: var(--text-quaternary);
+    font-family: $font-mono;
+    font-size: 11.5px;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .statusRateHigh {
+    color: var(--viz-success);
+  }
+
+  .statusRateMedium {
+    color: var(--quota-medium-color);
+  }
+
+  .statusRateLow {
+    color: var(--viz-failure);
+  }
+}

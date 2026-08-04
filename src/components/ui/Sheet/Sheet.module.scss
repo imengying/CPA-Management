@@ -133,9 +133,9 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .content {
-    width: 100vw !important;
+    width: 100vw;
     border-left: none;
   }
 

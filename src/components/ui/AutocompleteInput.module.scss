@@ -1,0 +1,125 @@
+@use '../../styles/variables' as *;
+
+.control {
+  position: relative;
+  width: 100%;
+}
+
+.input {
+  padding-right: 40px;
+}
+
+.toggle {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    color $transition-fast,
+    background-color $transition-fast;
+
+  &:hover:not(:disabled) {
+    color: var(--text-primary);
+    background: var(--muted);
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--ring) 45%, transparent);
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.chevron {
+  transition: transform $transition-fast;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
+  z-index: $z-dropdown;
+  max-height: 240px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--popover);
+  box-shadow: var(--shadow-lg);
+}
+
+.option {
+  flex-shrink: 0;
+  width: 100%;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--popover-foreground);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.35;
+  text-align: left;
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast;
+
+  &:hover,
+  &:focus-visible,
+  &.optionHighlighted {
+    outline: none;
+    background: var(--muted);
+  }
+
+  &[aria-selected='true'] {
+    border-color: color-mix(in srgb, var(--ring) 32%, var(--border));
+    background: color-mix(in srgb, var(--ring) 10%, transparent);
+  }
+}
+
+.optionValue {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.optionLabel {
+  color: var(--text-secondary);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle,
+  .chevron,
+  .option {
+    transition: none;
+  }
+}

@@ -66,6 +66,7 @@ export function ProviderResourcePanel({
       <div className={styles.toolbar}>
         <div className={styles.search}>
           <Input
+            size="sm"
             type="search"
             value={filter}
             onChange={(event) => onFilterChange(event.target.value)}

@@ -338,6 +338,31 @@ describe('buildTimelineLane', () => {
     ]);
   });
 
+  test('codex: keeps an available reset credit when no quota window is present', () => {
+    const expiresAt = '2026-08-02T12:00:00Z';
+    const lane = buildTimelineLane({
+      ...base,
+      provider: 'codex',
+      quota: {
+        status: 'success',
+        windows: [],
+        rateLimitResetCredits: [
+          {
+            id: 'credit-only',
+            status: 'available',
+            grantedAt: '2026-07-01T12:00:00Z',
+            expiresAt,
+          },
+        ],
+      },
+    });
+
+    expect(lane.anchorMs).toBeNull();
+    expect(lane.resetCredits).toHaveLength(1);
+    expect(lane.resetCredits[0].expiresAtMs).toBe(new Date(expiresAt).getTime());
+    expect(laneHasWindow(lane)).toBe(true);
+  });
+
   test('antigravity anchors on its bucket reset, with remaining from the fraction', () => {
     const lane = buildTimelineLane({
       ...base,

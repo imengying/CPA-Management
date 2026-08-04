@@ -1,39 +1,6 @@
-@use '../../../styles/variables' as *;
-@use '../../../styles/mixins' as *;
+@use '../../../styles/workbenchHeader' as workbenchHeader;
 
-.header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px 24px;
-  padding-top: 4px;
-}
-
-.copy {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-
-.meta {
-  margin: 0;
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 4px 8px;
-  color: var(--text-secondary);
-  font-family: $font-mono;
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0;
-}
-
-.metaDot {
-  color: var(--text-quaternary);
-  user-select: none;
-}
+@include workbenchHeader.layout;
 
 .metaActive {
   color: var(--viz-success);
@@ -45,32 +12,4 @@
 
 .metaProblem {
   color: var(--viz-failure);
-}
-
-.actions {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  gap: 8px;
-}
-
-.actions :global(.btn > span) {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-@include mobile {
-  .header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .actions {
-    width: 100%;
-  }
-
-  .actions :global(.btn) {
-    flex: 1 1 0;
-  }
 }

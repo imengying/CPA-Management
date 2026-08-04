@@ -81,6 +81,12 @@ $lane-width: 210px;
   }
 }
 
+.navCurrent {
+  width: 84px;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+}
+
 .chart {
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -134,12 +140,12 @@ $lane-width: 210px;
   border-left: 1px solid var(--border-color);
 
   &[data-weekend='1'] {
-    background: rgba(255, 255, 255, 0.014);
+    background: color-mix(in srgb, var(--bg-tertiary) 42%, transparent);
   }
 
   // The current day is the reference point for reading the whole chart.
   &[data-today='1'] {
-    background: rgba(255, 255, 255, 0.03);
+    background: color-mix(in srgb, var(--text-primary) 5%, transparent);
   }
 }
 
@@ -161,7 +167,7 @@ $lane-width: 210px;
   border-top: 1px solid var(--border-color);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.012);
+    background: color-mix(in srgb, var(--bg-tertiary) 55%, transparent);
   }
 }
 
@@ -243,7 +249,7 @@ $lane-width: 210px;
     border-left: 1px solid var(--border-color);
 
     &[data-weekend='1'] {
-      background: rgba(255, 255, 255, 0.014);
+      background: color-mix(in srgb, var(--bg-tertiary) 42%, transparent);
     }
   }
 }
@@ -316,17 +322,39 @@ $lane-width: 210px;
 .resetCreditTick {
   position: absolute;
   z-index: 3;
-  top: 6px;
-  bottom: 6px;
-  width: 2px;
+  top: 0;
+  bottom: 0;
+  width: 16px;
+  padding: 0;
   transform: translateX(-50%);
-  border-radius: 999px;
-  background: var(--amber-color);
-  box-shadow: 0 0 0 1px var(--bg-primary);
+  border: 0;
+  border-radius: 4px;
+  outline: none;
+  background: transparent;
   cursor: help;
 
-  &:hover {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background: var(--amber-color);
+    box-shadow: 0 0 0 1px var(--bg-primary);
+  }
+
+  &:hover::before,
+  &:focus-visible::before {
     width: 4px;
+  }
+
+  &:focus-visible::before {
+    box-shadow:
+      0 0 0 1px var(--bg-primary),
+      0 0 0 3px color-mix(in srgb, var(--amber-text) 55%, transparent);
   }
 }
 
@@ -360,16 +388,16 @@ $lane-width: 210px;
 }
 
 .swatchLive {
-  background: color-mix(in srgb, var(--text-tertiary, #888) 34%, transparent);
-  border: 1px solid color-mix(in srgb, var(--text-tertiary, #888) 50%, transparent);
+  background: color-mix(in srgb, var(--text-tertiary) 34%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text-tertiary) 50%, transparent);
 }
 
 .swatchNext {
-  border: 1px dashed color-mix(in srgb, var(--text-tertiary, #888) 45%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--text-tertiary) 45%, transparent);
 }
 
 .swatchPast {
-  background: color-mix(in srgb, var(--text-tertiary, #888) 12%, transparent);
+  background: color-mix(in srgb, var(--text-tertiary) 12%, transparent);
 }
 
 .swatchCredit {

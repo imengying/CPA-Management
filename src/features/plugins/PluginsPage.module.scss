@@ -9,8 +9,8 @@
 // ─── Alert Boxes ────────────────────────────────────────
 
 .errorBox {
-  border: 1px solid var(--danger-color);
-  background: rgba($error-color, 0.1);
+  border: 1px solid var(--failure-badge-border);
+  background: var(--bg-error-light);
   color: var(--danger-color);
 }
 
@@ -36,8 +36,8 @@
   display: grid;
   grid-template-columns: 40px 1fr auto;
   align-items: center;
-  gap: $spacing-md;
-  padding: $spacing-md $spacing-lg;
+  gap: 12px;
+  padding: 14px 16px;
   background: var(--card);
   transition: background-color $transition-fast;
 
@@ -177,15 +177,15 @@
 }
 
 .badgeSuccess {
-  background: rgba($success-color, 0.1);
-  border: 1px solid rgba($success-color, 0.2);
-  color: var(--success-color);
+  background: var(--success-badge-bg);
+  border: 1px solid var(--success-badge-border);
+  color: var(--success-badge-text);
 }
 
 .badgeWarning {
-  background: rgba($warning-color, 0.1);
-  border: 1px solid rgba($warning-color, 0.2);
-  color: var(--warning-color);
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+  color: var(--warning-text);
 }
 
 .badgeMuted {
@@ -250,8 +250,8 @@
 .skeletonRow {
   display: flex;
   align-items: center;
-  gap: $spacing-md;
-  padding: $spacing-md $spacing-lg;
+  gap: 12px;
+  padding: 14px 16px;
   background: var(--bg-primary);
 }
 
@@ -355,7 +355,7 @@
 .fieldError {
   padding: 8px 10px;
   border-radius: $radius-sm;
-  background: rgba($error-color, 0.1);
+  background: var(--bg-error-light);
   color: var(--danger-color);
   font-size: 12px;
   line-height: 1.4;

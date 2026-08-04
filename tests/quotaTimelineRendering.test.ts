@@ -38,9 +38,7 @@ describe('QuotaTimeline rendering', () => {
       })
     );
 
-    expect(markup).toMatch(
-      /<button type="button" aria-label="[^"]+" title="[^"]+">08\/02<\/button>/
-    );
+    expect(markup).toMatch(/<button[^>]+title="[^"]+"[^>]*>08\/02<\/button>/);
   });
 
   test('renders an unexpired Codex reset credit as an expiry tick', () => {

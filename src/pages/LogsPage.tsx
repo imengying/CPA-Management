@@ -678,10 +678,10 @@ export function LogsPage() {
               <div className={styles.filterPrimaryRow}>
                 <div className={styles.searchWrapper}>
                   <Input
+                    size="sm"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={t('logs.search_placeholder')}
-                    className={styles.searchInput}
                     rightElement={
                       searchQuery ? (
                         <button
@@ -1075,12 +1075,12 @@ export function LogsPage() {
 
               {errorLogsError && <div className="error-box">{errorLogsError}</div>}
 
-              <div className={styles.errorPanel}>
-                {loadingErrors ? (
-                  <div className="hint">{t('common.loading')}</div>
-                ) : errorLogs.length === 0 ? (
-                  <div className="hint">{t('logs.error_logs_empty')}</div>
-                ) : (
+              {loadingErrors ? (
+                <div className="hint">{t('common.loading')}</div>
+              ) : errorLogs.length === 0 ? (
+                <EmptyState title={t('logs.error_logs_empty')} />
+              ) : (
+                <div className={styles.errorPanel}>
                   <div className="item-list">
                     {errorLogs.map((item) => (
                       <div key={item.name} className="item-row">
@@ -1117,8 +1117,8 @@ export function LogsPage() {
                       </div>
                     ))}
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </Card>
         )}

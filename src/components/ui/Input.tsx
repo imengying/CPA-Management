@@ -1,10 +1,11 @@
 import { useId, type InputHTMLAttributes, type ReactNode } from 'react';
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string;
   hint?: string;
   error?: string;
   rightElement?: ReactNode;
+  size?: 'sm' | 'md';
 }
 
 export function Input({
@@ -12,6 +13,7 @@ export function Input({
   hint,
   error,
   rightElement,
+  size = 'md',
   className = '',
   id,
   ...rest
@@ -26,21 +28,17 @@ export function Input({
   return (
     <div className="form-group">
       {label && <label htmlFor={inputId}>{label}</label>}
-      <div style={{ position: 'relative' }}>
+      <div className="input-control">
         <input
           id={inputId}
-          className={`input ${className}`.trim()}
+          className={`input ${size === 'sm' ? 'input-sm' : ''} ${
+            rightElement ? 'input-with-right-element' : ''
+          } ${className}`.trim()}
           aria-invalid={Boolean(error) || rest['aria-invalid']}
           aria-describedby={describedBy}
           {...rest}
         />
-        {rightElement && (
-          <div
-            style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)' }}
-          >
-            {rightElement}
-          </div>
-        )}
+        {rightElement && <div className="input-right-element">{rightElement}</div>}
       </div>
       {hint && (
         <div id={hintId} className="hint">

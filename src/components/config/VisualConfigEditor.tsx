@@ -846,7 +846,6 @@ export function VisualConfigEditor({
 
         <div className={styles.searchBox} ref={searchBoxRef}>
           <Input
-            className={styles.searchControl}
             placeholder={t('config_management.visual.search.placeholder')}
             aria-label={t('config_management.visual.search.placeholder')}
             role="combobox"

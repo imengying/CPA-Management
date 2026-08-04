@@ -6,10 +6,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ToggleSwitch } from '@/components/ui/ToggleSwitch';
 import { IconSearch, IconSlidersHorizontal, IconTrash2 } from '@/components/ui/icons';
 import { MAX_CARD_PAGE_SIZE, MIN_CARD_PAGE_SIZE } from '@/features/authFiles/constants';
-import type {
-  AuthFilesSortMode,
-  AuthFilesStatusFilterMode,
-} from '@/features/authFiles/uiState';
+import type { AuthFilesSortMode, AuthFilesStatusFilterMode } from '@/features/authFiles/uiState';
 import styles from './AuthFilesToolbar.module.scss';
 
 export type AuthFilesToolbarProps = {
@@ -80,6 +77,7 @@ export function AuthFilesToolbar(props: AuthFilesToolbarProps) {
     <div className={styles.toolbar}>
       <div className={styles.search}>
         <Input
+          size="sm"
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
           placeholder={t('auth_files.search_placeholder')}

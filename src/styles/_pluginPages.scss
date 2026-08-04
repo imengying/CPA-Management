@@ -11,16 +11,16 @@
 
   .errorBox,
   .warningBox {
-    padding: $spacing-md;
+    padding: 9px 12px;
     border-radius: $radius-md;
-    font-size: 14px;
+    font-size: 12.5px;
     line-height: 1.5;
   }
 
   .warningBox {
-    border: 1px solid color-mix(in srgb, var(--warning-color, #c65746) 42%, var(--border-color));
-    background: color-mix(in srgb, var(--warning-color, #c65746) 9%, var(--bg-secondary));
-    color: var(--text-primary);
+    border: 1px solid var(--warning-border);
+    background: var(--warning-bg);
+    color: var(--warning-text);
   }
 }
 
@@ -28,11 +28,8 @@
   .statusBar {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--background);
+    gap: 8px 12px;
+    padding: 2px 0 4px;
     flex-wrap: wrap;
   }
 
@@ -41,13 +38,14 @@
     min-width: 0;
     max-width: 100%;
     align-items: center;
-    gap: 6px;
-    padding: 5px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--card);
+    gap: 5px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-family: $font-mono;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
+    line-height: 1.5;
     white-space: nowrap;
   }
 
@@ -59,8 +57,7 @@
   }
 
   .statusDotOn {
-    background: $success-color;
-    box-shadow: 0 0 6px rgba($success-color, 0.5);
+    background: var(--success-color);
   }
 
   .statusDotOff {
@@ -73,7 +70,7 @@
 
   .statusValue {
     color: var(--text-primary);
-    font-weight: 700;
+    font-weight: 650;
   }
 
   .statusPathValue {
@@ -87,7 +84,7 @@
 
   .statusDivider {
     width: 1px;
-    height: 20px;
+    height: 14px;
     background: color-mix(in srgb, var(--border-color) 60%, transparent);
     flex-shrink: 0;
 
@@ -103,12 +100,12 @@
 
     :global(.form-group) {
       flex: 1;
-      max-width: 480px;
+      max-width: 340px;
       margin: 0;
     }
 
     :global(.input) {
-      padding-right: 36px;
+      font-size: 13px;
     }
 
     :global(.btn > span) {
@@ -179,6 +176,14 @@
     }
     100% {
       background-position: 0 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeletonAvatar,
+    .skeletonLine {
+      animation: none;
+      background: var(--bg-tertiary);
     }
   }
 }

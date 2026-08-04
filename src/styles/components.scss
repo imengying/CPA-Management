@@ -1,4 +1,3 @@
-@use 'sass:color';
 @use './variables.scss' as *;
 
 .btn {
@@ -27,7 +26,7 @@
     color: var(--background);
     border-color: var(--foreground);
 
-    &:hover {
+    &:hover:not(:disabled) {
       background: var(--primary-hover);
       border-color: var(--primary-hover);
     }
@@ -38,7 +37,7 @@
     border-color: var(--border);
     color: var(--foreground);
 
-    &:hover {
+    &:hover:not(:disabled) {
       background: var(--muted);
       border-color: var(--border-hover);
     }
@@ -49,19 +48,20 @@
     border-color: transparent;
     color: var(--text-secondary);
 
-    &:hover {
+    &:hover:not(:disabled) {
       color: var(--foreground);
       background: var(--muted);
     }
   }
 
   &.btn-danger {
-    background-color: $error-color;
-    border-color: $error-color;
-    color: #fff;
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+    color: var(--primary-contrast);
 
-    &:hover {
-      background-color: color.adjust($error-color, $lightness: -5%);
+    &:hover:not(:disabled) {
+      background-color: color-mix(in srgb, var(--danger-color) 88%, black);
+      border-color: color-mix(in srgb, var(--danger-color) 88%, black);
     }
   }
 
@@ -78,6 +78,12 @@
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 20%, transparent);
   }
 }
 
@@ -111,6 +117,37 @@ textarea {
     border-color: var(--ring);
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 20%, transparent);
   }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.input-control {
+  position: relative;
+}
+
+.input.input-sm {
+  height: 32px;
+  min-height: 32px;
+  padding-block: 7px;
+  padding-inline: 10px;
+  font-size: 12px;
+}
+
+.input.input-with-right-element {
+  padding-right: calc(var(--input-right-element-width, 20px) + 20px);
+}
+
+.input-right-element {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
 }
 
 .form-group {
@@ -176,21 +213,21 @@ textarea {
   }
 
   &.success {
-    color: $success-color;
-    border-color: rgba($success-color, 0.35);
-    background: rgba($success-color, 0.08);
+    color: var(--success-badge-text);
+    border-color: var(--success-badge-border);
+    background: var(--success-badge-bg);
   }
 
   &.warning {
-    color: $warning-color;
-    border-color: rgba($warning-color, 0.35);
-    background: rgba($warning-color, 0.08);
+    color: var(--warning-text);
+    border-color: var(--warning-border);
+    background: var(--warning-bg);
   }
 
   &.error {
-    color: $error-color;
-    border-color: rgba($error-color, 0.35);
-    background: rgba($error-color, 0.08);
+    color: var(--failure-badge-text);
+    border-color: var(--failure-badge-border);
+    background: var(--failure-badge-bg);
   }
 
   &.muted {
@@ -254,13 +291,13 @@ textarea {
   }
 
   &.success {
-    border-color: rgba($success-color, 0.4);
+    border-color: var(--success-badge-border);
   }
   &.warning {
-    border-color: rgba($warning-color, 0.4);
+    border-color: var(--warning-border);
   }
   &.error {
-    border-color: rgba($error-color, 0.4);
+    border-color: var(--failure-badge-border);
   }
 
   .message {
@@ -653,11 +690,11 @@ textarea {
 }
 
 .error-box {
-  background: rgba($error-color, 0.1);
-  border: 1px solid rgba($error-color, 0.4);
+  background: var(--failure-badge-bg);
+  border: 1px solid var(--failure-badge-border);
   border-radius: $radius-md;
   padding: $spacing-sm $spacing-md;
-  color: $error-color;
+  color: var(--failure-badge-text);
 }
 
 .stack {

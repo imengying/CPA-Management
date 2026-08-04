@@ -1079,6 +1079,7 @@ export function PluginStorePage() {
       {/* ── Toolbar ── */}
       <div className={styles.toolbar}>
         <Input
+          size="sm"
           type="search"
           value={filter}
           onChange={(event) => setFilter(event.target.value)}

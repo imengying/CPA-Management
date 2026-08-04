@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { IconGithub, IconBookOpen, IconExternalLink, IconCode } from '@/components/ui/icons';
 import { useAuthStore, useNotificationStore, useModelsStore, useThemeStore } from '@/stores';
 import { useApiKeysForModels } from '@/hooks/useApiKeysForModels';
@@ -198,6 +199,7 @@ export function SystemPage() {
         </section>
 
         <Card
+          className={styles.systemCard}
           title={t('system_info.models_title')}
           extra={
             <Button
@@ -218,7 +220,7 @@ export function SystemPage() {
           {modelsLoading ? (
             <div className="hint">{t('common.loading')}</div>
           ) : models.length === 0 ? (
-            <div className="hint">{t('system_info.models_empty')}</div>
+            <EmptyState title={t('system_info.models_empty')} />
           ) : (
             <div className="item-list">
               {groupedModels.map((group) => {
@@ -253,7 +255,7 @@ export function SystemPage() {
           )}
         </Card>
 
-        <Card title={t('system_info.clear_login_title')}>
+        <Card className={styles.systemCard} title={t('system_info.clear_login_title')}>
           <p className={styles.sectionDescription}>{t('system_info.clear_login_desc')}</p>
           <div className={styles.clearLoginActions}>
             <Button variant="danger" onClick={handleClearLoginStorage}>

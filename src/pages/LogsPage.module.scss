@@ -58,10 +58,9 @@
     background: color-mix(in srgb, var(--bg-tertiary) 55%, transparent);
   }
 
-  &:focus,
   &:focus-visible {
-    outline: none;
-    box-shadow: none;
+    outline: 2px solid var(--primary-color);
+    outline-offset: -2px;
   }
 }
 
@@ -180,7 +179,7 @@
   align-items: center;
   padding: 2px 8px;
   border-radius: $radius-full;
-  background: rgba($primary-color, 0.12);
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
   color: var(--primary-color);
   font-size: 12px;
   line-height: 1.2;
@@ -255,8 +254,8 @@
 
 .filterChipActive {
   color: var(--primary-color);
-  border-color: rgba($primary-color, 0.45);
-  background: rgba($primary-color, 0.14);
+  border-color: color-mix(in srgb, var(--primary-color) 45%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 14%, transparent);
 }
 
 .filterChipHint {
@@ -303,10 +302,6 @@
     min-width: 0;
     line-height: 1.2;
   }
-}
-
-.searchInput {
-  padding-right: 44px !important;
 }
 
 .searchIcon {
@@ -527,7 +522,7 @@
   color: var(--text-primary);
 
   &:hover {
-    background: rgba($primary-color, 0.06);
+    background: color-mix(in srgb, var(--primary-color) 6%, transparent);
   }
 
   @include tablet {
@@ -629,8 +624,8 @@
 
 .statusInfo {
   color: var(--info-color);
-  background: rgba($primary-color, 0.12);
-  border-color: rgba($primary-color, 0.25);
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  border-color: color-mix(in srgb, var(--primary-color) 25%, transparent);
 }
 
 .statusWarn {
@@ -647,8 +642,8 @@
 
 .levelInfo {
   color: var(--info-color);
-  background: rgba($primary-color, 0.12);
-  border-color: rgba($primary-color, 0.25);
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  border-color: color-mix(in srgb, var(--primary-color) 25%, transparent);
 }
 
 .levelWarn {
@@ -659,8 +654,8 @@
 
 .levelError {
   color: var(--error-color);
-  background: rgba($error-color, 0.12);
-  border-color: rgba($error-color, 0.25);
+  background: color-mix(in srgb, var(--error-color) 12%, transparent);
+  border-color: color-mix(in srgb, var(--error-color) 25%, transparent);
 }
 
 .levelDebug,
@@ -672,8 +667,8 @@
 
 .methodBadge {
   color: var(--text-primary);
-  background: rgba($primary-color, 0.08);
-  border-color: rgba($primary-color, 0.22);
+  background: color-mix(in srgb, var(--primary-color) 8%, transparent);
+  border-color: color-mix(in srgb, var(--primary-color) 22%, transparent);
 }
 
 .path {
@@ -707,18 +702,6 @@
 }
 
 @media (max-height: 820px) {
-  .tabBar {
-    margin-bottom: $spacing-md;
-  }
-
-  .tabItem {
-    padding: 10px 16px;
-  }
-
-  .content {
-    gap: $spacing-md;
-  }
-
   @media (min-width: 769px) {
     .filters {
       flex: 0 0 auto;
@@ -746,20 +729,11 @@
   }
 
   .errorPanel {
-    height: 360px;
+    max-height: 360px;
   }
 }
 
 @media (max-height: 600px) {
-  .tabBar {
-    margin-bottom: $spacing-sm;
-  }
-
-  .tabItem {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
-
   .content {
     gap: $spacing-sm;
   }
@@ -796,6 +770,6 @@
   }
 
   .errorPanel {
-    height: 280px;
+    max-height: 280px;
   }
 }

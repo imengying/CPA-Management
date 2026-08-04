@@ -252,16 +252,15 @@ export function pickLaneWindow<
 /**
  * Whether a lane has anything to draw, in any mode.
  *
- * Without an anchor no bar can be projected at any span or zoom, so the row
- * would be permanently blank. The card grid above already enumerates every
- * credential, so a blank row here adds no information — it just makes the
- * chart taller and the real lanes harder to compare against each other.
+ * A quota window needs an anchor, while a Codex reset credit can stand on its
+ * own as an expiry marker. A lane with neither is permanently blank and adds no
+ * information beyond the card grid above.
  *
  * Note this is about the lane, not the current view: an anchored lane whose
  * windows fall outside the visible span still gets a row, and says so.
  */
 export function laneHasWindow(lane: TimelineLane): boolean {
-  return lane.anchorMs !== null;
+  return lane.anchorMs !== null || lane.resetCredits.length > 0;
 }
 
 /* ------------------------------------------------------------------ lanes */
@@ -348,9 +347,6 @@ export function buildTimelineLane(input: TimelineLaneInput): TimelineLane {
     const windows = ((quota as { windows?: WindowLike[] }).windows ?? []).filter(
       (window) => typeof window.resetAtMs === 'number'
     );
-    const chosen = pickLaneWindow(windows, maxPeriodHours);
-    if (!chosen) return empty;
-
     const resetCredits =
       provider === 'codex'
         ? ((quota as { rateLimitResetCredits?: ResetCreditLike[] }).rateLimitResetCredits ?? [])
@@ -368,6 +364,8 @@ export function buildTimelineLane(input: TimelineLaneInput): TimelineLane {
             })
             .filter((credit): credit is TimelineResetCredit => credit !== null)
         : [];
+    const chosen = pickLaneWindow(windows, maxPeriodHours);
+    if (!chosen) return { ...empty, resetCredits };
 
     return {
       ...empty,

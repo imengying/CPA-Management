@@ -111,7 +111,11 @@ export function QuotaTimeline({
             maxPeriodHours: mode === 'session' ? 5 : span.days * 24,
           })
         )
-        .filter((lane) => laneHasWindow(lane) && (mode !== 'session' || lane.periodHours === 5)),
+        .filter(
+          (lane) =>
+            laneHasWindow(lane) &&
+            (mode !== 'session' || lane.periodHours === 5 || lane.resetCredits.length > 0)
+        ),
     [laneInputs, mode, span.days]
   );
 
@@ -176,6 +180,7 @@ export function QuotaTimeline({
             </button>
             <button
               type="button"
+              className={styles.navCurrent}
               onClick={() => setOffset(0)}
               disabled={offset === 0}
               aria-label={todayLabel}
@@ -436,6 +441,7 @@ function Lane({ lane, span, now, mode, cells, nowPercent, resolvedTheme }: LaneP
               className={styles.resetCreditTick}
               style={{ left: `${credit.leftPercent}%` }}
               title={title}
+              tabIndex={0}
               role="img"
               aria-label={title.split('\n').join(', ')}
             />

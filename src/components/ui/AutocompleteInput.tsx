@@ -1,47 +1,40 @@
 import {
   useEffect,
+  useId,
   useRef,
   useState,
   type ChangeEvent,
+  type CSSProperties,
   type KeyboardEvent,
-  type ReactNode,
 } from 'react';
 import { IconChevronDown } from './icons';
+import styles from './AutocompleteInput.module.scss';
 
 interface AutocompleteInputProps {
-  label?: string;
   value: string;
   onChange: (value: string) => void;
   options: string[] | { value: string; label?: string }[];
-  placeholder?: string;
+  placeholder: string;
   disabled?: boolean;
-  hint?: string;
-  error?: string;
-  className?: string;
-  wrapperClassName?: string;
-  wrapperStyle?: React.CSSProperties;
+  wrapperStyle?: CSSProperties;
   id?: string;
-  rightElement?: ReactNode;
 }
 
 export function AutocompleteInput({
-  label,
   value,
   onChange,
   options,
   placeholder,
   disabled,
-  hint,
-  error,
-  className = '',
-  wrapperClassName = '',
   wrapperStyle,
   id,
-  rightElement,
 }: AutocompleteInputProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
+  const listboxId = `${inputId}-listbox`;
 
   const normalizedOptions = options.map((opt) =>
     typeof opt === 'string'
@@ -49,12 +42,15 @@ export function AutocompleteInput({
       : { value: opt.value, label: opt.label || opt.value }
   );
 
+  const searchValue = value.toLowerCase();
   const filteredOptions = normalizedOptions.filter((opt) => {
-    const v = value.toLowerCase();
     return (
-      opt.value.toLowerCase().includes(v) || (opt.label && opt.label.toLowerCase().includes(v))
+      opt.value.toLowerCase().includes(searchValue) || opt.label.toLowerCase().includes(searchValue)
     );
   });
+  const dropdownOpen = isOpen && filteredOptions.length > 0 && !disabled;
+  const activeDescendant =
+    dropdownOpen && highlightedIndex >= 0 ? `${inputId}-option-${highlightedIndex}` : undefined;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -106,12 +102,11 @@ export function AutocompleteInput({
   };
 
   return (
-    <div className={`form-group ${wrapperClassName}`} ref={containerRef} style={wrapperStyle}>
-      {label && <label htmlFor={id}>{label}</label>}
-      <div style={{ position: 'relative' }}>
+    <div className="form-group" ref={containerRef} style={wrapperStyle}>
+      <div className={styles.control}>
         <input
-          id={id}
-          className={`input ${className}`.trim()}
+          id={inputId}
+          className={`input ${styles.input}`}
           value={value}
           onChange={handleInputChange}
           onFocus={() => setIsOpen(true)}
@@ -119,72 +114,54 @@ export function AutocompleteInput({
           placeholder={placeholder}
           disabled={disabled}
           autoComplete="off"
-          style={{ paddingRight: 32 }}
+          role="combobox"
+          aria-label={placeholder}
+          aria-autocomplete="list"
+          aria-expanded={dropdownOpen}
+          aria-controls={dropdownOpen ? listboxId : undefined}
+          aria-activedescendant={activeDescendant}
         />
-        <div
-          style={{
-            position: 'absolute',
-            right: 8,
-            top: '50%',
-            transform: 'translateY(-50%)',
-            display: 'flex',
-            alignItems: 'center',
-            pointerEvents: disabled ? 'none' : 'auto',
-            cursor: 'pointer',
-            height: '100%',
-          }}
+        <button
+          type="button"
+          className={styles.toggle}
+          disabled={disabled}
+          tabIndex={-1}
+          aria-label={placeholder}
+          aria-haspopup="listbox"
+          aria-expanded={dropdownOpen}
+          aria-controls={dropdownOpen ? listboxId : undefined}
           onClick={() => !disabled && setIsOpen(!isOpen)}
         >
-          {rightElement}
-          <IconChevronDown size={16} style={{ opacity: 0.5, marginLeft: 4 }} />
-        </div>
+          <IconChevronDown
+            size={16}
+            className={`${styles.chevron} ${dropdownOpen ? styles.chevronOpen : ''}`}
+          />
+        </button>
 
-        {isOpen && filteredOptions.length > 0 && !disabled && (
-          <div
-            className="autocomplete-dropdown"
-            style={{
-              position: 'absolute',
-              top: 'calc(100% + 4px)',
-              left: 0,
-              right: 0,
-              zIndex: 1000,
-              backgroundColor: 'var(--bg-secondary)',
-              border: '1px solid var(--border-color)',
-              borderRadius: 'var(--radius-md)',
-              maxHeight: 200,
-              overflowY: 'auto',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-            }}
-          >
+        {dropdownOpen && (
+          <div className={styles.dropdown} id={listboxId} role="listbox">
             {filteredOptions.map((opt, index) => (
-              <div
+              <button
+                type="button"
                 key={`${opt.value}-${index}`}
+                id={`${inputId}-option-${index}`}
+                role="option"
+                tabIndex={-1}
+                aria-selected={opt.value === value}
+                className={`${styles.option} ${
+                  index === highlightedIndex ? styles.optionHighlighted : ''
+                }`}
+                onMouseDown={(event) => event.preventDefault()}
                 onClick={() => handleSelect(opt.value)}
-                style={{
-                  padding: '8px 12px',
-                  cursor: 'pointer',
-                  backgroundColor:
-                    index === highlightedIndex ? 'var(--bg-tertiary)' : 'transparent',
-                  color: 'var(--text-primary)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  fontSize: '0.9rem',
-                }}
                 onMouseEnter={() => setHighlightedIndex(index)}
               >
-                <span style={{ fontWeight: 500 }}>{opt.value}</span>
-                {opt.label && opt.label !== opt.value && (
-                  <span style={{ fontSize: '0.85em', color: 'var(--text-secondary)' }}>
-                    {opt.label}
-                  </span>
-                )}
-              </div>
+                <span className={styles.optionValue}>{opt.value}</span>
+                {opt.label !== opt.value && <span className={styles.optionLabel}>{opt.label}</span>}
+              </button>
             ))}
           </div>
         )}
       </div>
-      {hint && <div className="hint">{hint}</div>}
-      {error && <div className="error-box">{error}</div>}
     </div>
   );
 }

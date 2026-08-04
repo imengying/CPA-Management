@@ -4,16 +4,16 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 20px;
 }
 
 .hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
   align-items: center;
-  gap: 32px;
-  padding: 18px 0 8px;
+  gap: 20px;
+  padding: 4px 0 0;
 }
 
 .heroCopy {
@@ -22,15 +22,15 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .heroTitle {
   margin: 0;
   color: var(--text-primary);
-  font-size: 36px;
+  font-size: 26px;
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.2;
   letter-spacing: 0;
   text-wrap: balance;
   overflow-wrap: anywhere;
@@ -52,7 +52,7 @@
   margin: 0;
   color: var(--text-secondary);
   font-family: $font-mono;
-  font-size: 13px;
+  font-size: 12.5px;
   line-height: 1.5;
   letter-spacing: 0;
   overflow: hidden;
@@ -64,19 +64,19 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 2px;
+  margin-top: 0;
 }
 
 .primaryAction,
 .ghostAction {
-  min-height: 36px;
-  padding: 8px 14px;
+  min-height: 32px;
+  padding: 7px 11px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 650;
   line-height: 1.2;
   text-decoration: none;
@@ -130,7 +130,7 @@
 
 .heroPanel {
   min-width: 0;
-  padding: 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -183,7 +183,7 @@
 .heroFigure {
   color: var(--text-primary);
   font-family: $font-mono;
-  font-size: 42px;
+  font-size: 32px;
   font-weight: 600;
   line-height: 1.05;
   letter-spacing: 0;
@@ -221,10 +221,10 @@
 }
 
 .heroSplit {
-  padding-top: 10px;
+  padding-top: 8px;
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
   border-top: 1px solid var(--border-color);
   color: var(--text-secondary);
   font-size: 12px;
@@ -254,12 +254,12 @@
   position: relative;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  gap: 10px;
 }
 
 .statTile {
-  min-height: 128px;
-  padding: 16px;
+  min-height: 108px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -284,7 +284,7 @@
 .statValue {
   color: var(--text-primary);
   font-family: $font-mono;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: 0;
@@ -308,7 +308,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .sectionHead,
@@ -332,14 +332,14 @@
 .panelTitle {
   margin: 0;
   color: var(--text-primary);
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 650;
   line-height: 1.2;
   letter-spacing: 0;
 }
 
 .panelTitle {
-  font-size: 17px;
+  font-size: 16px;
 }
 
 .sectionDescription {
@@ -347,15 +347,15 @@
   margin: 0;
   color: var(--text-secondary);
   font-size: 13px;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 .panel {
   min-width: 0;
-  padding: 18px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   background: var(--bg-primary);
@@ -387,8 +387,8 @@
 }
 
 .fleetRow {
-  min-height: 64px;
-  padding: 12px 0;
+  min-height: 58px;
+  padding: 10px 0;
   display: grid;
   grid-template-columns: 28px minmax(120px, 1.3fr) minmax(90px, 1fr) 92px minmax(96px, 0.7fr);
   align-items: center;
@@ -463,7 +463,7 @@
 .detailGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 10px;
 }
 
 .healthBar {
@@ -670,8 +670,8 @@
 @media (max-width: 900px) {
   .hero {
     grid-template-columns: minmax(0, 1fr);
-    gap: 18px;
-    padding-top: 8px;
+    gap: 14px;
+    padding-top: 0;
   }
 
   .statsRow {
@@ -711,15 +711,15 @@
 
 @include mobile {
   .page {
-    gap: 20px;
+    gap: 16px;
   }
 
   .heroPanel {
-    padding: 16px;
+    padding: 14px;
   }
 
   .heroTitle {
-    font-size: 28px;
+    font-size: 22px;
   }
 
   .statsRow {
@@ -727,11 +727,11 @@
   }
 
   .statTile {
-    min-height: 112px;
+    min-height: 100px;
   }
 
   .panel {
-    padding: 16px;
+    padding: 14px;
   }
 
   .specRow {
