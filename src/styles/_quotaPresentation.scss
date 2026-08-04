@@ -94,6 +94,22 @@
     color: var(--text-tertiary);
   }
 
+  .quotaResetRelative {
+    margin-left: -4px;
+    color: var(--text-tertiary);
+
+    &::before {
+      content: '·';
+      margin-right: 4px;
+      color: var(--text-quaternary);
+    }
+  }
+
+  .quotaResetRelativeSoon {
+    color: var(--warning-text);
+    font-weight: 600;
+  }
+
   .quotaAmount {
     color: var(--text-secondary);
   }
@@ -206,6 +222,11 @@
     min-width: 0;
   }
 
+  .codexResetCreditRowSoon {
+    border-color: var(--warning-border);
+    background-color: var(--warning-bg);
+  }
+
   .codexResetCreditLabel {
     color: var(--text-tertiary);
     flex: 0 0 auto;
@@ -218,6 +239,10 @@
     text-align: right;
     overflow-wrap: anywhere;
     min-width: 0;
+
+    .quotaResetRelative {
+      margin-left: 4px;
+    }
   }
 
   .codexResetCreditsError {

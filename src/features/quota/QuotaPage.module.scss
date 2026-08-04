@@ -21,6 +21,23 @@
   min-width: 0;
 }
 
+.tabsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+
+  > :first-child {
+    min-width: 0;
+  }
+}
+
+.sort {
+  flex: 0 0 auto;
+  min-width: 148px;
+}
+
 .errorBanner {
   font-size: 12.5px;
   line-height: 1.5;
@@ -65,5 +82,14 @@
 @include mobile {
   .page {
     gap: 16px;
+  }
+
+  .tabsRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sort {
+    width: 100%;
   }
 }

@@ -6,6 +6,7 @@ import {
   laneHasWindow,
   pickLaneWindow,
   projectLane,
+  projectResetCredits,
   startOfDay,
   startOfWeek,
   timelineSpan,
@@ -105,6 +106,7 @@ describe('projectLane', () => {
     periodHours: 24 * 7,
     remaining: 40,
     limits: [],
+    resetCredits: [],
     ...over,
   });
 
@@ -167,6 +169,29 @@ describe('projectLane', () => {
       'session'
     );
     expect(windows.some((w) => w.endMs - w.startMs === 5 * HOUR_MS)).toBe(true);
+  });
+
+  test('projects only unexpired reset credits inside the visible span', () => {
+    const now = at(2026, 6, 29, 12);
+    const visibleExpiry = at(2026, 7, 2, 12);
+    const marks = projectResetCredits(
+      lane({
+        resetCredits: [
+          { id: 'expired', grantedAtMs: null, expiresAtMs: now - HOUR_MS },
+          { id: 'visible', grantedAtMs: now - DAY_MS, expiresAtMs: visibleExpiry },
+          { id: 'outside', grantedAtMs: now, expiresAtMs: span.endMs + HOUR_MS },
+        ],
+      }),
+      span.startMs,
+      span.endMs,
+      now
+    );
+
+    expect(marks).toHaveLength(1);
+    expect(marks[0].id).toBe('visible');
+    expect(marks[0].leftPercent).toBe(
+      ((visibleExpiry - span.startMs) / (span.endMs - span.startMs)) * 100
+    );
   });
 });
 
@@ -275,6 +300,41 @@ describe('buildTimelineLane', () => {
     expect(lane.limits).toEqual([
       { label: 'Daily', remaining: 46 },
       { label: 'Monthly', remaining: 73 },
+    ]);
+  });
+
+  test('codex: includes available reset credits with parseable expiry dates', () => {
+    const expiresAt = '2026-08-02T12:00:00.123456789Z';
+    const lane = buildTimelineLane({
+      ...base,
+      provider: 'codex',
+      quota: {
+        status: 'success',
+        windows: [{ label: '7-day', usedPercent: 90, resetAtMs: 5000, periodHours: 168 }],
+        rateLimitResetCredits: [
+          {
+            id: 'credit-1',
+            status: 'available',
+            grantedAt: '2026-07-01T12:00:00Z',
+            expiresAt,
+          },
+          {
+            id: 'spent',
+            status: 'consumed',
+            grantedAt: '2026-07-01T12:00:00Z',
+            expiresAt,
+          },
+          { id: 'invalid', status: 'available', grantedAt: '', expiresAt: 'not-a-date' },
+        ],
+      },
+    });
+
+    expect(lane.resetCredits).toEqual([
+      {
+        id: 'credit-1',
+        grantedAtMs: new Date('2026-07-01T12:00:00Z').getTime(),
+        expiresAtMs: Date.UTC(2026, 7, 2, 12, 0, 0, 123),
+      },
     ]);
   });
 

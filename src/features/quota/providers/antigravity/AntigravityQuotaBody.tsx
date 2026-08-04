@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import type { AntigravityQuotaState, AntigravityQuotaSubscription } from '@/types';
 import { QuotaMeter } from '../../components/QuotaMeter';
+import { collectQuotaRowInstants, pickUrgentRowId } from '../../resetSchedule';
 import type { QuotaBodyProps } from '../../types';
 import { getNextAntigravityCountdownUpdateDelay } from './countdown';
 
@@ -144,6 +145,11 @@ export function AntigravityQuotaBody({ quota, classes }: QuotaBodyProps<Antigrav
     };
   }, [resetTimestamps, serverTimeOffsetMs]);
 
+  const urgentRowId = useMemo(
+    () => pickUrgentRowId(collectQuotaRowInstants('antigravity', quota), nowMs),
+    [quota, nowMs]
+  );
+
   return (
     <>
       {planLabel && (
@@ -196,6 +202,7 @@ export function AntigravityQuotaBody({ quota, classes }: QuotaBodyProps<Antigrav
                   bucket.description,
                   t
                 );
+                const urgent = bucket.id === urgentRowId;
 
                 return (
                   <div key={bucket.id} className={classes.quotaRow}>
@@ -205,7 +212,16 @@ export function AntigravityQuotaBody({ quota, classes }: QuotaBodyProps<Antigrav
                       </span>
                       <div className={classes.quotaMeta}>
                         <span className={classes.quotaPercent}>{percentLabel}</span>
-                        <span className={classes.quotaReset}>{resetLabel}</span>
+                        <span
+                          className={
+                            urgent
+                              ? `${classes.quotaReset} ${classes.quotaResetRelativeSoon}`
+                              : classes.quotaReset
+                          }
+                          title={urgent ? t('quota_management.soonest_row_hint') : undefined}
+                        >
+                          {resetLabel}
+                        </span>
                       </div>
                     </div>
                     <QuotaMeter percent={percent} classes={classes} index={index} />

@@ -3,15 +3,23 @@
  * 重置积分明细、用量窗口水位条。
  */
 
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { CodexQuotaState } from '@/types';
 import {
+  buildResetDisplay,
+  formatInstantShort,
   normalizePlanType,
+  parseIsoToMs,
   resolvePlanTier,
-  formatShanghaiDateTime,
+  resolveResetMs,
 } from '@/utils/quota';
+import { resolveTimeZoneLabel } from '@/utils/time/timezone';
 import { formatDateTimeValue } from '@/utils/format';
+import { useNow } from '@/hooks/useNow';
 import { QuotaMeter } from '../../components/QuotaMeter';
+import { QuotaResetLabel } from '../../components/QuotaResetLabel';
+import { collectQuotaRowInstants, pickUrgentRowId, resetCreditRowId } from '../../resetSchedule';
 import type { QuotaBodyProps, QuotaClassMap } from '../../types';
 
 const getPlanValueClass = (planType: string | null, classes: QuotaClassMap): string => {
@@ -23,7 +31,13 @@ const getPlanValueClass = (planType: string | null, classes: QuotaClassMap): str
 };
 
 export function CodexQuotaBody({ quota, classes }: QuotaBodyProps<CodexQuotaState>) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const now = useNow();
+  const locale = i18n.resolvedLanguage;
+  const urgentRowId = useMemo(
+    () => pickUrgentRowId(collectQuotaRowInstants('codex', quota), now),
+    [quota, now]
+  );
   const windows = quota.windows ?? [];
   const planType = quota.planType ?? null;
   const subscriptionActiveUntil = quota.subscriptionActiveUntil ?? null;
@@ -45,12 +59,20 @@ export function CodexQuotaBody({ quota, classes }: QuotaBodyProps<CodexQuotaStat
   };
 
   const planLabel = getPlanLabel(planType);
-  const expiryLabel = subscriptionActiveUntil ? formatDateTimeValue(subscriptionActiveUntil) : '';
+  const subscriptionMs = resolveResetMs([subscriptionActiveUntil]);
+  const expiryDisplay = subscriptionActiveUntil
+    ? buildResetDisplay(
+        subscriptionMs === null ? formatDateTimeValue(subscriptionActiveUntil) : null,
+        subscriptionMs,
+        now,
+        locale
+      )
+    : null;
   const planValueClass = getPlanValueClass(planType, classes);
 
   return (
     <>
-      {(planLabel || expiryLabel || rateLimitResetCreditsAvailableCount !== null) && (
+      {(planLabel || expiryDisplay || rateLimitResetCreditsAvailableCount !== null) && (
         <div className={classes.codexPlan}>
           {planLabel && (
             <span className={classes.codexPlanItem}>
@@ -58,10 +80,13 @@ export function CodexQuotaBody({ quota, classes }: QuotaBodyProps<CodexQuotaStat
               <span className={planValueClass}>{planLabel}</span>
             </span>
           )}
-          {expiryLabel && (
+          {expiryDisplay && (
             <span className={classes.codexPlanItem}>
               <span className={classes.codexPlanLabel}>{t('codex_quota.expires_label')}</span>
-              <span className={classes.codexPlanValue}>{expiryLabel}</span>
+              <span className={classes.codexPlanValue}>{expiryDisplay.absolute}</span>
+              {expiryDisplay.relative && (
+                <span className={classes.quotaResetRelative}>{expiryDisplay.relative}</span>
+              )}
             </span>
           )}
           {rateLimitResetCreditsAvailableCount !== null && (
@@ -77,21 +102,39 @@ export function CodexQuotaBody({ quota, classes }: QuotaBodyProps<CodexQuotaStat
       {rateLimitResetCredits.length > 0 ? (
         <div className={classes.codexResetCredits}>
           <div className={classes.codexResetCreditsTitle}>
-            {t('codex_quota.reset_credits_expiry_label')}
+            {t('codex_quota.reset_credits_expiry_label', { timezone: resolveTimeZoneLabel() })}
           </div>
-          {rateLimitResetCredits.map((credit, index) => (
-            <div
-              key={credit.id || `${credit.expiresAt}-${index}`}
-              className={classes.codexResetCreditRow}
-            >
-              <span className={classes.codexResetCreditLabel}>
-                {t('codex_quota.reset_credit_number', { index: index + 1 })}
-              </span>
-              <span className={classes.codexResetCreditTime}>
-                {formatShanghaiDateTime(credit.expiresAt) || credit.expiresAt}
-              </span>
-            </div>
-          ))}
+          {rateLimitResetCredits.map((credit, index) => {
+            const expiresAtMs = parseIsoToMs(credit.expiresAt);
+            const expiresDisplay = buildResetDisplay(
+              expiresAtMs === null ? credit.expiresAt : formatInstantShort(expiresAtMs),
+              expiresAtMs,
+              now,
+              locale
+            );
+            const rowId = resetCreditRowId(credit, index);
+            const urgent = rowId === urgentRowId;
+            return (
+              <div
+                key={rowId}
+                className={
+                  urgent
+                    ? `${classes.codexResetCreditRow} ${classes.codexResetCreditRowSoon}`
+                    : classes.codexResetCreditRow
+                }
+                title={urgent ? t('quota_management.soonest_row_hint') : undefined}
+              >
+                <span className={classes.codexResetCreditLabel}>
+                  {t('codex_quota.reset_credit_number', { index: index + 1 })}
+                </span>
+                <span className={classes.codexResetCreditTime}>
+                  {expiresDisplay && (
+                    <QuotaResetLabel display={expiresDisplay} classes={classes} soon={urgent} />
+                  )}
+                </span>
+              </div>
+            );
+          })}
         </div>
       ) : rateLimitResetCreditsError ? (
         <div className={classes.codexResetCreditsError}>
@@ -112,14 +155,22 @@ export function CodexQuotaBody({ quota, classes }: QuotaBodyProps<CodexQuotaStat
           const windowLabel = window.labelKey
             ? t(window.labelKey, window.labelParams as Record<string, string | number>)
             : window.label;
+          const resetDisplay = buildResetDisplay(window.resetLabel, window.resetAtMs, now, locale);
+          const urgent = window.id === urgentRowId;
 
           return (
-            <div key={window.id} className={classes.quotaRow}>
+            <div
+              key={window.id}
+              className={classes.quotaRow}
+              title={urgent ? t('quota_management.soonest_row_hint') : undefined}
+            >
               <div className={classes.quotaRowHeader}>
                 <span className={classes.quotaModel}>{windowLabel}</span>
                 <div className={classes.quotaMeta}>
                   <span className={classes.quotaPercent}>{percentLabel}</span>
-                  <span className={classes.quotaReset}>{window.resetLabel}</span>
+                  {resetDisplay && (
+                    <QuotaResetLabel display={resetDisplay} classes={classes} soon={urgent} />
+                  )}
                 </div>
               </div>
               <QuotaMeter percent={remaining} classes={classes} index={index} />

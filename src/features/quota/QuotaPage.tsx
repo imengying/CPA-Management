@@ -13,8 +13,10 @@ import { useTranslation } from 'react-i18next';
 import { authFilesApi } from '@/services/api';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Select } from '@/components/ui/Select';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
+import { useNow } from '@/hooks/useNow';
 import { useRevealGroup } from '@/hooks/motion';
 import { useAuthStore, useQuotaStore, useThemeStore } from '@/stores';
 import type { AuthFileItem, ResolvedTheme } from '@/types';
@@ -25,7 +27,9 @@ import { QuotaTimeline } from './components/QuotaTimeline';
 import {
   CARD_ENTRANCE_BUDGET_MS,
   QUOTA_PAGE_SIZE,
+  QUOTA_SORT_MODES,
   QUOTA_TAB_ORDER,
+  type QuotaSortMode,
   type QuotaTabId,
 } from './constants';
 import {
@@ -33,8 +37,10 @@ import {
   classifyQuotaFiles,
   filterEntriesByTab,
   paginate,
+  sortQuotaEntries,
   type QuotaFileEntry,
 } from './logic';
+import { nextRecoveryMs } from './resetSchedule';
 import { QUOTA_ADAPTERS, getQuotaSetter, type QuotaCardState } from './providers';
 import type { QuotaProviderType } from './providers/types';
 import { useQuotaActions } from './hooks/useQuotaActions';
@@ -54,6 +60,9 @@ export function QuotaPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [tab, setTab] = useState<QuotaTabId>(() => readQuotaUiState()?.tab ?? 'all');
+  const [sortMode, setSortMode] = useState<QuotaSortMode>(
+    () => readQuotaUiState()?.sortMode ?? 'default'
+  );
   const [page, setPage] = useState(1);
   // 页头 + tabs 的入场级联（标题 → meta → 动作 → tabs，级差 70ms）
   const revealRef = useRevealGroup<HTMLDivElement>();
@@ -88,22 +97,6 @@ export function QuotaPage() {
     };
   }, [loadFiles]);
 
-  /* ---------- 归类 / 过滤 / 分页 ---------- */
-
-  const entries = useMemo(() => classifyQuotaFiles(files), [files]);
-  const tabCounts = useMemo(() => buildTabCounts(entries), [entries]);
-  const filteredEntries = useMemo(() => filterEntriesByTab(entries, tab), [entries, tab]);
-  const { pageItems, currentPage, totalPages } = useMemo(
-    () => paginate(filteredEntries, page, QUOTA_PAGE_SIZE),
-    [filteredEntries, page]
-  );
-
-  const handleTabChange = useCallback((next: string) => {
-    setTab(next as QuotaTabId);
-    setPage(1);
-    writeQuotaUiState({ tab: next as QuotaTabId });
-  }, []);
-
   /* ---------- 额度缓存 ---------- */
 
   const antigravityQuota = useQuotaStore((state) => state.antigravityQuota);
@@ -127,6 +120,46 @@ export function QuotaPage() {
   const getQuota = useCallback(
     (entry: QuotaFileEntry): QuotaCardState | undefined => quotaByType[entry.type][entry.file.name],
     [quotaByType]
+  );
+
+  /* ---------- 归类 / 过滤 / 排序 / 分页 ---------- */
+
+  // 默认排序不订阅分钟时钟，避免 pageItems 每分钟产生无效的新引用。
+  const tick = useNow(sortMode !== 'default');
+  const sortNow = sortMode === 'default' ? 0 : tick;
+
+  const entries = useMemo(() => classifyQuotaFiles(files), [files]);
+  const tabCounts = useMemo(() => buildTabCounts(entries), [entries]);
+  const filteredEntries = useMemo(() => filterEntriesByTab(entries, tab), [entries, tab]);
+  const resolveNextRecovery = useCallback(
+    (entry: QuotaFileEntry) => nextRecoveryMs(entry.type, getQuota(entry), sortNow),
+    [getQuota, sortNow]
+  );
+  const sortedEntries = useMemo(
+    () => sortQuotaEntries(filteredEntries, sortMode, resolveNextRecovery),
+    [filteredEntries, sortMode, resolveNextRecovery]
+  );
+  const { pageItems, currentPage, totalPages } = useMemo(
+    () => paginate(sortedEntries, page, QUOTA_PAGE_SIZE),
+    [sortedEntries, page]
+  );
+
+  const handleTabChange = useCallback((next: string) => {
+    setTab(next as QuotaTabId);
+    setPage(1);
+    writeQuotaUiState({ tab: next as QuotaTabId });
+  }, []);
+
+  const handleSortModeChange = useCallback((next: string) => {
+    setSortMode(next as QuotaSortMode);
+    setPage(1);
+    writeQuotaUiState({ sortMode: next as QuotaSortMode });
+  }, []);
+
+  const sortOptions = useMemo(
+    () =>
+      QUOTA_SORT_MODES.map((mode) => ({ value: mode, label: t(`quota_management.sort_${mode}`) })),
+    [t]
   );
 
   const { loadedCount, attentionCount } = useMemo(() => {
@@ -223,8 +256,7 @@ export function QuotaPage() {
       />
 
       <section className={styles.workbench}>
-        {/* tabs 作为一个整体入场（不做逐 tab 级差 —— 克制优先） */}
-        <div data-reveal>
+        <div className={styles.tabsRow} data-reveal>
           <ProviderTabs
             types={TAB_IDS}
             counts={tabCounts}
@@ -232,6 +264,15 @@ export function QuotaPage() {
             resolvedTheme={resolvedTheme}
             onChange={handleTabChange}
           />
+          <div className={styles.sort}>
+            <Select
+              value={sortMode}
+              options={sortOptions}
+              onChange={handleSortModeChange}
+              ariaLabel={t('quota_management.sort_label')}
+              size="sm"
+            />
+          </div>
         </div>
 
         {error && (

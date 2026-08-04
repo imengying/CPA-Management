@@ -10,7 +10,7 @@ import { CODEX_CONFIG } from './providers/codex/data';
 import { KIMI_CONFIG } from './providers/kimi/data';
 import { XAI_CONFIG } from './providers/xai/data';
 import type { QuotaProviderType } from './providers/types';
-import { QUOTA_TAB_ORDER, type QuotaTabId } from './constants';
+import { QUOTA_TAB_ORDER, type QuotaSortMode, type QuotaTabId } from './constants';
 
 const QUOTA_FILTER_MAP: Record<QuotaProviderType, (file: AuthFileItem) => boolean> = {
   antigravity: ANTIGRAVITY_CONFIG.filterFn,
@@ -47,6 +47,25 @@ export function classifyQuotaFiles(files: AuthFileItem[]): QuotaFileEntry[] {
 export function filterEntriesByTab(entries: QuotaFileEntry[], tab: QuotaTabId): QuotaFileEntry[] {
   if (tab === 'all') return entries;
   return entries.filter((entry) => entry.type === tab);
+}
+
+/** 按下一次恢复时间排序；无可用时间的凭证保持原顺序并沉底。 */
+export function sortQuotaEntries(
+  entries: QuotaFileEntry[],
+  mode: QuotaSortMode,
+  resolveNextRecoveryMs: (entry: QuotaFileEntry) => number | null
+): QuotaFileEntry[] {
+  if (mode !== 'soonest') return [...entries];
+
+  return entries
+    .map((entry, index) => ({ entry, index, atMs: resolveNextRecoveryMs(entry) }))
+    .sort((a, b) => {
+      if (a.atMs === null && b.atMs === null) return a.index - b.index;
+      if (a.atMs === null) return 1;
+      if (b.atMs === null) return -1;
+      return a.atMs - b.atMs || a.index - b.index;
+    })
+    .map(({ entry }) => entry);
 }
 
 export function buildTabCounts(entries: QuotaFileEntry[]): Record<string, number> {

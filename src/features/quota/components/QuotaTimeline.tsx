@@ -12,15 +12,17 @@
  * quotaTimeline.ts.)
  */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TYPE_COLORS } from '@/utils/quota';
+import { formatRelativeInstant, TYPE_COLORS } from '@/utils/quota';
+import { useNow } from '@/hooks/useNow';
 import type { ResolvedTheme, ThemeColors } from '@/types';
 import {
   buildTimelineLane,
   laneHasWindow,
   projectLane,
+  projectResetCredits,
   timelineSpan,
   DAY_MS,
 } from '../quotaTimelineModel';
@@ -50,26 +52,34 @@ export interface QuotaTimelineProps {
    */
   quotaFor: (entry: QuotaFileEntry) => QuotaCardState | undefined;
   resolvedTheme: ResolvedTheme;
+  /** Injectable for tests/screenshots; defaults to the real clock. */
+  now?: number;
+  /** Injectable initial zoom for tests/screenshots; defaults to the weekly view. */
+  initialMode?: TimelineMode;
+  /** Injectable initial date offset for tests/screenshots; defaults to the current period. */
+  initialOffset?: number;
 }
 
-export function QuotaTimeline({ entries, quotaFor, resolvedTheme }: QuotaTimelineProps) {
+export function QuotaTimeline({
+  entries,
+  quotaFor,
+  resolvedTheme,
+  now: nowProp,
+  initialMode = 'weekly',
+  initialOffset = 0,
+}: QuotaTimelineProps) {
   const { t } = useTranslation();
-  const [mode, setMode] = useState<TimelineMode>('weekly');
-  const [offset, setOffset] = useState(0);
+  const [mode, setMode] = useState<TimelineMode>(initialMode);
+  const [offset, setOffset] = useState(initialOffset);
 
-  // The clock is state, not a read during render: bars are classified
-  // past/live/next against it and the marker is positioned by it, so it has to
-  // advance on its own or the chart quietly goes stale on a long-lived tab.
-  // A minute is finer than any window boundary here (the shortest is 5 hours).
-  const [tick, setTick] = useState(() => Date.now());
-  useEffect(() => {
-    const id = setInterval(() => setTick(Date.now()), 60_000);
-    return () => clearInterval(id);
-  }, []);
-
-  const now = tick;
+  // Shared app-wide so cards and timeline advance in lockstep without each
+  // owning a timer. Tests and screenshots can inject a fixed instant.
+  const tick = useNow(nowProp === undefined);
+  const now = nowProp ?? tick;
 
   const span = useMemo(() => timelineSpan(mode, offset, now), [mode, offset, now]);
+  const todayLabel = t('quota_management.windows_today', { defaultValue: 'Today' });
+  const navigationLabel = offset === 0 ? todayLabel : formatDay(span.startMs);
 
   const laneInputs = useMemo(
     () =>
@@ -164,8 +174,14 @@ export function QuotaTimeline({ entries, quotaFor, resolvedTheme }: QuotaTimelin
             >
               ‹
             </button>
-            <button type="button" onClick={() => setOffset(0)} disabled={offset === 0}>
-              {t('quota_management.windows_today', { defaultValue: 'Today' })}
+            <button
+              type="button"
+              onClick={() => setOffset(0)}
+              disabled={offset === 0}
+              aria-label={todayLabel}
+              title={offset === 0 ? undefined : todayLabel}
+            >
+              {navigationLabel}
             </button>
             <button
               type="button"
@@ -257,6 +273,12 @@ export function QuotaTimeline({ entries, quotaFor, resolvedTheme }: QuotaTimelin
             <span className={`${styles.swatch} ${styles.swatchPast}`} />
             {t('quota_management.windows_legend_elapsed', { defaultValue: 'elapsed' })}
           </span>
+          <span className={styles.legendItem}>
+            <span className={styles.swatchCredit} />
+            {t('quota_management.windows_legend_reset_credit', {
+              defaultValue: 'manual reset expiry',
+            })}
+          </span>
           <span className={styles.legendNote}>
             {mode === 'weekly'
               ? t('quota_management.windows_note_weekly', {
@@ -285,11 +307,15 @@ interface LaneProps {
 }
 
 function Lane({ lane, span, now, mode, cells, nowPercent, resolvedTheme }: LaneProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const windows = useMemo(
     () => projectLane(lane, span.startMs, span.endMs, now, mode),
     [lane, span, now, mode]
+  );
+  const resetCredits = useMemo(
+    () => projectResetCredits(lane, span.startMs, span.endMs, now),
+    [lane, span, now]
   );
 
   const colorSet = TYPE_COLORS[lane.provider] || TYPE_COLORS.unknown;
@@ -385,6 +411,36 @@ function Lane({ lane, span, now, mode, cells, nowPercent, resolvedTheme }: LaneP
             );
           })
         )}
+
+        {resetCredits.map((credit, index) => {
+          const grantedLabel = t('quota_management.windows_credit_granted', {
+            defaultValue: 'Granted',
+          });
+          const expiresLabel = t('quota_management.windows_credit_expires', {
+            defaultValue: 'Expires',
+          });
+          const title = [
+            t('quota_management.windows_reset_credit', { defaultValue: 'Manual reset' }),
+            credit.grantedAtMs !== null
+              ? `${grantedLabel}: ${formatDay(credit.grantedAtMs)} ${formatTime(credit.grantedAtMs)}`
+              : null,
+            `${expiresLabel}: ${formatDay(credit.expiresAtMs)} ${formatTime(credit.expiresAtMs)}`,
+            formatRelativeInstant(credit.expiresAtMs, now, i18n.resolvedLanguage),
+          ]
+            .filter((line): line is string => line !== null)
+            .join('\n');
+
+          return (
+            <span
+              key={credit.id || `${credit.expiresAtMs}-${index}`}
+              className={styles.resetCreditTick}
+              style={{ left: `${credit.leftPercent}%` }}
+              title={title}
+              role="img"
+              aria-label={title.split('\n').join(', ')}
+            />
+          );
+        })}
       </div>
     </div>
   );

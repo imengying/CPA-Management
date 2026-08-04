@@ -6,6 +6,8 @@ import {
   filterEntriesByTab,
   paginate,
   resolveQuotaProviderType,
+  sortQuotaEntries,
+  type QuotaFileEntry,
 } from '@/features/quota/logic';
 import type { AuthFileItem } from '@/types';
 
@@ -98,5 +100,43 @@ describe('paginate', () => {
       currentPage: 1,
       totalPages: 1,
     });
+  });
+});
+
+describe('sortQuotaEntries', () => {
+  const entries = classifyQuotaFiles(FILES);
+  const names = (items: QuotaFileEntry[]) => items.map((entry) => entry.file.name);
+  const resolver = (instants: Record<string, number>) => (entry: QuotaFileEntry) =>
+    instants[entry.file.name] ?? null;
+
+  test('preserves default order without mutating the input', () => {
+    const sorted = sortQuotaEntries(entries, 'default', () => 1);
+    expect(names(sorted)).toEqual(names(entries));
+    expect(sorted).not.toBe(entries);
+  });
+
+  test('orders loaded credentials by recovery time and sinks unresolved entries', () => {
+    const sorted = sortQuotaEntries(
+      entries,
+      'soonest',
+      resolver({ 'codex-b.json': 200, 'kimi-a.json': 100 })
+    );
+    expect(names(sorted)).toEqual([
+      'kimi-a.json',
+      'codex-b.json',
+      'claude-a.json',
+      'codex-a.json',
+      'grok-a.json',
+    ]);
+  });
+
+  test('keeps equal or unresolved entries stable and sorts before pagination', () => {
+    expect(names(sortQuotaEntries(entries, 'soonest', () => null))).toEqual(names(entries));
+    expect(names(sortQuotaEntries(entries, 'soonest', () => 500))).toEqual(names(entries));
+
+    const last = entries.at(-1)?.file.name;
+    if (!last) throw new Error('expected fixture entries');
+    const sorted = sortQuotaEntries(entries, 'soonest', resolver({ [last]: 1 }));
+    expect(paginate(sorted, 1, 2).pageItems[0].file.name).toBe(last);
   });
 });
