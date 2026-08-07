@@ -829,11 +829,24 @@
     "clear_confirm_title": "清空記錄"
   },
   "config_management": {
-    "editor_title": "設定檔",
+    "title": "設定面板",
+    "meta_fields": "{{count}} 項設定",
+    "meta_dirty": "{{count}} 項待儲存",
+    "meta_dirty_source": "原始碼有未儲存修改",
+    "meta_errors": "{{count}} 項驗證錯誤",
+    "meta_synced": "已同步",
+    "actions": {
+      "discard": "放棄變更",
+      "save": "儲存變更"
+    },
+    "discard_confirm_message": "確定放棄所有未儲存的變更並還原到最近的伺服器版本嗎？",
+    "mode": {
+      "label": "編輯模式",
+      "visual": "視覺化",
+      "source": "原始碼"
+    },
     "reload": "重新載入",
     "reload_confirm_message": "重新載入將捨棄你目前未儲存的修改，確定繼續嗎？",
-    "save": "儲存",
-    "status_idle": "等待操作",
     "status_loading": "載入設定中...",
     "status_loading_short": "載入中",
     "status_loaded": "設定已載入",
@@ -846,12 +859,10 @@
     "status_load_failed_short": "失敗",
     "status_saving": "正在儲存設定...",
     "status_saving_short": "儲存中",
-    "status_saved": "設定儲存完成",
-    "status_save_failed": "儲存失敗",
     "save_success": "設定已儲存",
-    "error_yaml_not_supported": "伺服器未回傳 YAML 格式，請確認 /config.yaml 介面可用",
     "visual_mode_unavailable": "YAML 語法修復前無法使用視覺化編輯",
     "visual_mode_unavailable_short": "YAML 錯誤",
+    "validation_blocked_short": "修復錯誤",
     "visual_mode_unavailable_detail": "目前設定存在無效 YAML，暫時無法使用視覺化編輯：{{message}}",
     "visual_mode_save_blocked": "請先修復 YAML 語法錯誤，再從視覺化模式儲存",
     "visual_mode_latest_yaml_invalid": "伺服器最新設定包含無效 YAML，請先切回原始碼模式檢查後再儲存視覺化修改：{{message}}",
@@ -863,22 +874,19 @@
     "search_next": "下一個",
     "diff": {
       "title": "確認變更",
-      "current": "目前設定",
-      "modified": "修改後",
       "confirm": "確認儲存",
       "no_changes": "未偵測到變更"
     },
-    "tabs": {
-      "visual": "視覺化編輯",
-      "source": "原始檔編輯"
-    },
     "visual": {
-      "quick_jump": "快速跳轉",
       "search": {
         "placeholder": "搜尋設定項（標籤或 YAML 鍵名）",
         "no_results": "沒有符合的設定項"
       },
       "sections": {
+        "common": {
+          "title": "常用",
+          "description": "最常調整的設定項，與完整分區共享同一份資料"
+        },
         "connectivity": {
           "title": "接入與認證",
           "description": "服務位址、連接埠、認證目錄與 API 金鑰"
@@ -894,8 +902,6 @@
           "signature_title": "Antigravity 簽章"
         },
         "server": {
-          "title": "伺服器設定",
-          "description": "基本伺服器設定",
           "host": "主機位址",
           "port": "連接埠"
         },
@@ -921,14 +927,10 @@
           "panel_repo": "面板儲存庫"
         },
         "auth": {
-          "title": "驗證設定",
-          "description": "API 金鑰與驗證檔案目錄設定",
           "auth_dir": "驗證檔案目錄（auth-dir）",
           "auth_dir_hint": "存放驗證檔案的目錄路徑（支援 ~）"
         },
         "system": {
-          "title": "系統設定",
-          "description": "除錯、記錄、統計與效能調整設定",
           "debug": "除錯模式",
           "debug_desc": "啟用詳細的除錯記錄",
           "commercial_mode": "商業模式",
@@ -1073,7 +1075,15 @@
         "input_placeholder": "貼上你的 API 金鑰",
         "input_hint": "此處僅修改本地設定檔內容，不會自動同步到 API 金鑰管理介面",
         "error_empty": "請輸入 API 金鑰",
-        "error_invalid": "API 金鑰包含無效字元"
+        "error_invalid": "API 金鑰包含無效字元",
+        "strength": {
+          "label": "API 金鑰強度",
+          "empty": "待輸入",
+          "weak": "弱",
+          "fair": "一般",
+          "good": "良好",
+          "strong": "很強"
+        }
       },
       "payload_rules": {
         "rule": "規則",
@@ -1140,8 +1150,7 @@
         "cancel": "取消",
         "update": "更新",
         "add": "新增"
-      },
-      "validation_blocked_short": "修復錯誤"
+      }
     }
   },
   "quota_management": {

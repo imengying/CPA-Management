@@ -829,11 +829,24 @@
     "clear_confirm_title": "清空日志"
   },
   "config_management": {
-    "editor_title": "配置文件",
+    "title": "配置面板",
+    "meta_fields": "{{count}} 项配置",
+    "meta_dirty": "{{count}} 项待保存",
+    "meta_dirty_source": "源码有未保存修改",
+    "meta_errors": "{{count}} 项校验错误",
+    "meta_synced": "已同步",
+    "actions": {
+      "discard": "放弃更改",
+      "save": "保存更改"
+    },
+    "discard_confirm_message": "确定放弃所有未保存的更改并恢复到最近的服务器版本吗？",
+    "mode": {
+      "label": "编辑模式",
+      "visual": "可视化",
+      "source": "源码"
+    },
     "reload": "重新加载",
     "reload_confirm_message": "重新加载将丢弃你当前未保存的修改，确定继续吗？",
-    "save": "保存",
-    "status_idle": "等待操作",
     "status_loading": "加载配置中...",
     "status_loading_short": "加载中",
     "status_loaded": "配置已加载",
@@ -846,12 +859,10 @@
     "status_load_failed_short": "失败",
     "status_saving": "正在保存配置...",
     "status_saving_short": "保存中",
-    "status_saved": "配置保存完成",
-    "status_save_failed": "保存失败",
     "save_success": "配置已保存",
-    "error_yaml_not_supported": "服务器未返回 YAML 格式，请确认 /config.yaml 接口可用",
     "visual_mode_unavailable": "YAML 语法修复前无法使用可视化编辑",
     "visual_mode_unavailable_short": "YAML错误",
+    "validation_blocked_short": "修复错误",
     "visual_mode_unavailable_detail": "当前配置存在无效 YAML，暂时无法使用可视化编辑：{{message}}",
     "visual_mode_save_blocked": "请先修复 YAML 语法错误，再从可视化模式保存",
     "visual_mode_latest_yaml_invalid": "服务端最新配置包含无效 YAML，请先切回源码模式检查后再保存可视化修改：{{message}}",
@@ -863,22 +874,19 @@
     "search_next": "下一个",
     "diff": {
       "title": "确认变更",
-      "current": "当前配置",
-      "modified": "修改后",
       "confirm": "确认保存",
       "no_changes": "未检测到变更"
     },
-    "tabs": {
-      "visual": "可视化编辑",
-      "source": "源文件编辑"
-    },
     "visual": {
-      "quick_jump": "快速跳转",
       "search": {
         "placeholder": "搜索配置项（标签或 YAML 键名）",
         "no_results": "没有匹配的配置项"
       },
       "sections": {
+        "common": {
+          "title": "常用",
+          "description": "最常调整的配置项，与完整分区共享同一份数据"
+        },
         "connectivity": {
           "title": "接入与认证",
           "description": "服务地址、端口、认证目录与 API 密钥"
@@ -894,8 +902,6 @@
           "signature_title": "Antigravity 签名"
         },
         "server": {
-          "title": "服务器配置",
-          "description": "基础服务器设置",
           "host": "主机地址",
           "port": "端口"
         },
@@ -921,14 +927,10 @@
           "panel_repo": "面板仓库"
         },
         "auth": {
-          "title": "认证配置",
-          "description": "API 密钥与认证文件目录设置",
           "auth_dir": "认证文件目录 (auth-dir)",
           "auth_dir_hint": "存放认证文件的目录路径（支持 ~）"
         },
         "system": {
-          "title": "系统配置",
-          "description": "调试、日志、统计与性能调试设置",
           "debug": "调试模式",
           "debug_desc": "启用详细的调试日志",
           "commercial_mode": "商业模式",
@@ -1073,7 +1075,15 @@
         "input_placeholder": "粘贴你的 API 密钥",
         "input_hint": "此处仅修改本地配置文件内容，不会自动同步到 API 密钥管理接口",
         "error_empty": "请输入 API 密钥",
-        "error_invalid": "API 密钥包含无效字符"
+        "error_invalid": "API 密钥包含无效字符",
+        "strength": {
+          "label": "API 密钥强度",
+          "empty": "待输入",
+          "weak": "弱",
+          "fair": "一般",
+          "good": "良好",
+          "strong": "很强"
+        }
       },
       "payload_rules": {
         "rule": "规则",
@@ -1140,8 +1150,7 @@
         "cancel": "取消",
         "update": "更新",
         "add": "添加"
-      },
-      "validation_blocked_short": "修复错误"
+      }
     }
   },
   "quota_management": {

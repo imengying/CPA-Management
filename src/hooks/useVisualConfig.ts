@@ -1557,6 +1557,7 @@ export function useVisualConfig() {
   return {
     visualValues,
     visualDirty,
+    visualDirtyFields: dirtyFields as ReadonlySet<string>,
     visualParseError,
     visualValidationErrors,
     visualHasPayloadValidationErrors,

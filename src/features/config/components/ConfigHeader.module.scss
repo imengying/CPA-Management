@@ -1,0 +1,23 @@
+@use '../../../styles/workbenchHeader' as workbenchHeader;
+
+/* 配置面板头部：与凭证库、额度页共享同一布局。 */
+
+@include workbenchHeader.layout;
+
+.metaMuted {
+  color: var(--text-secondary);
+}
+
+.metaWarning {
+  color: var(--amber-text);
+}
+
+.metaError {
+  color: var(--viz-failure);
+}
+
+.metaOk {
+  color: var(--viz-success);
+}
+
+/* ---------- 动作区 ---------- */
