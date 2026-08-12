@@ -40,19 +40,11 @@
 }
 
 .errorBanner {
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--danger-color);
-  background: var(--bg-error-light);
-  border: 1px solid var(--failure-badge-border);
-  border-radius: 8px;
-  padding: 9px 12px;
-  overflow-wrap: anywhere;
+  @include error-banner;
 }
 
 /* ---------- 卡片网格 ----------
- * 列宽由 CSS 决定（不再用 JS 测量）：额度卡承载水位条，取 340px 下限，
- * 与认证文件页配额模式（.gridQuota）同一档。 */
+ * 列宽由 CSS 决定（不再用 JS 测量）：额度卡承载水位条，取 340px 下限。 */
 
 .grid {
   display: grid;

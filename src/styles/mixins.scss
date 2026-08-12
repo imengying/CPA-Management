@@ -48,3 +48,15 @@
     outline-offset: 2px;
   }
 }
+
+// 页面级请求错误提示，供工作台页面保持相同的视觉层级。
+@mixin error-banner {
+  padding: 9px 12px;
+  border: 1px solid var(--failure-badge-border);
+  border-radius: $radius-md;
+  background: var(--bg-error-light);
+  color: var(--danger-color);
+  font-size: 12.5px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}

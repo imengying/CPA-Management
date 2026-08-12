@@ -460,7 +460,6 @@ export function AuthFilesPage() {
   const gridClassName = [
     styles.grid,
     compactMode ? styles.gridCompact : '',
-    quotaFilterType ? styles.gridQuota : '',
   ]
     .filter(Boolean)
     .join(' ');
