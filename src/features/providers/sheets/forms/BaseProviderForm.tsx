@@ -91,7 +91,7 @@ function buildInitialForm(
         brand === 'claude'
           ? { mode: '', strictMode: false, sensitiveWordsText: '', cacheUserId: false }
           : undefined,
-      experimentalCchSigning: brand === 'claude' ? false : undefined,
+      fingerprintProfile: brand === 'claude' ? '' : undefined,
       testModel:
         brand === 'openaiCompatibility' ||
         brand === 'codex' ||
@@ -189,8 +189,8 @@ function buildInitialForm(
             cacheUserId: (cfg as ProviderKeyConfig).cloak?.cacheUserId === true,
           }
         : undefined,
-    experimentalCchSigning:
-      brand === 'claude' ? (cfg as ProviderKeyConfig).experimentalCchSigning === true : undefined,
+    fingerprintProfile:
+      brand === 'claude' ? ((cfg as ProviderKeyConfig).fingerprintProfile ?? '') : undefined,
     testModel:
       brand === 'codex' ||
       brand === 'xai' ||
@@ -922,6 +922,31 @@ export function BaseProviderForm({
         </Collapsible>
       ) : null}
 
+      {brand === 'claude' ? (
+        <div className={styles.field}>
+          <label id={`${fid}-fingerprint-profile-label`} className={styles.label}>
+            {t('providersPage.form.fingerprintProfile')}
+          </label>
+          <Select
+            id={`${fid}-fingerprint-profile`}
+            value={form.fingerprintProfile ?? ''}
+            options={[
+              { value: '', label: t('providersPage.form.fingerprintProfileDefault') },
+              {
+                value: 'claude-code-cli',
+                label: t('providersPage.form.fingerprintProfileClaudeCodeCli'),
+              },
+            ]}
+            onChange={(value) => updateField('fingerprintProfile', value)}
+            disabled={mutating}
+            ariaLabelledBy={`${fid}-fingerprint-profile-label`}
+          />
+          <small className={styles.labelHint}>
+            {t('providersPage.form.fingerprintProfileHint')}
+          </small>
+        </div>
+      ) : null}
+
       {descriptor.supportsCloak && form.cloak ? (
         <Collapsible label={t('providersPage.form.cloakSection')}>
           <div className={styles.section}>
@@ -958,19 +983,6 @@ export function BaseProviderForm({
               <span className={styles.checkboxText}>
                 <span>{t('providersPage.form.cloakCacheUserId')}</span>
                 <small>{t('providersPage.form.cloakCacheUserIdHint')}</small>
-              </span>
-            </label>
-            <label className={styles.checkboxRow}>
-              <input
-                type="checkbox"
-                className={styles.checkboxBox}
-                checked={form.experimentalCchSigning ?? false}
-                disabled={mutating}
-                onChange={(e) => updateField('experimentalCchSigning', e.target.checked)}
-              />
-              <span className={styles.checkboxText}>
-                <span>{t('providersPage.form.experimentalCchSigning')}</span>
-                <small>{t('providersPage.form.experimentalCchSigningHint')}</small>
               </span>
             </label>
             <div className={styles.field}>

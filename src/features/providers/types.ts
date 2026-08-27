@@ -22,11 +22,6 @@ export type ProviderResourceSelector =
   | { brand: 'vertex'; apiKey: string; baseUrl?: string; index: number }
   | { brand: 'openaiCompatibility'; name: string; index: number };
 
-interface ProviderResourceFlags {
-  cloakEnabled?: boolean;
-  websockets?: boolean;
-}
-
 export interface ProviderResource {
   /** 稳定 id,用作 React key 与选中态判断 */
   id: string;
@@ -56,8 +51,6 @@ export interface ProviderResource {
   apiKeyEntryCount: number;
   /** 是否被禁用(各 brand 判定规则不同) */
   disabled: boolean;
-  /** 额外能力旗标 */
-  flags: ProviderResourceFlags;
   /** 删除/更新使用的 selector */
   selector: ProviderResourceSelector;
   /** 原始 raw config,Sheet 表单初始化用 */
@@ -127,7 +120,7 @@ export interface ProviderEntryFormInput {
   websockets?: boolean;
   /** Claude 专属 */
   cloak?: CloakInput;
-  experimentalCchSigning?: boolean;
+  fingerprintProfile?: string;
   /** OpenAI persists this; Gemini/Claude use it for one-off connectivity tests. */
   testModel?: string;
   apiKeyEntries?: ApiKeyEntryInput[];

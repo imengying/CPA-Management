@@ -35,14 +35,6 @@ function providerKeyToResource(
 ): ProviderResource {
   const apiKey = config.apiKey ?? '';
   const disabled = hasDisableAllModelsRule(config.excludedModels);
-  const flags: ProviderResource['flags'] = {};
-  if (brand === 'codex' || brand === 'xai') {
-    flags.websockets = (config as ProviderKeyConfig).websockets === true;
-  }
-  if (brand === 'claude') {
-    const cloak = (config as ProviderKeyConfig).cloak;
-    flags.cloakEnabled = Boolean(cloak?.mode?.trim());
-  }
 
   const selector: ProviderResourceSelector = {
     brand,
@@ -70,7 +62,6 @@ function providerKeyToResource(
     excludedModelCount: stripDisableAllModelsRule(config.excludedModels).length,
     apiKeyEntryCount: 0,
     disabled,
-    flags,
     selector,
     raw: config,
   };
@@ -124,7 +115,6 @@ export function openaiToResource(config: OpenAIProviderConfig, index: number): P
     excludedModelCount: 0,
     apiKeyEntryCount: config.apiKeyEntries?.length ?? 0,
     disabled: config.disabled === true,
-    flags: {},
     selector: { brand: 'openaiCompatibility', name, index: sourceIndex },
     raw: config,
   };
