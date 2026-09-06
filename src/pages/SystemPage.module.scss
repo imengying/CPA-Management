@@ -113,16 +113,13 @@
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
+  background-color: #24292f;
+  color: white;
   flex-shrink: 0;
 
-  &.github {
-    background-color: var(--bg-secondary);
-  }
-
+  &.github,
   &.docs {
-    background-color: var(--bg-secondary);
+    background-color: #24292f;
   }
 }
 

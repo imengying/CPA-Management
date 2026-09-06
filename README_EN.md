@@ -6,7 +6,7 @@ A single-file Web UI (React + TypeScript) for operating and troubleshooting the 
 
 **Main Project**: https://github.com/router-for-me/CLIProxyAPI<br>
 **Original WebUI Repository**: https://github.com/router-for-me/Cli-Proxy-API-Management-Center<br>
-**Supported Version**: CLIProxyAPI 7.2.104 or later
+**Supported Version**: CLIProxyAPI 7.2.147 or later
 
 After the service starts, access the Web UI via `/management.html` on the API port.
 
@@ -90,7 +90,7 @@ Check the CLI Proxy API server documentation/config comments for the full authen
 - Vite 8 (single-file build)
 - Zustand (state management)
 - Axios (HTTP client)
-- react-router-dom v7 (HashRouter)
+- react-router v8 (HashRouter)
 - Motion (animations)
 - CodeMirror 6 (YAML editor)
 - SCSS Modules (styling)

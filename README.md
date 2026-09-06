@@ -6,7 +6,7 @@
 
 **主项目**: https://github.com/router-for-me/CLIProxyAPI<br>
 **原版WebUI 仓库**: https://github.com/router-for-me/Cli-Proxy-API-Management-Center<br>
-**支持版本**: CLIProxyAPI 7.2.104 及以上
+**支持版本**: CLIProxyAPI 7.2.147 及以上
 
 服务运行后，通过 API 端口上的 `/management.html` 访问 Web UI。
 
@@ -90,7 +90,7 @@ bun run build
 - Vite 8（单文件构建）
 - Zustand（状态管理）
 - Axios（HTTP 客户端）
-- react-router-dom v7（HashRouter）
+- react-router v8（HashRouter）
 - Motion（动效）
 - CodeMirror 6（YAML 编辑器）
 - SCSS Modules（样式）
