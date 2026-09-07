@@ -49,10 +49,6 @@ function parseApiKeysText(raw: unknown): string {
   return keys.join('\n');
 }
 
-function resolveApiKeysText(parsed: Record<string, unknown>): string {
-  return parseApiKeysText(parsed['api-keys']);
-}
-
 type YamlDocument = ReturnType<typeof parseDocument>;
 type YamlPath = string[];
 
@@ -904,6 +900,15 @@ function getNextDirtyFields(
       arePluginStoreAuthRulesEqual(nextValues.pluginStoreAuth, baselineValues.pluginStoreAuth)
     );
   }
+  if (Object.prototype.hasOwnProperty.call(patch, 'antigravitySensitiveWords')) {
+    updateDirty(
+      'antigravitySensitiveWords',
+      areStringArraysEqual(
+        nextValues.antigravitySensitiveWords,
+        baselineValues.antigravitySensitiveWords
+      )
+    );
+  }
 
   if (Object.prototype.hasOwnProperty.call(patch, 'payloadDefaultRules')) {
     updateDirty(
@@ -1043,6 +1048,7 @@ export function useVisualConfig() {
       const payload = asRecord(parsed.payload);
       const streaming = asRecord(parsed.streaming);
       const plugins = asRecord(parsed.plugins);
+      const antigravity = asRecord(parsed.antigravity);
       const claudeHeaderDefaults = asRecord(parsed['claude-header-defaults']);
       const codexHeaderDefaults = asRecord(parsed['codex-header-defaults']);
 
@@ -1067,10 +1073,11 @@ export function useVisualConfig() {
             : '',
 
         authDir: typeof parsed['auth-dir'] === 'string' ? parsed['auth-dir'] : '',
-        apiKeysText: resolveApiKeysText(parsed),
+        apiKeysText: parseApiKeysText(parsed['api-keys']),
         pluginsEnabled: Boolean(plugins?.enabled),
         pluginStoreSources: parseStringList(plugins?.['store-sources']),
         pluginStoreAuth: parsePluginStoreAuthRules(plugins?.['store-auth']),
+        antigravitySensitiveWords: parseStringList(antigravity?.['sensitive-words']),
 
         debug: Boolean(parsed.debug),
         commercialMode: Boolean(parsed['commercial-mode']),
@@ -1326,6 +1333,15 @@ export function useVisualConfig() {
           setIntFromStringInDoc(doc, ['auth-auto-refresh-workers'], values.authAutoRefreshWorkers);
         }
         if (dirtyFields.has('wsAuth')) setBooleanInDoc(doc, ['ws-auth'], values.wsAuth);
+        if (dirtyFields.has('antigravitySensitiveWords')) {
+          ensureMapInDoc(doc, ['antigravity']);
+          setStringListInDoc(
+            doc,
+            ['antigravity', 'sensitive-words'],
+            values.antigravitySensitiveWords
+          );
+          deleteIfMapEmpty(doc, ['antigravity']);
+        }
         if (dirtyFields.has('antigravitySignatureCacheEnabled')) {
           if (
             docHas(doc, ['antigravity-signature-cache-enabled']) ||

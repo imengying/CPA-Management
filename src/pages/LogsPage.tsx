@@ -24,7 +24,7 @@ import {
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useAuthStore, useConfigStore, useNotificationStore } from '@/stores';
-import { logsApi, type LogsQuery } from '@/services/api/logs';
+import { logsApi, type ErrorLogFile, type LogsQuery } from '@/services/api/logs';
 import { copyToClipboard } from '@/utils/clipboard';
 import { getErrorMessage } from '@/utils/helpers';
 import { downloadBlob } from '@/utils/download';
@@ -35,12 +35,6 @@ import { parseLogLine } from './hooks/logParsing';
 import { useLogFilters } from './hooks/useLogFilters';
 import { isNearBottom, useLogScroller } from './hooks/useLogScroller';
 import styles from './LogsPage.module.scss';
-
-interface ErrorLogItem {
-  name: string;
-  size?: number;
-  modified?: number;
-}
 
 // 初始只渲染最近 100 行，滚动到顶部再逐步加载更多（避免一次性渲染过多导致卡顿）
 const INITIAL_DISPLAY_LINES = 100;
@@ -152,10 +146,10 @@ export function LogsPage() {
     'logsPage.structuredFiltersExpanded',
     true
   );
-  const [errorLogs, setErrorLogs] = useState<ErrorLogItem[]>([]);
+  const [errorLogs, setErrorLogs] = useState<ErrorLogFile[]>([]);
   const [loadingErrors, setLoadingErrors] = useState(false);
   const [errorLogsError, setErrorLogsError] = useState('');
-  const [selectedErrorLog, setSelectedErrorLog] = useState<ErrorLogItem | null>(null);
+  const [selectedErrorLog, setSelectedErrorLog] = useState<ErrorLogFile | null>(null);
   const [selectedErrorLogText, setSelectedErrorLogText] = useState('');
   const [selectedErrorLogError, setSelectedErrorLogError] = useState('');
   const [selectedErrorLogLoading, setSelectedErrorLogLoading] = useState(false);
@@ -237,7 +231,7 @@ export function LogsPage() {
 
       updateLogPosition(data);
 
-      const newLines = Array.isArray(data.lines) ? data.lines : [];
+      const newLines = data.lines;
 
       if (incremental && data.cursorReset) {
         const buffer = newLines.slice(-MAX_BUFFER_LINES);
@@ -369,7 +363,7 @@ export function LogsPage() {
     }
   };
 
-  const openErrorLog = async (item: ErrorLogItem) => {
+  const openErrorLog = async (item: ErrorLogFile) => {
     const requestId = errorLogViewRequestRef.current + 1;
     errorLogViewRequestRef.current = requestId;
     setSelectedErrorLog(item);

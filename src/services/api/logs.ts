@@ -6,26 +6,18 @@ import { apiClient } from './client';
 import { LOGS_TIMEOUT_MS } from '@/utils/constants';
 import { isRecord } from '@/utils/helpers';
 
-type LogBackendKind = 'unknown' | 'file';
-
 export interface LogsQuery {
   cursor?: string;
   limit?: number;
-  offset?: number;
 }
 
 export interface LogsResponse {
   lines: string[];
-  lineCount: number;
   nextCursor?: string;
   cursorReset?: boolean;
-  logBackendKind: LogBackendKind;
-  total?: number;
-  limit?: number;
-  offset?: number;
 }
 
-interface ErrorLogFile {
+export interface ErrorLogFile {
   name: string;
   size?: number;
   modified?: number;
@@ -40,27 +32,16 @@ const stringValue = (value: unknown): string => (typeof value === 'string' ? val
 const booleanValue = (value: unknown): boolean =>
   value === true || (typeof value === 'string' && value.trim().toLowerCase() === 'true');
 
-const normalizeCPALogs = (data: Record<string, unknown>): LogsResponse => {
-  const lines = Array.isArray(data.lines)
-    ? data.lines.filter((line): line is string => typeof line === 'string')
-    : [];
-  const lineCount = Number(data['line-count']);
+const normalizeLogsResponse = (data: unknown): LogsResponse => {
+  if (!isRecord(data) || !Array.isArray(data.lines)) {
+    return { lines: [] };
+  }
 
   return {
-    lines,
-    lineCount: Number.isFinite(lineCount) ? lineCount : lines.length,
+    lines: data.lines.filter((line): line is string => typeof line === 'string'),
     nextCursor: stringValue(data['next-cursor']) || undefined,
     cursorReset: booleanValue(data['cursor-reset']),
-    logBackendKind: 'file',
   };
-};
-
-const normalizeLogsResponse = (data: unknown): LogsResponse => {
-  if (!isRecord(data)) {
-    return { lines: [], lineCount: 0, logBackendKind: 'unknown' };
-  }
-  if (Array.isArray(data.lines)) return normalizeCPALogs(data);
-  return { lines: [], lineCount: 0, logBackendKind: 'unknown' };
 };
 
 export const logsApi = {
