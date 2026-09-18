@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { I18nextProvider } from 'react-i18next';
 import { createInstance } from 'i18next';
 import { OAuthPage } from '@/pages/OAuthPage';

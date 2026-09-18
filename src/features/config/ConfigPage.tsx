@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router';
 import { usePageTransitionLayer } from '@/components/common/PageTransitionLayer';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useRevealGroup } from '@/hooks/motion';
