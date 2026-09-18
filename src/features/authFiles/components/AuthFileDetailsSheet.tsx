@@ -1,5 +1,6 @@
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useCallback, useMemo, type MouseEvent } from 'react';
+import { Link, useNavigate } from 'react-router';
+import { Trans, useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
@@ -52,6 +53,7 @@ const formatJsonText = (text: string): string => {
 
 export function AuthFileDetailsSheet(props: AuthFileDetailsSheetProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { disableControls, editor, updatedText, dirty, onClose, onCopyText, onSave, onChange } =
     props;
   const showConfirmation = useNotificationStore((state) => state.showConfirmation);
@@ -76,6 +78,18 @@ export function AuthFileDetailsSheet(props: AuthFileDetailsSheetProps) {
       if (confirmed) onClose();
     });
   }, [confirmClose, onClose]);
+
+  const handleSettingsLinkClick = useCallback(
+    (event: MouseEvent<HTMLAnchorElement>) => {
+      event.preventDefault();
+      if (editor?.saving) return;
+
+      void Promise.resolve(confirmClose()).then((ok) => {
+        if (ok) void navigate('/config?field=routingStrategy');
+      });
+    },
+    [confirmClose, editor?.saving, navigate]
+  );
 
   const previewText = formatJsonText(updatedText);
   const invalidContentPreview = editor?.invalidContentPreview ?? '';
@@ -191,7 +205,20 @@ export function AuthFileDetailsSheet(props: AuthFileDetailsSheetProps) {
                     max={MAX_CREDENTIAL_WEIGHT}
                     value={editor.weight}
                     placeholder="1"
-                    hint={t('auth_files.weight_hint')}
+                    hint={
+                      <Trans
+                        i18nKey="auth_files.weight_hint"
+                        components={{
+                          settingsLink: (
+                            <Link
+                              className={styles.settingsLink}
+                              to="/config?field=routingStrategy"
+                              onClick={handleSettingsLinkClick}
+                            />
+                          ),
+                        }}
+                      />
+                    }
                     error={editor.weightError ?? undefined}
                     disabled={disableControls || editor.saving}
                     onChange={(event) => onChange('weight', event.target.value)}

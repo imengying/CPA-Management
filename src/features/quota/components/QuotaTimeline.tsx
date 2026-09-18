@@ -16,6 +16,7 @@ import { useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatRelativeInstant, TYPE_COLORS } from '@/utils/quota';
+import { getQuotaCacheKey, getQuotaDisplayName } from '@/utils/quota/identity';
 import { useNow } from '@/hooks/useNow';
 import type { ResolvedTheme, ThemeColors } from '@/types';
 import {
@@ -51,6 +52,7 @@ export interface QuotaTimelineProps {
    * off the entry, and lanes see exactly what the cards see.
    */
   quotaFor: (entry: QuotaFileEntry) => QuotaCardState | undefined;
+  displayNameFor: (name: string) => string;
   resolvedTheme: ResolvedTheme;
   /** Injectable for tests/screenshots; defaults to the real clock. */
   now?: number;
@@ -63,6 +65,7 @@ export interface QuotaTimelineProps {
 export function QuotaTimeline({
   entries,
   quotaFor,
+  displayNameFor,
   resolvedTheme,
   now: nowProp,
   initialMode = 'weekly',
@@ -84,11 +87,15 @@ export function QuotaTimeline({
   const laneInputs = useMemo(
     () =>
       entries.map((entry) => ({
-        name: entry.file.name,
+        name: getQuotaCacheKey(entry.file),
+        displayName:
+          entry.type === 'devin'
+            ? getQuotaDisplayName(entry.file)
+            : displayNameFor(entry.file.name),
         provider: entry.type,
         quota: quotaFor(entry),
       })),
-    [entries, quotaFor]
+    [entries, quotaFor, displayNameFor]
   );
 
   // Keep the timeline hidden until at least one loaded credential exposes a
@@ -350,7 +357,8 @@ function Lane({ lane, span, now, mode, cells, nowPercent, resolvedTheme }: LaneP
         <div className={styles.laneLimits}>
           {lane.limits.map((limit) => (
             <span key={limit.label} className={styles.laneLimit}>
-              {limit.label} <b>{limit.remaining}%</b>
+              {lane.provider === 'meta' ? t(limit.label) : limit.label}{' '}
+              <b>{limit.remaining}%</b>
             </span>
           ))}
         </div>

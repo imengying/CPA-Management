@@ -175,6 +175,7 @@ const fetchXaiQuota = async (file: AuthFileItem, t: TFunction): Promise<XaiBilli
 };
 
 export const XAI_CONFIG: QuotaProviderData<XaiQuotaState, XaiBillingSummary> = {
+  type: 'xai',
   i18nPrefix: 'xai_quota',
   filterFn: (file) => isXaiFile(file) && !isDisabledAuthFile(file),
   fetchQuota: fetchXaiQuota,

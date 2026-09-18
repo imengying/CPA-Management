@@ -27,6 +27,16 @@ afterAll(() => {
 
 describe('quota ui state', () => {
   test('round-trips preferences and preserves fields on partial writes', () => {
+    writeQuotaUiState({ tab: 'codex', sortMode: 'soonest' });
+    expect(readQuotaUiState()).toEqual({ tab: 'codex', sortMode: 'soonest' });
+  });
+
+  test('retains the Devin tab across visits', () => {
+    writeQuotaUiState({ tab: 'devin', sortMode: 'soonest' });
+    expect(readQuotaUiState()).toEqual({ tab: 'devin', sortMode: 'soonest' });
+  });
+
+  test('writing one preference preserves the other', () => {
     writeQuotaUiState({ sortMode: 'soonest' });
     writeQuotaUiState({ tab: 'kimi' });
     expect(readQuotaUiState()).toEqual({ tab: 'kimi', sortMode: 'soonest' });

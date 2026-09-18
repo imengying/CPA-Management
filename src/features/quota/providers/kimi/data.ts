@@ -44,6 +44,7 @@ const fetchKimiQuota = async (file: AuthFileItem, t: TFunction): Promise<KimiQuo
 };
 
 export const KIMI_CONFIG: QuotaProviderData<KimiQuotaState, KimiQuotaRow[]> = {
+  type: 'kimi',
   i18nPrefix: 'kimi_quota',
   filterFn: (file) => isKimiFile(file) && !isDisabledAuthFile(file),
   fetchQuota: fetchKimiQuota,

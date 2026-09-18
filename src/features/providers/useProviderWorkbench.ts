@@ -6,12 +6,19 @@ import {
   withDisableAllModelsRule,
   withoutDisableAllModelsRule,
 } from '@/components/providers/utils';
-import type { GeminiKeyConfig, ModelAlias, OpenAIProviderConfig, ProviderKeyConfig } from '@/types';
+import type {
+  Config,
+  GeminiKeyConfig,
+  ModelAlias,
+  OpenAIProviderConfig,
+  ProviderKeyConfig,
+} from '@/types';
 import {
   claudeToResource,
   codexToResource,
   geminiToResource,
   interactionsToResource,
+  metaToResource,
   openaiToResource,
   vertexToResource,
   xaiToResource,
@@ -113,7 +120,7 @@ const buildModelAliases = (
     .filter((m) => m.name);
 
 const buildProviderKeyConfig = (
-  brand: 'gemini' | 'interactions' | 'codex' | 'xai' | 'claude' | 'vertex',
+  brand: 'gemini' | 'interactions' | 'codex' | 'meta' | 'xai' | 'claude' | 'vertex',
   input: ProviderEntryFormInput,
   existing?: ProviderKeyConfig | GeminiKeyConfig | null
 ): ProviderKeyConfig | GeminiKeyConfig => {
@@ -186,6 +193,42 @@ const buildOpenAIConfig = (
   };
 };
 
+export function buildProviderGroups(config: Config): ProviderGroup[] {
+  return PROVIDER_BRAND_ORDER.map((brand) => {
+    let resources: ProviderResource[] = [];
+    switch (brand) {
+      case 'gemini':
+        resources = (config.geminiApiKeys ?? []).map((c, i) => geminiToResource(c, i));
+        break;
+      case 'interactions':
+        resources = (config.interactionsApiKeys ?? []).map((c, i) => interactionsToResource(c, i));
+        break;
+      case 'codex':
+        resources = (config.codexApiKeys ?? []).map((c, i) => codexToResource(c, i));
+        break;
+      case 'meta':
+        resources = (config.metaApiKeys ?? []).map((item, index) => metaToResource(item, index));
+        break;
+      case 'xai':
+        resources = (config.xaiApiKeys ?? []).map((c, i) => xaiToResource(c, i));
+        break;
+      case 'claude':
+        resources = (config.claudeApiKeys ?? []).map((c, i) => claudeToResource(c, i));
+        break;
+      case 'vertex':
+        resources = (config.vertexApiKeys ?? []).map((c, i) => vertexToResource(c, i));
+        break;
+      case 'openaiCompatibility':
+        resources = (config.openaiCompatibility ?? []).map((c, i) => openaiToResource(c, i));
+        break;
+    }
+    return {
+      id: brand,
+      resources,
+    };
+  });
+}
+
 /* -------------------------------------------------------------------------- */
 /* hook                                                                       */
 /* -------------------------------------------------------------------------- */
@@ -252,45 +295,10 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
 
   /* ------------------- snapshot 计算 ------------------- */
 
-  const snapshot = useMemo<ProviderSnapshot | null>(() => {
-    if (!config) return null;
-    const groups: ProviderGroup[] = PROVIDER_BRAND_ORDER.map((brand) => {
-      let resources: ProviderResource[] = [];
-      switch (brand) {
-        case 'gemini':
-          resources = (config.geminiApiKeys ?? []).map((c, i) => geminiToResource(c, i));
-          break;
-        case 'interactions':
-          resources = (config.interactionsApiKeys ?? []).map((c, i) =>
-            interactionsToResource(c, i)
-          );
-          break;
-        case 'codex':
-          resources = (config.codexApiKeys ?? []).map((c, i) => codexToResource(c, i));
-          break;
-        case 'xai':
-          resources = (config.xaiApiKeys ?? []).map((c, i) => xaiToResource(c, i));
-          break;
-        case 'claude':
-          resources = (config.claudeApiKeys ?? []).map((c, i) => claudeToResource(c, i));
-          break;
-        case 'vertex':
-          resources = (config.vertexApiKeys ?? []).map((c, i) => vertexToResource(c, i));
-          break;
-        case 'openaiCompatibility':
-          resources = (config.openaiCompatibility ?? []).map((c, i) => openaiToResource(c, i));
-          break;
-      }
-      return {
-        id: brand,
-        resources,
-      };
-    });
-    return {
-      fetchedAt,
-      groups,
-    };
-  }, [config, fetchedAt]);
+  const snapshot = useMemo<ProviderSnapshot | null>(
+    () => (config ? { fetchedAt, groups: buildProviderGroups(config) } : null),
+    [config, fetchedAt]
+  );
 
   /* ------------------- mutations ------------------- */
 
@@ -309,6 +317,10 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
         } else if (brand === 'codex') {
           await providersApi.createCodexConfig(
             buildProviderKeyConfig('codex', input) as ProviderKeyConfig
+          );
+        } else if (brand === 'meta') {
+          await providersApi.createMetaConfig(
+            buildProviderKeyConfig('meta', input) as ProviderKeyConfig
           );
         } else if (brand === 'xai') {
           await providersApi.createXAIConfig(
@@ -369,6 +381,13 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
               resource.raw as ProviderKeyConfig
             ) as ProviderKeyConfig
           );
+        } else if (brand === 'meta' && selector.brand === 'meta') {
+          const existing = resource.raw as ProviderKeyConfig;
+          await providersApi.updateMetaConfig(
+            selector.apiKey,
+            selector.baseUrl,
+            buildProviderKeyConfig('meta', input, existing) as ProviderKeyConfig
+          );
         } else if (brand === 'xai' && selector.brand === 'xai') {
           await providersApi.updateXAIConfig(
             selector.apiKey,
@@ -425,6 +444,12 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
           await providersApi.deleteInteractionsKey(sel.apiKey, sel.baseUrl);
         } else if (sel.brand === 'codex') {
           await providersApi.deleteCodexConfig(sel.apiKey, sel.baseUrl);
+          const next = (config?.codexApiKeys ?? []).filter((_, i) => i !== sel.index);
+          updateConfigValue('codex-api-key', next);
+        } else if (sel.brand === 'meta') {
+          await providersApi.deleteMetaConfig(sel.apiKey, sel.baseUrl);
+          const next = (config?.metaApiKeys ?? []).filter((_, i) => i !== sel.index);
+          updateConfigValue('meta-api-key', next);
         } else if (sel.brand === 'xai') {
           await providersApi.deleteXAIConfig(sel.apiKey, sel.baseUrl);
         } else if (sel.brand === 'claude') {
@@ -466,42 +491,29 @@ export function useProviderWorkbench(): UseProviderWorkbenchResult {
             ...current,
             excludedModels: excluded,
           });
-        } else if (brand === 'codex' && selector.brand === 'codex') {
+        } else if (
+          (brand === 'codex' && selector.brand === 'codex') ||
+          (brand === 'meta' && selector.brand === 'meta') ||
+          (brand === 'xai' && selector.brand === 'xai') ||
+          (brand === 'claude' && selector.brand === 'claude') ||
+          (brand === 'vertex' && selector.brand === 'vertex')
+        ) {
           const current = resource.raw as ProviderKeyConfig;
           const excluded = disabled
             ? withDisableAllModelsRule(current.excludedModels)
             : withoutDisableAllModelsRule(current.excludedModels);
-          await providersApi.updateCodexConfig(selector.apiKey, selector.baseUrl, {
-            ...current,
-            excludedModels: excluded,
-          });
-        } else if (brand === 'xai' && selector.brand === 'xai') {
-          const current = resource.raw as ProviderKeyConfig;
-          const excluded = disabled
-            ? withDisableAllModelsRule(current.excludedModels)
-            : withoutDisableAllModelsRule(current.excludedModels);
-          await providersApi.updateXAIConfig(selector.apiKey, selector.baseUrl, {
-            ...current,
-            excludedModels: excluded,
-          });
-        } else if (brand === 'claude' && selector.brand === 'claude') {
-          const current = resource.raw as ProviderKeyConfig;
-          const excluded = disabled
-            ? withDisableAllModelsRule(current.excludedModels)
-            : withoutDisableAllModelsRule(current.excludedModels);
-          await providersApi.updateClaudeConfig(selector.apiKey, selector.baseUrl, {
-            ...current,
-            excludedModels: excluded,
-          });
-        } else if (brand === 'vertex' && selector.brand === 'vertex') {
-          const current = resource.raw as ProviderKeyConfig;
-          const excluded = disabled
-            ? withDisableAllModelsRule(current.excludedModels)
-            : withoutDisableAllModelsRule(current.excludedModels);
-          await providersApi.updateVertexConfig(selector.apiKey, selector.baseUrl, {
-            ...current,
-            excludedModels: excluded,
-          });
+          const next = { ...current, excludedModels: excluded };
+          if (selector.brand === 'codex') {
+            await providersApi.updateCodexConfig(selector.apiKey, selector.baseUrl, next);
+          } else if (selector.brand === 'meta') {
+            await providersApi.updateMetaConfig(selector.apiKey, selector.baseUrl, next);
+          } else if (selector.brand === 'xai') {
+            await providersApi.updateXAIConfig(selector.apiKey, selector.baseUrl, next);
+          } else if (selector.brand === 'claude') {
+            await providersApi.updateClaudeConfig(selector.apiKey, selector.baseUrl, next);
+          } else if (selector.brand === 'vertex') {
+            await providersApi.updateVertexConfig(selector.apiKey, selector.baseUrl, next);
+          }
         } else if (brand === 'openaiCompatibility' && selector.brand === 'openaiCompatibility') {
           await providersApi.updateOpenAIProviderDisabled(selector.index, disabled);
         }

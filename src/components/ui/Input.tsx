@@ -2,7 +2,7 @@ import { useId, type InputHTMLAttributes, type ReactNode } from 'react';
 
 interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string;
-  hint?: string;
+  hint?: ReactNode;
   error?: string;
   rightElement?: ReactNode;
   size?: 'sm' | 'md';

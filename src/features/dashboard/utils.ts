@@ -9,7 +9,6 @@ const EMPTY_TRAFFIC: TrafficWindow = {
   successRate: null,
   peakTotal: 0,
   peakIndex: -1,
-  activeBuckets: 0,
   windowMinutes: 0,
 };
 
@@ -21,13 +20,11 @@ export function buildTrafficWindow(bucketGroups: RecentRequestBucket[][]): Traff
   let totalFailure = 0;
   let peakTotal = 0;
   let peakIndex = -1;
-  let activeBuckets = 0;
 
   buckets.forEach((bucket, index) => {
     const bucketTotal = bucket.success + bucket.failed;
     totalSuccess += bucket.success;
     totalFailure += bucket.failed;
-    if (bucketTotal > 0) activeBuckets += 1;
     if (bucketTotal > peakTotal) {
       peakTotal = bucketTotal;
       peakIndex = index;
@@ -43,7 +40,6 @@ export function buildTrafficWindow(bucketGroups: RecentRequestBucket[][]): Traff
     successRate: total > 0 ? (totalSuccess / total) * 100 : null,
     peakTotal,
     peakIndex,
-    activeBuckets,
     windowMinutes: buckets.length * TRAFFIC_BUCKET_MINUTES,
   };
 }
@@ -55,6 +51,8 @@ const PROVIDER_LABELS: Record<string, string> = {
   aistudio: 'AI Studio',
   codex: 'Codex',
   claude: 'Claude',
+  devin: 'Devin',
+  meta: 'Muse (Meta)',
   xai: 'xAI',
   vertex: 'Vertex AI',
   openai: 'OpenAI',

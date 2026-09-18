@@ -203,6 +203,7 @@ const fetchClaudeQuota = async (file: AuthFileItem, t: TFunction): Promise<Claud
 };
 
 export const CLAUDE_CONFIG: QuotaProviderData<ClaudeQuotaState, ClaudeQuotaData> = {
+  type: 'claude',
   i18nPrefix: 'claude_quota',
   filterFn: (file) => isClaudeFile(file) && !isDisabledAuthFile(file),
   fetchQuota: fetchClaudeQuota,

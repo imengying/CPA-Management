@@ -3,15 +3,3 @@
 @use '../styles/oauthEditor' as oauthEditor;
 
 @include oauthEditor.layout;
-
-.emptyModels {
-  padding: $spacing-xl $spacing-lg;
-  color: var(--text-secondary);
-  font-size: 13px;
-  text-align: center;
-
-  @include mobile {
-    padding-left: $spacing-md;
-    padding-right: $spacing-md;
-  }
-}

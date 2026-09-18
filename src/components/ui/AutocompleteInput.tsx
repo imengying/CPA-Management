@@ -7,6 +7,7 @@ import {
   type CSSProperties,
   type KeyboardEvent,
 } from 'react';
+
 import { IconChevronDown } from './icons';
 import styles from './AutocompleteInput.module.scss';
 
@@ -16,7 +17,10 @@ interface AutocompleteInputProps {
   options: string[] | { value: string; label?: string }[];
   placeholder: string;
   disabled?: boolean;
+  label?: string;
+  className?: string;
   wrapperStyle?: CSSProperties;
+  wrapperClassName?: string;
   id?: string;
 }
 
@@ -26,7 +30,10 @@ export function AutocompleteInput({
   options,
   placeholder,
   disabled,
+  label,
+  className,
   wrapperStyle,
+  wrapperClassName,
   id,
 }: AutocompleteInputProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -102,11 +109,16 @@ export function AutocompleteInput({
   };
 
   return (
-    <div className="form-group" ref={containerRef} style={wrapperStyle}>
+    <div
+      className={['form-group', wrapperClassName].filter(Boolean).join(' ')}
+      ref={containerRef}
+      style={wrapperStyle}
+    >
+      {label && <label htmlFor={inputId}>{label}</label>}
       <div className={styles.control}>
         <input
           id={inputId}
-          className={`input ${styles.input}`}
+          className={`input ${styles.input} ${className ?? ''}`.trim()}
           value={value}
           onChange={handleInputChange}
           onFocus={() => setIsOpen(true)}

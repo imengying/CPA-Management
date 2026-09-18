@@ -436,6 +436,7 @@ const resetCodexQuota = async (file: AuthFileItem, t: TFunction): Promise<CodexQ
 };
 
 export const CODEX_CONFIG: QuotaProviderData<CodexQuotaState, CodexQuotaData> = {
+  type: 'codex',
   i18nPrefix: 'codex_quota',
   filterFn: (file) => isCodexFile(file) && !isDisabledAuthFile(file),
   fetchQuota: fetchCodexQuota,

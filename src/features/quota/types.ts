@@ -48,7 +48,7 @@ export interface QuotaClassMap {
   quotaBarFillLow: string;
 }
 
-const QUOTA_CLASS_KEYS: readonly (keyof QuotaClassMap)[] = [
+export const QUOTA_CLASS_KEYS: readonly (keyof QuotaClassMap)[] = [
   'quotaRow',
   'quotaRowHeader',
   'quotaModel',

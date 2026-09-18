@@ -4,17 +4,16 @@ import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { AutocompleteInput } from '@/components/ui/AutocompleteInput';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { ToggleSwitch } from '@/components/ui/ToggleSwitch';
-import { IconChevronLeft, IconInfo, IconX } from '@/components/ui/icons';
+import { IconChevronLeft, IconInfo, IconNetwork, IconPlus } from '@/components/ui/icons';
+import { OAuthEditorProviderCard } from '@/features/authFiles/components/OAuthEditorProviderCard';
+import { OAuthAliasMappingRow } from '@/features/authFiles/components/OAuthAliasMappingRow';
 import { useEdgeSwipeBack } from '@/hooks/useEdgeSwipeBack';
 import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
 import { useAuthStore, useNotificationStore } from '@/stores';
 import { authFilesApi } from '@/services/api';
 import {
   buildOAuthProviderOptions,
-  getTypeLabel,
   normalizeProviderKey,
   type AuthFileModelItem,
 } from '@/features/authFiles/constants';
@@ -25,6 +24,7 @@ import {
 import type { AuthFileItem, OAuthModelAliasEntry } from '@/types';
 import { generateId, getErrorMessage, getErrorStatus } from '@/utils/helpers';
 import styles from './AuthFilesOAuthModelAliasEditPage.module.scss';
+import editorStyles from '@/features/authFiles/components/OAuthEditor.module.scss';
 
 type LocationState = { fromAuthFiles?: boolean } | null;
 
@@ -71,6 +71,7 @@ export function AuthFilesOAuthModelAliasEditPage() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [initialLoadError, setInitialLoadError] = useState<string | null>(null);
   const [baselineReady, setBaselineReady] = useState(false);
+  const [modelAliasUnsupported, setModelAliasUnsupported] = useState(false);
   const loadRequestRef = useRef(0);
 
   const [mappings, setMappings] = useState<OAuthModelMappingFormEntry[]>([
@@ -78,7 +79,7 @@ export function AuthFilesOAuthModelAliasEditPage() {
   ]);
   const [modelsList, setModelsList] = useState<AuthFileModelItem[]>([]);
   const [modelsLoading, setModelsLoading] = useState(false);
-  const [modelsUnavailable, setModelsUnavailable] = useState(false);
+  const [modelsError, setModelsError] = useState<'unsupported' | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -138,7 +139,9 @@ export function AuthFilesOAuthModelAliasEditPage() {
     shouldBlock: isDirty,
     dialog: unsavedChangesDialog,
   });
-  const title = useMemo(() => t('oauth_model_alias.add_title'), [t]);
+  const title = isEditing
+    ? t('oauth_model_alias.edit_title', { provider: provider.trim() || resolvedProviderKey })
+    : t('oauth_model_alias.add_title');
   const headerHint = useMemo(() => {
     if (!provider.trim()) {
       return t('oauth_model_alias.provider_hint');
@@ -146,11 +149,11 @@ export function AuthFilesOAuthModelAliasEditPage() {
     if (modelsLoading) {
       return t('oauth_model_alias.model_source_loading');
     }
-    if (modelsUnavailable) {
-      return t('oauth_model_alias.model_source_unavailable');
+    if (modelsError === 'unsupported') {
+      return t('oauth_model_alias.model_source_unsupported');
     }
     return t('oauth_model_alias.model_source_loaded', { count: modelsList.length });
-  }, [modelsList.length, modelsLoading, modelsUnavailable, provider, t]);
+  }, [modelsError, modelsList.length, modelsLoading, provider, t]);
 
   const handleBack = useCallback(() => {
     const state = location.state as LocationState;
@@ -178,6 +181,7 @@ export function AuthFilesOAuthModelAliasEditPage() {
     setInitialLoading(true);
     setInitialLoadError(null);
     setBaselineReady(false);
+    setModelAliasUnsupported(false);
 
     try {
       const [filesResult, excludedResult, aliasResult] = await Promise.allSettled([
@@ -202,6 +206,10 @@ export function AuthFilesOAuthModelAliasEditPage() {
         return;
       }
 
+      if (getErrorStatus(aliasResult.reason) === 404) {
+        setModelAliasUnsupported(true);
+        return;
+      }
       setInitialLoadError(getErrorMessage(aliasResult.reason));
     } catch (err: unknown) {
       if (requestId === loadRequestRef.current) {
@@ -248,15 +256,15 @@ export function AuthFilesOAuthModelAliasEditPage() {
     queueMicrotask(() => {
       if (cancelled) return;
 
-      if (!resolvedProviderKey) {
+      if (!resolvedProviderKey || modelAliasUnsupported) {
         setModelsList([]);
-        setModelsUnavailable(false);
+        setModelsError(null);
         setModelsLoading(false);
         return;
       }
 
       setModelsLoading(true);
-      setModelsUnavailable(false);
+      setModelsError(null);
 
       authFilesApi
         .getModelDefinitions(resolvedProviderKey)
@@ -268,11 +276,12 @@ export function AuthFilesOAuthModelAliasEditPage() {
           if (cancelled) return;
           const status = getErrorStatus(err);
           setModelsList([]);
-          setModelsUnavailable(true);
-          if (status !== 400) {
-            const errorMessage = err instanceof Error ? err.message : t('common.unknown_error');
-            showNotification(`${t('notification.load_failed')}: ${errorMessage}`, 'error');
+          if (status === 400 || status === 404) {
+            setModelsError('unsupported');
+            return;
           }
+          const errorMessage = err instanceof Error ? err.message : t('common.unknown_error');
+          showNotification(`${t('notification.load_failed')}: ${errorMessage}`, 'error');
         })
         .finally(() => {
           if (cancelled) return;
@@ -283,7 +292,7 @@ export function AuthFilesOAuthModelAliasEditPage() {
     return () => {
       cancelled = true;
     };
-  }, [resolvedProviderKey, showNotification, t]);
+  }, [modelAliasUnsupported, resolvedProviderKey, showNotification, t]);
 
   const applyProviderChange = useCallback(
     (value: string) => {
@@ -391,7 +400,12 @@ export function AuthFilesOAuthModelAliasEditPage() {
     }
   }, [allowNextNavigation, handleBack, isEditing, mappings, provider, showNotification, t]);
 
-  const canSave = !disableControls && !saving && baselineReady && initialLoadError === null;
+  const canSave =
+    !disableControls &&
+    !saving &&
+    baselineReady &&
+    !modelAliasUnsupported &&
+    initialLoadError === null;
 
   return (
     <div className={styles.page} ref={swipeRef}>
@@ -423,7 +437,14 @@ export function AuthFilesOAuthModelAliasEditPage() {
         </div>
       ) : (
         <div className={styles.pageContent}>
-          {initialLoadError !== null ? (
+          {modelAliasUnsupported ? (
+            <Card>
+              <EmptyState
+                title={t('oauth_model_alias.upgrade_required_title')}
+                description={t('oauth_model_alias.upgrade_required_desc')}
+              />
+            </Card>
+          ) : initialLoadError !== null ? (
             <Card>
               <EmptyState
                 title={t('notification.refresh_failed')}
@@ -437,118 +458,75 @@ export function AuthFilesOAuthModelAliasEditPage() {
             </Card>
           ) : (
             <>
-              <Card className={styles.settingsCard}>
-                <div className={styles.settingsHeader}>
-                  <div className={styles.settingsHeaderTitle}>
-                    <IconInfo size={16} />
-                    <span>{t('oauth_model_alias.title')}</span>
-                  </div>
-                  <div className={styles.settingsHeaderHint}>{headerHint}</div>
+              <div className={editorStyles.intro}>
+                <span className={editorStyles.introIcon}>
+                  <IconNetwork size={22} aria-hidden="true" />
+                </span>
+                <div>
+                  <h1 className={editorStyles.introTitle}>{t('oauth_model_alias.title')}</h1>
+                  <p className={editorStyles.description}>
+                    {t('oauth_model_alias.editor_description')}
+                  </p>
                 </div>
+              </div>
 
-                <div className={styles.settingsSection}>
-                  <div className={styles.settingsRow}>
-                    <div className={styles.settingsInfo}>
-                      <div className={styles.settingsLabel}>
-                        {t('oauth_model_alias.provider_label')}
-                      </div>
-                      <div className={styles.settingsDesc}>
-                        {t('oauth_model_alias.provider_hint')}
-                      </div>
-                    </div>
-                    <div className={styles.settingsControl}>
-                      <AutocompleteInput
-                        id="oauth-model-alias-provider"
-                        placeholder={t('oauth_model_alias.provider_placeholder')}
-                        value={provider}
-                        onChange={updateProvider}
-                        options={providerOptions}
-                        disabled={disableControls || saving}
-                        wrapperStyle={{ marginBottom: 0 }}
-                      />
+              <OAuthEditorProviderCard
+                provider={provider}
+                options={providerOptions}
+                onChange={updateProvider}
+                disabled={disableControls || saving}
+                translationPrefix="oauth_model_alias"
+              />
+
+              <Card className={editorStyles.settingsCard}>
+                <div className={editorStyles.editorHeader}>
+                  <div className={editorStyles.sectionHeading}>
+                    <span className={editorStyles.stepNumber} aria-hidden="true">
+                      02
+                    </span>
+                    <div className={editorStyles.headingCopy}>
+                      <h2 className={editorStyles.sectionTitle}>
+                        {t('oauth_model_alias.alias_label')}
+                      </h2>
+                      <p className={editorStyles.description}>
+                        {t('oauth_model_alias.mapping_hint')}
+                      </p>
                     </div>
                   </div>
-
-                  {providerOptions.length > 0 && (
-                    <div className={styles.tagList}>
-                      {providerOptions.map((option) => {
-                        const isActive =
-                          normalizeProviderKey(provider) === normalizeProviderKey(option);
-                        return (
-                          <button
-                            key={option}
-                            type="button"
-                            className={`${styles.tag} ${isActive ? styles.tagActive : ''}`}
-                            onClick={() => updateProvider(option)}
-                            disabled={disableControls || saving}
-                          >
-                            {getTypeLabel(t, option)}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              </Card>
-
-              <Card className={styles.settingsCard}>
-                <div className={styles.mappingsHeader}>
-                  <div className={styles.mappingsTitle}>{t('oauth_model_alias.alias_label')}</div>
                   <Button
                     variant="secondary"
                     size="sm"
                     onClick={addMappingEntry}
-                    disabled={disableControls || saving}
+                    disabled={disableControls || saving || modelAliasUnsupported}
                   >
+                    <IconPlus size={14} aria-hidden="true" />
                     {t('oauth_model_alias.add_alias')}
                   </Button>
                 </div>
 
-                <div className={styles.mappingsBody}>
+                <div className={editorStyles.catalogHint}>
+                  <IconInfo size={15} aria-hidden="true" />
+                  <p className={editorStyles.description}>{headerHint}</p>
+                </div>
+
+                <div className={editorStyles.mappingsBody}>
                   {mappings.map((entry, index) => (
-                    <div key={entry.id} className={styles.mappingRow}>
-                      <AutocompleteInput
-                        wrapperStyle={{ flex: 1, marginBottom: 0 }}
-                        placeholder={t('oauth_model_alias.alias_name_placeholder')}
-                        value={entry.name}
-                        onChange={(val) => updateMappingEntry(index, 'name', val)}
-                        disabled={disableControls || saving}
-                        options={modelsList.map((model) => ({
-                          value: model.id,
-                          label:
-                            model.display_name && model.display_name !== model.id
-                              ? model.display_name
-                              : undefined,
-                        }))}
-                      />
-                      <span className={styles.mappingSeparator}>→</span>
-                      <input
-                        className={`input ${styles.mappingAliasInput}`}
-                        placeholder={t('oauth_model_alias.alias_placeholder')}
-                        value={entry.alias}
-                        onChange={(e) => updateMappingEntry(index, 'alias', e.target.value)}
-                        disabled={disableControls || saving}
-                      />
-                      <div className={styles.mappingFork}>
-                        <ToggleSwitch
-                          label={t('oauth_model_alias.alias_fork_label')}
-                          labelPosition="left"
-                          checked={Boolean(entry.fork)}
-                          onChange={(value) => updateMappingEntry(index, 'fork', value)}
-                          disabled={disableControls || saving}
-                        />
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeMappingEntry(index)}
-                        disabled={disableControls || saving || mappings.length <= 1}
-                        title={t('common.delete')}
-                        aria-label={t('common.delete')}
-                      >
-                        <IconX size={14} />
-                      </Button>
-                    </div>
+                    <OAuthAliasMappingRow
+                      key={entry.id}
+                      entry={entry}
+                      index={index}
+                      options={modelsList.map((model) => ({
+                        value: model.id,
+                        label:
+                          model.display_name && model.display_name !== model.id
+                            ? model.display_name
+                            : undefined,
+                      }))}
+                      disabled={disableControls || saving}
+                      canRemove={mappings.length > 1}
+                      onChange={(field, value) => updateMappingEntry(index, field, value)}
+                      onRemove={() => removeMappingEntry(index)}
+                    />
                   ))}
                 </div>
               </Card>

@@ -7,5 +7,5 @@ export const invalidateAuthFileDerivedCaches = (
   names?: string[]
 ): void => {
   invalidateModels(names);
-  useQuotaStore.getState().clearQuotaCache();
+  useQuotaStore.getState().clearQuotaCache(names);
 };

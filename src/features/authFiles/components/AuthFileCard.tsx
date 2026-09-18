@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/icons';
 import type { AuthFileItem, ResolvedTheme } from '@/types';
 import { formatFileSize } from '@/utils/format';
-import { resolveAuthProvider } from '@/utils/quota';
 import {
   normalizeRecentRequestAuthIndex,
   normalizeRecentRequestBuckets,
@@ -23,7 +22,6 @@ import {
   statusBarDataFromRecentRequests,
 } from '@/utils/recentRequests';
 import {
-  QUOTA_PROVIDER_TYPES,
   formatModified,
   getAuthFileIcon,
   getAuthFileStatusMessage,
@@ -36,12 +34,14 @@ import {
   normalizeProviderKey,
   parsePriorityValue,
   supportsAuthFileManualRefresh,
-  type QuotaProviderType,
+  type AuthFileQuotaFilter,
 } from '@/features/authFiles/constants';
 import { deriveAuthFileIdentity } from '@/features/authFiles/identity';
 import { AuthFileQuotaContent } from '@/features/authFiles/components/AuthFileQuotaContent';
+import { resolveAuthFileQuotaType } from '@/features/authFiles/logic';
 import type { AuthFileStatusBarData } from '@/features/authFiles/hooks/useAuthFilesStatusBarCache';
 import { useAuthFileQuotaControls } from '@/features/authFiles/hooks/useAuthFileQuotaControls';
+import { AuthFileCooldownSection } from './AuthFileCooldownSection';
 import styles from './AuthFileCard.module.scss';
 
 export type AuthFileCardProps = {
@@ -53,7 +53,7 @@ export type AuthFileCardProps = {
   deleting: string | null;
   statusUpdating: Record<string, boolean>;
   manualRefreshing: Record<string, boolean>;
-  quotaFilterType: QuotaProviderType | null;
+  quotaFilterType: AuthFileQuotaFilter;
   statusBarCache: Map<string, AuthFileStatusBarData>;
   entranceDelayMs?: number | null;
   onShowModels: (file: AuthFileItem) => void;
@@ -63,13 +63,6 @@ export type AuthFileCardProps = {
   onDelete: (name: string) => void;
   onToggleStatus: (file: AuthFileItem, enabled: boolean) => void;
   onToggleSelect: (name: string) => void;
-};
-
-const resolveQuotaType = (file: AuthFileItem): QuotaProviderType | null => {
-  const provider = resolveAuthProvider(file);
-  return QUOTA_PROVIDER_TYPES.has(provider as QuotaProviderType)
-    ? (provider as QuotaProviderType)
-    : null;
 };
 
 export function AuthFileCard(props: AuthFileCardProps) {
@@ -105,8 +98,7 @@ export function AuthFileCard(props: AuthFileCardProps) {
   const providerIcon = getAuthFileIcon(providerKey, resolvedTheme);
   const useThemeSurfaceIcon = isThemeSurfaceIconProvider(providerKey);
 
-  const quotaType =
-    quotaFilterType && resolveQuotaType(file) === quotaFilterType ? quotaFilterType : null;
+  const quotaType = resolveAuthFileQuotaType(file, quotaFilterType);
   const showQuotaLayout = Boolean(quotaType) && !isRuntimeOnly && !compact;
   const quotaControls = useAuthFileQuotaControls({ file, quotaType, disableControls });
 
@@ -164,10 +156,8 @@ export function AuthFileCard(props: AuthFileCardProps) {
             checked={selected}
             onChange={() => onToggleSelect(file.name)}
             className={styles.selection}
-            aria-label={
-              selected ? t('auth_files.batch_deselect') : t('auth_files.batch_select_all')
-            }
-            title={selected ? t('auth_files.batch_deselect') : t('auth_files.batch_select_all')}
+            ariaLabel={t('auth_files.card_select', { name: file.name })}
+            title={t('auth_files.card_select', { name: file.name })}
           />
         )}
         <div
@@ -235,6 +225,8 @@ export function AuthFileCard(props: AuthFileCardProps) {
           <span>{statusMessage}</span>
         </div>
       )}
+
+      <AuthFileCooldownSection snapshot={file.cooldownSnapshot} />
 
       <div className={styles.health}>
         <div className={styles.healthHead}>

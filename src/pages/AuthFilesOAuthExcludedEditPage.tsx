@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { AutocompleteInput } from '@/components/ui/AutocompleteInput';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { IconChevronLeft, IconInfo } from '@/components/ui/icons';
+import { IconChevronLeft, IconEyeOff, IconNetwork } from '@/components/ui/icons';
+import { OAuthEditorProviderCard } from '@/features/authFiles/components/OAuthEditorProviderCard';
 import {
   ExcludedModelsPicker,
   normalizeExcludedRules,
@@ -18,7 +18,6 @@ import { useAuthStore, useNotificationStore } from '@/stores';
 import { authFilesApi } from '@/services/api';
 import {
   buildOAuthProviderOptions,
-  getTypeLabel,
   normalizeProviderKey,
   type AuthFileModelItem,
 } from '@/features/authFiles/constants';
@@ -26,6 +25,7 @@ import { getStringSetSignature, isOAuthEditorDirty } from '@/features/authFiles/
 import type { AuthFileItem, OAuthModelAliasEntry } from '@/types';
 import { getErrorMessage, getErrorStatus } from '@/utils/helpers';
 import styles from './AuthFilesOAuthExcludedEditPage.module.scss';
+import editorStyles from '@/features/authFiles/components/OAuthEditor.module.scss';
 
 type LocationState = { fromAuthFiles?: boolean } | null;
 
@@ -402,67 +402,47 @@ export function AuthFilesOAuthExcludedEditPage() {
             </Card>
           ) : (
             <>
-              <Card className={styles.settingsCard}>
-                <div className={styles.settingsHeader}>
-                  <div className={styles.settingsHeaderTitle}>
-                    <IconInfo size={16} />
-                    <span>{t('oauth_excluded.title')}</span>
-                  </div>
-                  <div className={styles.settingsHeaderHint}>{t('oauth_excluded.description')}</div>
+              <div className={editorStyles.intro}>
+                <span className={editorStyles.introIcon}>
+                  <IconEyeOff size={22} aria-hidden="true" />
+                </span>
+                <div>
+                  <h1 className={editorStyles.introTitle}>{t('oauth_excluded.title')}</h1>
+                  <p className={editorStyles.description}>
+                    {t('oauth_excluded.editor_description')}
+                  </p>
                 </div>
+              </div>
 
-                <div className={styles.settingsSection}>
-                  <div className={styles.settingsRow}>
-                    <div className={styles.settingsInfo}>
-                      <div className={styles.settingsLabel}>
-                        {t('oauth_excluded.provider_label')}
-                      </div>
-                      <div className={styles.settingsDesc}>{t('oauth_excluded.provider_hint')}</div>
-                    </div>
-                    <div className={styles.settingsControl}>
-                      <AutocompleteInput
-                        id="oauth-excluded-provider"
-                        placeholder={t('oauth_excluded.provider_placeholder')}
-                        value={provider}
-                        onChange={updateProvider}
-                        options={providerOptions}
-                        disabled={disableControls || saving}
-                        wrapperStyle={{ marginBottom: 0 }}
-                      />
+              <OAuthEditorProviderCard
+                provider={provider}
+                options={providerOptions}
+                onChange={updateProvider}
+                disabled={disableControls || saving}
+                translationPrefix="oauth_excluded"
+              />
+
+              <Card className={editorStyles.settingsCard}>
+                <div className={editorStyles.editorHeader}>
+                  <div className={editorStyles.sectionHeading}>
+                    <span className={editorStyles.stepNumber} aria-hidden="true">
+                      02
+                    </span>
+                    <div className={editorStyles.headingCopy}>
+                      <h2 className={editorStyles.sectionTitle} id="oauth-excluded-models-label">
+                        {t('oauth_excluded.models_label')}
+                      </h2>
+                      <p className={editorStyles.description}>{t('oauth_excluded.models_hint')}</p>
                     </div>
                   </div>
-
-                  {providerOptions.length > 0 && (
-                    <div className={styles.tagList}>
-                      {providerOptions.map((option) => {
-                        const isActive =
-                          normalizeProviderKey(provider) === normalizeProviderKey(option);
-                        return (
-                          <button
-                            key={option}
-                            type="button"
-                            className={`${styles.tag} ${isActive ? styles.tagActive : ''}`}
-                            onClick={() => updateProvider(option)}
-                            disabled={disableControls || saving}
-                          >
-                            {getTypeLabel(t, option)}
-                          </button>
-                        );
-                      })}
-                    </div>
+                  {resolvedProviderKey && (
+                    <span className={editorStyles.countBadge}>
+                      {t('excluded_models.trigger_summary_rules', { n: effectiveRules.length })}
+                    </span>
                   )}
                 </div>
-              </Card>
-
-              <Card className={styles.settingsCard}>
-                <div className={styles.settingsHeader}>
-                  <div className={styles.settingsHeaderTitle} id="oauth-excluded-models-label">
-                    {t('oauth_excluded.models_label')}
-                  </div>
-                </div>
-
-                {resolvedProviderKey ? (
-                  <div className={styles.settingsSection}>
+                <div className={editorStyles.editorBody}>
+                  {resolvedProviderKey ? (
                     <ExcludedModelsPicker
                       value={effectiveRules}
                       onChange={handleRulesChange}
@@ -476,10 +456,13 @@ export function AuthFilesOAuthExcludedEditPage() {
                       disabled={disableControls || saving}
                       labelledBy="oauth-excluded-models-label"
                     />
-                  </div>
-                ) : (
-                  <div className={styles.emptyModels}>{t('oauth_excluded.provider_required')}</div>
-                )}
+                  ) : (
+                    <div className={editorStyles.emptyModels}>
+                      <IconNetwork size={24} aria-hidden="true" />
+                      {t('oauth_excluded.provider_required')}
+                    </div>
+                  )}
+                </div>
               </Card>
             </>
           )}

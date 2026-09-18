@@ -31,6 +31,7 @@ describe('QuotaTimeline rendering', () => {
     const markup = renderToStaticMarkup(
       createElement(QuotaTimeline, {
         entries,
+        displayNameFor: (name: string) => name,
         resolvedTheme: 'light',
         now,
         initialOffset: 1,
@@ -44,6 +45,7 @@ describe('QuotaTimeline rendering', () => {
   test('renders an unexpired Codex reset credit as an expiry tick', () => {
     const markup = renderToStaticMarkup(
       createElement(QuotaTimeline, {
+        displayNameFor: (name: string) => name,
         entries: [
           {
             file: { name: 'codex-credit.json', type: 'codex' },

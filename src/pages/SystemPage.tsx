@@ -10,6 +10,9 @@ import { classifyModels } from '@/utils/models';
 import { STORAGE_KEY_AUTH } from '@/utils/constants';
 import iconGemini from '@/assets/icons/gemini.svg';
 import iconClaude from '@/assets/icons/claude.svg';
+import iconMeta from '@/assets/icons/meta.svg';
+import iconDevinLight from '@/assets/icons/devin.svg';
+import iconDevinDark from '@/assets/icons/devin-dark.svg';
 import iconOpenaiLight from '@/assets/icons/openai-light.svg';
 import iconOpenaiDark from '@/assets/icons/openai-dark.svg';
 import iconQwen from '@/assets/icons/qwen.svg';
@@ -23,8 +26,10 @@ import iconMinimax from '@/assets/icons/minimax.svg';
 import styles from './SystemPage.module.scss';
 
 const MODEL_CATEGORY_ICONS: Record<string, string | { light: string; dark: string }> = {
+  devin: { light: iconDevinLight, dark: iconDevinDark },
   gpt: { light: iconOpenaiLight, dark: iconOpenaiDark },
   claude: iconClaude,
+  meta: iconMeta,
   gemini: iconGemini,
   qwen: iconQwen,
   kimi: { light: iconKimiLight, dark: iconKimiDark },

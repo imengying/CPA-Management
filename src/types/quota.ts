@@ -6,7 +6,8 @@
 export type ThemeColors = { bg: string; text: string; border?: string };
 export type TypeColorSet = { light: ThemeColors; dark?: ThemeColors };
 export type ResolvedTheme = 'light' | 'dark';
-export type QuotaProviderType = 'antigravity' | 'claude' | 'codex' | 'kimi' | 'xai';
+export type QuotaProviderType =
+  'antigravity' | 'claude' | 'codex' | 'devin' | 'kimi' | 'xai' | 'meta';
 
 // API payload types
 interface AntigravityQuotaSummaryBucketPayload {
@@ -241,6 +242,52 @@ export interface CodexQuotaState {
   rateLimitResetCreditsApplicableAvailableCount?: number | null;
   rateLimitResetCredits?: CodexRateLimitResetCredit[];
   rateLimitResetCreditsError?: string;
+  error?: string;
+  errorStatus?: number;
+}
+
+export interface DevinQuotaWindow {
+  id: 'daily' | 'weekly';
+  label?: string;
+  remainingPercent: number | null;
+  resetAtMs: number | null;
+  periodHours: number;
+}
+
+/** Only quota observations, never the credential-bearing refresh response. */
+export interface DevinQuotaData {
+  windows: DevinQuotaWindow[];
+  observedAtMs: number | null;
+  plan: string | null;
+  planStartMs: number | null;
+  planEndMs: number | null;
+}
+
+export interface DevinQuotaState extends DevinQuotaData {
+  status: 'idle' | 'loading' | 'success' | 'error';
+  error?: string;
+  errorStatus?: number;
+}
+
+/** A whitelisted quota observation from Meta's Muse key endpoint. */
+export interface MetaQuotaWindow {
+  id: 'window' | 'weekly';
+  usedPercent: number | null;
+  /** Reset instant as Unix seconds, matching the upstream contract. */
+  resetAt?: number;
+  durationMinutes?: number;
+}
+
+/** Contains quota/display fields only; credential-bearing response fields are discarded. */
+export interface MetaQuotaData {
+  planName?: string;
+  isSubscriptionActive?: boolean;
+  windows: MetaQuotaWindow[];
+}
+
+export interface MetaQuotaState {
+  status: 'idle' | 'loading' | 'success' | 'error';
+  data?: MetaQuotaData;
   error?: string;
   errorStatus?: number;
 }

@@ -200,6 +200,7 @@ const fetchAntigravityQuota = async (
 };
 
 export const ANTIGRAVITY_CONFIG: QuotaProviderData<AntigravityQuotaState, AntigravityQuotaData> = {
+  type: 'antigravity',
   i18nPrefix: 'antigravity_quota',
   filterFn: (file) => isAntigravityFile(file) && !isDisabledAuthFile(file),
   fetchQuota: fetchAntigravityQuota,

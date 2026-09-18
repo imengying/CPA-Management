@@ -19,6 +19,7 @@ import { useAuthStore, useNotificationStore, useThemeStore } from '@/stores';
 import type { ResolvedTheme } from '@/types';
 import { copyToClipboard } from '@/utils/clipboard';
 import { invalidateAuthFileDerivedCaches } from '@/features/authFiles/cacheInvalidation';
+import { getQuotaCacheKey } from '@/utils/quota/identity';
 import {
   QUOTA_PROVIDER_TYPES,
   clampCardPageSize,
@@ -26,6 +27,7 @@ import {
   isProblemAuthFile,
   isRuntimeOnlyAuthFile,
   normalizeProviderKey,
+  type AuthFileQuotaFilter,
   type QuotaProviderType,
 } from '@/features/authFiles/constants';
 import { AuthFileCard } from '@/features/authFiles/components/AuthFileCard';
@@ -217,6 +219,8 @@ export function AuthFilesPage() {
   )
     ? (normalizedFilter as QuotaProviderType)
     : null;
+  const activeQuotaFilter: AuthFileQuotaFilter =
+    normalizedFilter === 'all' ? 'all' : quotaFilterType;
   const pageSize = compactMode ? pageSizeByMode.compact : pageSizeByMode.regular;
   const problemOnly = statusFilterMode === 'problem';
   const disabledOnly = statusFilterMode === 'disabled';
@@ -460,6 +464,7 @@ export function AuthFilesPage() {
   const gridClassName = [
     styles.grid,
     compactMode ? styles.gridCompact : '',
+    activeQuotaFilter ? styles.gridQuota : '',
   ]
     .filter(Boolean)
     .join(' ');
@@ -576,7 +581,7 @@ export function AuthFilesPage() {
           <div className={gridClassName}>
             {pageItems.map((file, index) => (
               <AuthFileCard
-                key={file.name}
+                key={getQuotaCacheKey(file)}
                 file={file}
                 compact={compactMode}
                 selected={selectedFiles.has(file.name)}
@@ -585,7 +590,7 @@ export function AuthFilesPage() {
                 deleting={deleting}
                 statusUpdating={statusUpdating}
                 manualRefreshing={manualRefreshing}
-                quotaFilterType={quotaFilterType}
+                quotaFilterType={activeQuotaFilter}
                 statusBarCache={statusBarCache}
                 entranceDelayMs={cardEntranceDelay(index)}
                 onShowModels={showModels}
