@@ -393,7 +393,8 @@
     "quota_refresh_success": "Quota refreshed for \"{{name}}\"",
     "quota_refresh_failed": "Failed to refresh quota for \"{{name}}\": {{message}}",
     "delete_title": "Delete File",
-    "delete_all_title": "Delete All Files"
+    "delete_all_title": "Delete All Files",
+    "weight_tooltip": "Defaults to 1. Values at or below 0 exclude this credential from weighted scheduling; maximum 1,000,000. After entering a value, enable weighted round robin for it to take effect."
   },
   "antigravity_subscription": {
     "subscription_label": "Subscription",
@@ -505,7 +506,8 @@
     "plan_team": "Team",
     "plan_free": "Free",
     "plan_pro": "Pro 20x",
-    "plan_prolite": "Pro 5x"
+    "plan_prolite": "Pro 5x",
+    "plan_business_premium": "Business Premium"
   },
   "devin_quota": {
     "daily": "Daily remaining",
@@ -589,7 +591,8 @@
     "paid_health": "Paid API chat is available. xAI does not expose quota totals for this OAuth credential.",
     "pay_as_you_go_label": "Pay as you go",
     "pay_as_you_go_enabled": "Enabled, cap {{cap}}",
-    "pay_as_you_go_disabled": "Disabled"
+    "pay_as_you_go_disabled": "Disabled",
+    "usage_unavailable": "Usage unavailable from xAI"
   },
   "vertex_import": {
     "title": "Vertex",
@@ -749,8 +752,8 @@
     "remove_mapping": "Delete alias mapping {{number}}"
   },
   "auth_login": {
-    "codex_oauth_title": "Codex",
-    "codex_oauth_button": "Log in to Codex",
+    "codex_oauth_title": "Codex OAuth",
+    "codex_oauth_button": "Start Codex Login",
     "devin_oauth_cancel": "Cancel Devin Login",
     "devin_oauth_cancelled": "Devin login cancelled.",
     "devin_oauth_cancel_error": "Failed to cancel Devin login:",
@@ -773,8 +776,6 @@
     "recommended_provider_badge": "Recommended provider",
     "other_oauth_providers": "Other OAuth providers",
     "other_login_methods": "Other login methods",
-    "codex_oauth_title": "Codex OAuth",
-    "codex_oauth_button": "Start Codex Login",
     "codex_oauth_hint": "Login to Codex service through OAuth flow, automatically obtain and save authentication files.",
     "codex_oauth_url_label": "Authorization URL:",
     "codex_open_link": "Open Link",
@@ -806,9 +807,9 @@
     "antigravity_oauth_status_error": "Authentication failed:",
     "antigravity_oauth_start_error": "Failed to start Antigravity OAuth:",
     "antigravity_oauth_polling_error": "Failed to check authentication status:",
-    "kimi_oauth_title": "Kimi",
-    "kimi_oauth_button": "Log in to Kimi",
-    "kimi_oauth_hint": "Login to Kimi service through OAuth device flow, automatically obtain and save authentication files.",
+    "kimi_oauth_title": "Kimi China (kimi.com)",
+    "kimi_oauth_button": "Log in to Kimi China",
+    "kimi_oauth_hint": "Log in to kimi.com via device authorization; the credential file is saved automatically. International accounts use the separate kimi.ai entry.",
     "meta_oauth_title": "Muse (Meta) OAuth",
     "meta_oauth_button": "Log in with Muse",
     "meta_oauth_hint": "Open the authorization link and enter the device code if requested. Authentication files are saved automatically after authorization.",
@@ -822,10 +823,6 @@
     "meta_oauth_polling_error": "Failed to check authentication status:",
     "device_code_label": "Device code:",
     "device_code_copy": "Copy device code",
-    "kimi_oauth_title": "Kimi OAuth",
-    "kimi_oauth_button": "Log in with Kimi",
-    "kimi_sign_up_button": "Sign Up Now",
-    "kimi_oauth_hint": "Quickly log in to Kimi through device authorization. Authentication files are obtained and saved automatically.",
     "kimi_oauth_url_label": "Authorization URL:",
     "kimi_open_link": "Open Link",
     "kimi_copy_link": "Copy Link",
@@ -873,7 +870,18 @@
     "missing_state": "Unable to retrieve authentication state parameter",
     "login_another_account": "Log in another account",
     "view_auth_files": "View auth files",
-    "remote_access_disabled": "This login method is not available for remote access. Please access from localhost."
+    "remote_access_disabled": "This login method is not available for remote access. Please access from localhost.",
+    "kimi_ai_oauth_title": "Kimi International (kimi.ai)",
+    "kimi_ai_oauth_button": "Log in to Kimi International",
+    "kimi_ai_oauth_hint": "Log in to kimi.ai via device authorization; a separate kimi-ai credential file is saved automatically. China and international accounts are not interchangeable.",
+    "kimi_ai_oauth_url_label": "Authorization URL:",
+    "kimi_ai_open_link": "Open Link",
+    "kimi_ai_copy_link": "Copy Link",
+    "kimi_ai_oauth_status_waiting": "Waiting for authentication...",
+    "kimi_ai_oauth_status_success": "Authentication successful!",
+    "kimi_ai_oauth_status_error": "Authentication failed:",
+    "kimi_ai_oauth_start_error": "Failed to start Kimi OAuth:",
+    "kimi_ai_oauth_polling_error": "Failed to check authentication status:"
   },
   "stats": {
     "success": "Success",
@@ -1011,8 +1019,7 @@
       },
       "sections": {
         "common": {
-          "title": "Common",
-          "description": "The most-used settings, backed by the same data as the full sections"
+          "title": "Common"
         },
         "connectivity": {
           "title": "Access & Authentication",
@@ -1333,7 +1340,12 @@
     "weekday_wed": "Wed",
     "weekday_thu": "Thu",
     "weekday_fri": "Fri",
-    "weekday_sat": "Sat"
+    "weekday_sat": "Sat",
+    "search_label": "Search accounts",
+    "search_placeholder": "Search by file name or email",
+    "search_empty_title": "No matching accounts",
+    "search_empty_desc": "Try another file name or email, or clear the search.",
+    "search_clear": "Clear search"
   },
   "plugin_management": {
     "refresh": "Refresh",

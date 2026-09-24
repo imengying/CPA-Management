@@ -127,14 +127,8 @@ const parseClaudeProfilePayload = (payload: unknown): ClaudeProfileResponse | nu
   return null;
 };
 
-const resolveClaudePlanType = (profile: ClaudeProfileResponse | null): string | null => {
+export const resolveClaudePlanType = (profile: ClaudeProfileResponse | null): string | null => {
   if (!profile) return null;
-
-  const hasClaudeMax = normalizeFlagValue(profile.account?.has_claude_max);
-  if (hasClaudeMax) return 'plan_max';
-
-  const hasClaudePro = normalizeFlagValue(profile.account?.has_claude_pro);
-  if (hasClaudePro) return 'plan_pro';
 
   const organizationType = normalizeStringValue(
     profile.organization?.organization_type
@@ -143,9 +137,17 @@ const resolveClaudePlanType = (profile: ClaudeProfileResponse | null): string | 
     profile.organization?.subscription_status
   )?.toLowerCase();
 
+  // 组织类型优先：Team 令牌的 account 标记会带上个人订阅，若先看
+  // has_claude_max / has_claude_pro，Team 席位会被误判成个人套餐。
   if (organizationType === 'claude_team' && subscriptionStatus === 'active') {
     return 'plan_team';
   }
+
+  const hasClaudeMax = normalizeFlagValue(profile.account?.has_claude_max);
+  if (hasClaudeMax) return 'plan_max';
+
+  const hasClaudePro = normalizeFlagValue(profile.account?.has_claude_pro);
+  if (hasClaudePro) return 'plan_pro';
 
   if (hasClaudeMax === false && hasClaudePro === false) return 'plan_free';
 

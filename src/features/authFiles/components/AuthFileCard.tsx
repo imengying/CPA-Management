@@ -265,7 +265,7 @@ export function AuthFileCard(props: AuthFileCardProps) {
             <span className={styles.metaDivider} aria-hidden="true">
               &middot;
             </span>
-            <span className={styles.metaWeight} title={t('auth_files.weight_hint')}>
+            <span className={styles.metaWeight} title={t('auth_files.weight_tooltip')}>
               <span>{t('auth_files.weight_display')}</span>
               <strong>{weightValue}</strong>
             </span>

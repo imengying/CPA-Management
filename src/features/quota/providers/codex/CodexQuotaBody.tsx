@@ -49,6 +49,9 @@ export function CodexQuotaBody({ quota, classes }: QuotaBodyProps<CodexQuotaStat
     const normalized = normalizePlanType(pt);
     if (!normalized) return null;
     if (normalized === 'pro') return t('codex_quota.plan_pro');
+    if (normalized === 'self_serve_business_prolite') {
+      return t('codex_quota.plan_business_premium');
+    }
     if (resolvePlanTier(normalized) === 'premium') {
       return t('codex_quota.plan_prolite');
     }

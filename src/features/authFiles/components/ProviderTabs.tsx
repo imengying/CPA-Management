@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IconFilterAll } from '@/components/ui/icons';
 import {
@@ -7,6 +8,7 @@ import {
   isThemeSurfaceIconProvider,
 } from '@/features/authFiles/constants';
 import type { ResolvedTheme } from '@/types';
+import { scrollProviderTabs } from './providerTabsWheel';
 import styles from './ProviderTabs.module.scss';
 
 export type ProviderTabsProps = {
@@ -17,11 +19,32 @@ export type ProviderTabsProps = {
   onChange: (type: string) => void;
 };
 
-export function ProviderTabs({ types, counts, active, resolvedTheme, onChange }: ProviderTabsProps) {
+export function ProviderTabs({
+  types,
+  counts,
+  active,
+  resolvedTheme,
+  onChange,
+}: ProviderTabsProps) {
   const { t } = useTranslation();
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const strip = tabsRef.current;
+    if (!strip) return;
+    const onWheel = (event: WheelEvent) => scrollProviderTabs(strip, event);
+    // React 的 wheel 是 passive 委托，无法 preventDefault，必须本地监听。
+    strip.addEventListener('wheel', onWheel, { passive: false });
+    return () => strip.removeEventListener('wheel', onWheel);
+  }, []);
 
   return (
-    <div className={styles.tabs} role="group" aria-label={t('auth_files.filter_all')}>
+    <div
+      ref={tabsRef}
+      className={styles.tabs}
+      role="group"
+      aria-label={t('auth_files.filter_all')}
+    >
       {types.map((type) => {
         const isActive = active === type;
         const label = type === 'all' ? t('auth_files.filter_all') : getTypeLabel(t, type);

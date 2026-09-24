@@ -66,6 +66,22 @@ export function filterEntriesByTab(entries: QuotaFileEntry[], tab: QuotaTabId): 
   return entries.filter((entry) => entry.type === tab);
 }
 
+/**
+ * 按文件名或邮箱搜索账号。
+ *
+ * 只匹配公开标识符：file.account 里可能存着 API key，把它纳入匹配面会让
+ * 搜索结果泄露密钥的存在性（输入片段即可试探命中），因此刻意排除。
+ */
+export function filterEntriesBySearch(entries: QuotaFileEntry[], search: string): QuotaFileEntry[] {
+  const query = search.trim().toLowerCase();
+  if (!query) return entries;
+  return entries.filter(({ file }) =>
+    [file.name, file.email].some(
+      (value) => typeof value === 'string' && value.toLowerCase().includes(query)
+    )
+  );
+}
+
 /** 按下一次恢复时间排序；无可用时间的凭证保持原顺序并沉底。 */
 export function sortQuotaEntries(
   entries: QuotaFileEntry[],

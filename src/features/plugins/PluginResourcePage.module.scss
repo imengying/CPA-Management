@@ -5,7 +5,8 @@
   min-width: 0;
   min-height: 0;
   flex: 1 1 auto;
-  background: #ffffff;
+  /* 插件页面铺满内容区，必须跟随主题：硬编码白色会在深色下闪白。 */
+  background: var(--bg-secondary);
 }
 
 .frame {
@@ -16,7 +17,7 @@
   min-width: 0;
   min-height: 0;
   border: 0;
-  background: #ffffff;
+  background: var(--bg-secondary);
 }
 
 .stateShell {

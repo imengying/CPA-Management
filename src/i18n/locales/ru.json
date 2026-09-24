@@ -397,7 +397,8 @@
     "quota_refresh_success": "Квота для \"{{name}}\" обновлена",
     "quota_refresh_failed": "Не удалось обновить квоту для \"{{name}}\": {{message}}",
     "delete_title": "Удалить файл",
-    "delete_all_title": "Удалить все файлы"
+    "delete_all_title": "Удалить все файлы",
+    "weight_tooltip": "По умолчанию 1. Значения ≤ 0 исключают эти учётные данные из взвешенного планирования; максимум 1 000 000. После ввода значения включите взвешенный круговой алгоритм, чтобы настройка вступила в силу."
   },
   "antigravity_subscription": {
     "subscription_label": "Подписка",
@@ -509,7 +510,8 @@
     "plan_team": "Team",
     "plan_free": "Free",
     "plan_pro": "Pro 20x",
-    "plan_prolite": "Pro 5x"
+    "plan_prolite": "Pro 5x",
+    "plan_business_premium": "Business Premium"
   },
   "devin_quota": {
     "daily": "Остаток на день",
@@ -593,7 +595,8 @@
     "paid_health": "Чат платного API доступен. xAI не предоставляет данные об общей квоте для этих учётных данных OAuth.",
     "pay_as_you_go_label": "Оплата по факту",
     "pay_as_you_go_enabled": "Включено, лимит {{cap}}",
-    "pay_as_you_go_disabled": "Отключено"
+    "pay_as_you_go_disabled": "Отключено",
+    "usage_unavailable": "Данные об использовании недоступны от xAI"
   },
   "vertex_import": {
     "title": "Vertex",
@@ -753,8 +756,8 @@
     "remove_mapping": "Удалить сопоставление {{number}}"
   },
   "auth_login": {
-    "codex_oauth_title": "Codex",
-    "codex_oauth_button": "Войти в Codex",
+    "codex_oauth_title": "Codex OAuth",
+    "codex_oauth_button": "Начать вход Codex",
     "devin_oauth_cancel": "Отменить вход в Devin",
     "devin_oauth_cancelled": "Вход в Devin отменён.",
     "devin_oauth_cancel_error": "Не удалось отменить вход в Devin:",
@@ -777,8 +780,6 @@
     "recommended_provider_badge": "Рекомендуемый провайдер",
     "other_oauth_providers": "Другие провайдеры OAuth",
     "other_login_methods": "Другие способы входа",
-    "codex_oauth_title": "Codex OAuth",
-    "codex_oauth_button": "Начать вход Codex",
     "codex_oauth_hint": "Выполните вход в сервис Codex через OAuth и автоматически получите/сохраните файлы авторизации.",
     "codex_oauth_url_label": "URL авторизации:",
     "codex_open_link": "Открыть ссылку",
@@ -810,9 +811,9 @@
     "antigravity_oauth_status_error": "Ошибка аутентификации:",
     "antigravity_oauth_start_error": "Не удалось запустить Antigravity OAuth:",
     "antigravity_oauth_polling_error": "Не удалось проверить статус аутентификации:",
-    "kimi_oauth_title": "Kimi",
-    "kimi_oauth_button": "Войти в Kimi",
-    "kimi_oauth_hint": "Выполните вход в сервис Kimi через поток авторизации устройства и автоматически получите/сохраните файлы авторизации.",
+    "kimi_oauth_title": "Kimi (kimi.com)",
+    "kimi_oauth_button": "Войти в Kimi (kimi.com)",
+    "kimi_oauth_hint": "Вход в kimi.com через авторизацию устройства; файл авторизации сохраняется автоматически. Для международных аккаунтов используйте отдельный вход kimi.ai.",
     "meta_oauth_title": "Muse (Meta) OAuth",
     "meta_oauth_button": "Войти через Muse",
     "meta_oauth_hint": "Откройте ссылку авторизации и введите код устройства, если потребуется. Файлы авторизации будут сохранены автоматически.",
@@ -826,10 +827,6 @@
     "meta_oauth_polling_error": "Не удалось проверить статус аутентификации:",
     "device_code_label": "Код устройства:",
     "device_code_copy": "Скопировать код устройства",
-    "kimi_oauth_title": "Kimi OAuth",
-    "kimi_oauth_button": "Войти через Kimi",
-    "kimi_sign_up_button": "Зарегистрироваться сейчас",
-    "kimi_oauth_hint": "Быстро войдите в Kimi через авторизацию устройства. Файлы авторизации будут получены и сохранены автоматически.",
     "kimi_oauth_url_label": "URL авторизации:",
     "kimi_open_link": "Открыть ссылку",
     "kimi_copy_link": "Скопировать ссылку",
@@ -877,7 +874,18 @@
     "missing_state": "Не удалось получить параметр состояния аутентификации",
     "login_another_account": "Войти в другой аккаунт",
     "view_auth_files": "Открыть файлы авторизации",
-    "remote_access_disabled": "Этот способ входа недоступен при удалённом доступе. Подключитесь с localhost."
+    "remote_access_disabled": "Этот способ входа недоступен при удалённом доступе. Подключитесь с localhost.",
+    "kimi_ai_oauth_title": "Kimi International (kimi.ai)",
+    "kimi_ai_oauth_button": "Войти в Kimi International",
+    "kimi_ai_oauth_hint": "Вход в kimi.ai через авторизацию устройства; автоматически сохраняется отдельный файл авторизации kimi-ai. Аккаунты kimi.com и kimi.ai не взаимозаменяемы.",
+    "kimi_ai_oauth_url_label": "URL авторизации:",
+    "kimi_ai_open_link": "Открыть ссылку",
+    "kimi_ai_copy_link": "Скопировать ссылку",
+    "kimi_ai_oauth_status_waiting": "Ожидание аутентификации...",
+    "kimi_ai_oauth_status_success": "Аутентификация успешна!",
+    "kimi_ai_oauth_status_error": "Ошибка аутентификации:",
+    "kimi_ai_oauth_start_error": "Не удалось запустить Kimi OAuth:",
+    "kimi_ai_oauth_polling_error": "Не удалось проверить статус аутентификации:"
   },
   "stats": {
     "success": "Успех",
@@ -1015,8 +1023,7 @@
       },
       "sections": {
         "common": {
-          "title": "Основные",
-          "description": "Самые востребованные настройки — те же данные, что и в полных разделах"
+          "title": "Основные"
         },
         "connectivity": {
           "title": "Доступ и аутентификация",
@@ -1337,7 +1344,12 @@
     "weekday_wed": "Ср",
     "weekday_thu": "Чт",
     "weekday_fri": "Пт",
-    "weekday_sat": "Сб"
+    "weekday_sat": "Сб",
+    "search_label": "Поиск аккаунтов",
+    "search_placeholder": "Поиск по имени файла или почте",
+    "search_empty_title": "Нет подходящих аккаунтов",
+    "search_empty_desc": "Попробуйте другое имя файла или почту либо очистите поиск.",
+    "search_clear": "Очистить поиск"
   },
   "plugin_management": {
     "refresh": "Обновить",

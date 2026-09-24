@@ -107,6 +107,13 @@ const PROVIDERS: BuiltInOAuthProviderCard[] = [
     icon: { light: iconKimiLight, dark: iconKimiDark },
   },
   {
+    // 国内站与国际站账号不互通，后端用独立的 kimi-ai 端点，这里必须分开建卡。
+    kind: 'builtin',
+    id: 'kimi-ai',
+    titleKey: 'auth_login.kimi_ai_oauth_title',
+    icon: { light: iconKimiLight, dark: iconKimiDark },
+  },
+  {
     kind: 'builtin',
     id: 'xai',
     titleKey: 'auth_login.xai_oauth_title',

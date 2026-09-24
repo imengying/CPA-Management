@@ -4,6 +4,9 @@
   display: flex;
   align-items: stretch;
   gap: 2px;
+  /* 约束在容器内横向滚动：min-width 防止 flex 子项把父级撑破。 */
+  min-width: 0;
+  max-width: 100%;
   overflow-x: auto;
   border-bottom: 1px solid var(--border-color);
   scrollbar-width: none;

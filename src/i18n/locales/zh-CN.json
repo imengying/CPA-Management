@@ -391,7 +391,8 @@
     "quota_refresh_success": "已刷新 \"{{name}}\" 的额度",
     "quota_refresh_failed": "刷新 \"{{name}}\" 的额度失败：{{message}}",
     "delete_title": "删除文件",
-    "delete_all_title": "删除全部文件"
+    "delete_all_title": "删除全部文件",
+    "weight_tooltip": "默认值为 1；小于或等于 0 时不参与加权调度；最大值为 1,000,000。填入后打开加权轮询设置即可生效。"
   },
   "antigravity_subscription": {
     "subscription_label": "订阅",
@@ -503,7 +504,8 @@
     "plan_team": "Team",
     "plan_free": "Free",
     "plan_pro": "Pro 20x",
-    "plan_prolite": "Pro 5x"
+    "plan_prolite": "Pro 5x",
+    "plan_business_premium": "商业高级版"
   },
   "devin_quota": {
     "daily": "每日剩余额度",
@@ -587,7 +589,8 @@
     "paid_health": "付费 API 对话可用。xAI 暂不为此 OAuth 凭证提供额度总量数据。",
     "pay_as_you_go_label": "按量付费",
     "pay_as_you_go_enabled": "已启用，封顶 {{cap}}",
-    "pay_as_you_go_disabled": "未启用"
+    "pay_as_you_go_disabled": "未启用",
+    "usage_unavailable": "xAI 用量暂不可用"
   },
   "vertex_import": {
     "title": "Vertex",
@@ -747,8 +750,8 @@
     "remove_mapping": "删除第 {{number}} 条别名映射"
   },
   "auth_login": {
-    "codex_oauth_title": "Codex",
-    "codex_oauth_button": "登录 Codex",
+    "codex_oauth_title": "Codex OAuth",
+    "codex_oauth_button": "开始 Codex 登录",
     "devin_oauth_cancel": "取消 Devin 登录",
     "devin_oauth_cancelled": "已取消 Devin 登录。",
     "devin_oauth_cancel_error": "取消 Devin 登录失败：",
@@ -771,8 +774,6 @@
     "recommended_provider_badge": "推荐提供商",
     "other_oauth_providers": "其他 OAuth 提供商",
     "other_login_methods": "其他登录方式",
-    "codex_oauth_title": "Codex OAuth",
-    "codex_oauth_button": "开始 Codex 登录",
     "codex_oauth_hint": "通过 OAuth 流程登录 Codex 服务，自动获取并保存认证文件。",
     "codex_oauth_url_label": "授权链接:",
     "codex_open_link": "打开链接",
@@ -804,9 +805,9 @@
     "antigravity_oauth_status_error": "认证失败:",
     "antigravity_oauth_start_error": "启动 Antigravity OAuth 失败:",
     "antigravity_oauth_polling_error": "检查认证状态失败:",
-    "kimi_oauth_title": "Kimi",
-    "kimi_oauth_button": "登录 Kimi",
-    "kimi_oauth_hint": "通过设备授权流程登录 Kimi 服务，自动获取并保存认证文件。",
+    "kimi_oauth_title": "Kimi 国内站（kimi.com）",
+    "kimi_oauth_button": "登录 Kimi 国内站",
+    "kimi_oauth_hint": "通过设备授权登录 kimi.com 国内站，自动获取并保存认证文件。国际站账号请使用独立的 kimi.ai 登录入口。",
     "meta_oauth_title": "Muse (Meta) OAuth",
     "meta_oauth_button": "使用 Muse 登录",
     "meta_oauth_hint": "打开授权链接，如有提示请输入设备码。授权完成后将自动获取并保存认证文件。",
@@ -820,10 +821,6 @@
     "meta_oauth_polling_error": "检查认证状态失败:",
     "device_code_label": "设备码:",
     "device_code_copy": "复制设备码",
-    "kimi_oauth_title": "Kimi OAuth",
-    "kimi_oauth_button": "使用 Kimi 登录",
-    "kimi_sign_up_button": "立即注册",
-    "kimi_oauth_hint": "通过设备授权快速登录 Kimi，完成后将自动获取并保存认证文件。",
     "kimi_oauth_url_label": "授权链接:",
     "kimi_open_link": "打开链接",
     "kimi_copy_link": "复制链接",
@@ -871,7 +868,18 @@
     "missing_state": "无法获取认证状态参数",
     "login_another_account": "登录另一个账号",
     "view_auth_files": "查看认证文件",
-    "remote_access_disabled": "远程访问不支持此登录方式，请从本地 (localhost) 访问"
+    "remote_access_disabled": "远程访问不支持此登录方式，请从本地 (localhost) 访问",
+    "kimi_ai_oauth_title": "Kimi 国际站（kimi.ai）",
+    "kimi_ai_oauth_button": "登录 Kimi 国际站",
+    "kimi_ai_oauth_hint": "通过设备授权登录 kimi.ai 国际站，自动保存独立的 kimi-ai 认证文件。国内站与国际站账号不互通。",
+    "kimi_ai_oauth_url_label": "授权链接:",
+    "kimi_ai_open_link": "打开链接",
+    "kimi_ai_copy_link": "复制链接",
+    "kimi_ai_oauth_status_waiting": "等待认证中...",
+    "kimi_ai_oauth_status_success": "认证成功！",
+    "kimi_ai_oauth_status_error": "认证失败:",
+    "kimi_ai_oauth_start_error": "启动 Kimi OAuth 失败:",
+    "kimi_ai_oauth_polling_error": "检查认证状态失败:"
   },
   "stats": {
     "success": "成功",
@@ -1009,8 +1017,7 @@
       },
       "sections": {
         "common": {
-          "title": "常用",
-          "description": "最常调整的配置项，与完整分区共享同一份数据"
+          "title": "常用"
         },
         "connectivity": {
           "title": "接入与认证",
@@ -1331,7 +1338,12 @@
     "weekday_wed": "三",
     "weekday_thu": "四",
     "weekday_fri": "五",
-    "weekday_sat": "六"
+    "weekday_sat": "六",
+    "search_label": "搜索账号",
+    "search_placeholder": "按文件名或邮箱搜索",
+    "search_empty_title": "没有匹配的账号",
+    "search_empty_desc": "请尝试其他文件名或邮箱，或清空搜索。",
+    "search_clear": "清空搜索"
   },
   "plugin_management": {
     "refresh": "刷新",

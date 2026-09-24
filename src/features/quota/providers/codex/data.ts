@@ -17,6 +17,7 @@ import { apiCallApi, getApiCallErrorMessage } from '@/services/api';
 import {
   CODEX_RATE_LIMIT_RESET_CREDITS_URL,
   CODEX_RATE_LIMIT_RESET_CREDITS_CONSUME_URL,
+  CODEX_SUBSCRIPTION_URL,
   CODEX_USAGE_URL,
   CODEX_REQUEST_HEADERS,
   normalizeNumberValue,
@@ -38,7 +39,7 @@ import {
 import { normalizeAuthIndex } from '@/utils/authIndex';
 import type { QuotaProviderData } from '../types';
 
-const CODEX_RESET_CREDITS_REQUEST_TIMEOUT_MS = 8000;
+const CODEX_OPTIONAL_REQUEST_TIMEOUT_MS = 8000;
 
 type CodexResetCreditsData = {
   availableCount: number | null;
@@ -281,6 +282,54 @@ const buildCodexRequestHeader = (file: AuthFileItem): Record<string, string> => 
   return requestHeader;
 };
 
+const parseCodexSubscriptionActiveUntil = (payload: unknown): string | number | null => {
+  if (typeof payload === 'string') {
+    const trimmed = payload.trim();
+    if (!trimmed) return null;
+    try {
+      return parseCodexSubscriptionActiveUntil(JSON.parse(trimmed));
+    } catch {
+      return null;
+    }
+  }
+
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return null;
+  const subscription = payload as Record<string, unknown>;
+  const value = subscription.active_until ?? subscription.activeUntil;
+  const numberValue = normalizeNumberValue(value);
+  if (numberValue !== null && numberValue !== 0) return numberValue;
+  const stringValue = normalizeStringValue(value);
+  return stringValue && stringValue !== '0' ? stringValue : null;
+};
+
+/**
+ * 订阅接口是可选增强：失败只回落到认证文件里的静态值，不影响额度加载。
+ * 账号 ID 缺失时无从查询，直接放弃。
+ */
+const fetchCodexSubscriptionActiveUntil = async (
+  authIndex: string,
+  accountId: string | null,
+  requestHeader: Record<string, string>
+): Promise<string | number | null> => {
+  if (!accountId) return null;
+
+  try {
+    const result = await apiCallApi.request(
+      {
+        authIndex,
+        method: 'GET',
+        url: `${CODEX_SUBSCRIPTION_URL}?account_id=${encodeURIComponent(accountId)}`,
+        header: requestHeader,
+      },
+      { timeout: CODEX_OPTIONAL_REQUEST_TIMEOUT_MS }
+    );
+    if (result.statusCode < 200 || result.statusCode >= 300) return null;
+    return parseCodexSubscriptionActiveUntil(result.body ?? result.bodyText);
+  } catch {
+    return null;
+  }
+};
+
 const fetchCodexResetCredits = async (
   authIndex: string,
   requestHeader: Record<string, string>,
@@ -299,7 +348,7 @@ const fetchCodexResetCredits = async (
           Originator: 'Codex Desktop',
         },
       },
-      { timeout: CODEX_RESET_CREDITS_REQUEST_TIMEOUT_MS }
+      { timeout: CODEX_OPTIONAL_REQUEST_TIMEOUT_MS }
     );
 
     if (result.statusCode < 200 || result.statusCode >= 300) {
@@ -345,15 +394,20 @@ const fetchCodexQuota = async (file: AuthFileItem, t: TFunction): Promise<CodexQ
   }
 
   const planTypeFromFile = resolveCodexPlanType(file);
-  const subscriptionActiveUntil = resolveCodexSubscriptionActiveUntil(file);
+  const subscriptionActiveUntilFromFile = resolveCodexSubscriptionActiveUntil(file);
+  const accountId = resolveCodexChatgptAccountId(file);
   const requestHeader = buildCodexRequestHeader(file);
 
-  const result = await apiCallApi.request({
-    authIndex,
-    method: 'GET',
-    url: CODEX_USAGE_URL,
-    header: requestHeader,
-  });
+  // 订阅接口与用量接口并行：前者失败不影响后者，只是续订日期退回静态值。
+  const [result, liveSubscriptionActiveUntil] = await Promise.all([
+    apiCallApi.request({
+      authIndex,
+      method: 'GET',
+      url: CODEX_USAGE_URL,
+      header: requestHeader,
+    }),
+    fetchCodexSubscriptionActiveUntil(authIndex, accountId, requestHeader),
+  ]);
 
   if (result.statusCode < 200 || result.statusCode >= 300) {
     throw createStatusError(getApiCallErrorMessage(result), result.statusCode);
@@ -379,6 +433,7 @@ const fetchCodexQuota = async (file: AuthFileItem, t: TFunction): Promise<CodexQ
     resetCreditsData.applicableAvailableCount ??
     rateLimitResetCreditsAvailableCount;
   const planType = planTypeFromUsage ?? planTypeFromFile;
+  const subscriptionActiveUntil = liveSubscriptionActiveUntil ?? subscriptionActiveUntilFromFile;
   const windows = buildCodexQuotaWindows(payload, t);
   return {
     planType,
