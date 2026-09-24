@@ -47,7 +47,9 @@ jobs:
         run: |
           set -euo pipefail
           current_tag="${GITHUB_REF_NAME}"
-          previous_tag="$(git tag --list 'v*' --sort=-v:refname | grep -v "^${current_tag}$" | head -n 1 || true)"
+          # 只取当前 tag 的祖先：仓库里若混入其它来源（如上上游）的同名或更高版本号 tag，
+          # 不加 --merged 会选错基准，把无关提交写进本次 release notes。
+          previous_tag="$(git tag --list 'v*' --merged "${current_tag}" --sort=-v:refname | grep -v "^${current_tag}$" | head -n 1 || true)"
           if [ -n "${previous_tag}" ]; then
             range="${previous_tag}..${current_tag}"
           else
