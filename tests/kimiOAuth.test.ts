@@ -6,7 +6,10 @@ import { createOAuthAttempts } from '@/pages/oauthAttempts';
 
 const LOCALES = ['en', 'zh-CN', 'zh-TW', 'ru'] as const;
 
-const OAuthPageSource = readFileSync(new URL('../src/pages/OAuthPage.tsx', import.meta.url), 'utf8');
+const OAuthPageSource = readFileSync(
+  new URL('../src/pages/OAuthPage.tsx', import.meta.url),
+  'utf8'
+);
 
 const messagesFor = (locale: (typeof LOCALES)[number]): Record<string, string> =>
   (
@@ -22,18 +25,18 @@ const messagesFor = (locale: (typeof LOCALES)[number]): Record<string, string> =
  * 刻意不覆盖推广/返利链接：本地 fork 不保留上游的注册引导入口。
  */
 describe('Kimi regional login', () => {
-  test('uses separate management endpoints and preserves cancellation', async () => {
+  test('uses separate provider parameters and preserves cancellation', async () => {
     const get = spyOn(apiClient, 'get').mockResolvedValue({ url: 'https://example.test' });
     const controller = new AbortController();
     try {
       await oauthApi.startAuth('kimi', controller.signal);
-      expect(get).toHaveBeenLastCalledWith('/kimi-auth-url', {
-        params: undefined,
+      expect(get).toHaveBeenLastCalledWith('/oauth/auth-url', {
+        params: { provider: 'kimi' },
         signal: controller.signal,
       });
       await oauthApi.startAuth('kimi-ai', controller.signal);
-      expect(get).toHaveBeenLastCalledWith('/kimi-ai-auth-url', {
-        params: undefined,
+      expect(get).toHaveBeenLastCalledWith('/oauth/auth-url', {
+        params: { provider: 'kimi-ai' },
         signal: controller.signal,
       });
     } finally {

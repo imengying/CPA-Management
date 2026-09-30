@@ -70,7 +70,7 @@ export interface AuthFileItem {
   failureCount?: number;
   recent_requests?: RecentRequestBucket[];
   recentRequests?: RecentRequestBucket[];
-  /** Absent on older servers. Never interpreted as credential health. */
+  /** Missing snapshots must never be interpreted as credential health. */
   cooldownSnapshot?: AuthFileCooldownSnapshot;
   [key: string]: unknown;
 }

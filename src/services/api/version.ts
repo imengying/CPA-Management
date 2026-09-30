@@ -53,7 +53,7 @@ const fetchGitHubJson = async <T>(repository: string, path: string): Promise<T> 
 };
 
 export const versionApi = {
-  checkLatest: () => apiClient.get<Record<string, unknown>>('/latest-version'),
+  checkLatest: () => apiClient.get<Record<string, unknown>>('/server/latest-version'),
   checkLatestApp: async (repository?: string | null) => {
     const normalizedRepository = normalizeGitHubRepository(repository);
 

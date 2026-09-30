@@ -71,7 +71,6 @@ export function AuthFilesOAuthModelAliasEditPage() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [initialLoadError, setInitialLoadError] = useState<string | null>(null);
   const [baselineReady, setBaselineReady] = useState(false);
-  const [modelAliasUnsupported, setModelAliasUnsupported] = useState(false);
   const loadRequestRef = useRef(0);
 
   const [mappings, setMappings] = useState<OAuthModelMappingFormEntry[]>([
@@ -79,7 +78,7 @@ export function AuthFilesOAuthModelAliasEditPage() {
   ]);
   const [modelsList, setModelsList] = useState<AuthFileModelItem[]>([]);
   const [modelsLoading, setModelsLoading] = useState(false);
-  const [modelsError, setModelsError] = useState<'unsupported' | null>(null);
+  const [modelsError, setModelsError] = useState<'unavailable' | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -149,8 +148,8 @@ export function AuthFilesOAuthModelAliasEditPage() {
     if (modelsLoading) {
       return t('oauth_model_alias.model_source_loading');
     }
-    if (modelsError === 'unsupported') {
-      return t('oauth_model_alias.model_source_unsupported');
+    if (modelsError === 'unavailable') {
+      return t('oauth_model_alias.model_source_unavailable');
     }
     return t('oauth_model_alias.model_source_loaded', { count: modelsList.length });
   }, [modelsError, modelsList.length, modelsLoading, provider, t]);
@@ -181,7 +180,6 @@ export function AuthFilesOAuthModelAliasEditPage() {
     setInitialLoading(true);
     setInitialLoadError(null);
     setBaselineReady(false);
-    setModelAliasUnsupported(false);
 
     try {
       const [filesResult, excludedResult, aliasResult] = await Promise.allSettled([
@@ -206,10 +204,6 @@ export function AuthFilesOAuthModelAliasEditPage() {
         return;
       }
 
-      if (getErrorStatus(aliasResult.reason) === 404) {
-        setModelAliasUnsupported(true);
-        return;
-      }
       setInitialLoadError(getErrorMessage(aliasResult.reason));
     } catch (err: unknown) {
       if (requestId === loadRequestRef.current) {
@@ -256,7 +250,7 @@ export function AuthFilesOAuthModelAliasEditPage() {
     queueMicrotask(() => {
       if (cancelled) return;
 
-      if (!resolvedProviderKey || modelAliasUnsupported) {
+      if (!resolvedProviderKey) {
         setModelsList([]);
         setModelsError(null);
         setModelsLoading(false);
@@ -276,8 +270,8 @@ export function AuthFilesOAuthModelAliasEditPage() {
           if (cancelled) return;
           const status = getErrorStatus(err);
           setModelsList([]);
+          setModelsError('unavailable');
           if (status === 400 || status === 404) {
-            setModelsError('unsupported');
             return;
           }
           const errorMessage = err instanceof Error ? err.message : t('common.unknown_error');
@@ -292,7 +286,7 @@ export function AuthFilesOAuthModelAliasEditPage() {
     return () => {
       cancelled = true;
     };
-  }, [modelAliasUnsupported, resolvedProviderKey, showNotification, t]);
+  }, [resolvedProviderKey, showNotification, t]);
 
   const applyProviderChange = useCallback(
     (value: string) => {
@@ -400,12 +394,7 @@ export function AuthFilesOAuthModelAliasEditPage() {
     }
   }, [allowNextNavigation, handleBack, isEditing, mappings, provider, showNotification, t]);
 
-  const canSave =
-    !disableControls &&
-    !saving &&
-    baselineReady &&
-    !modelAliasUnsupported &&
-    initialLoadError === null;
+  const canSave = !disableControls && !saving && baselineReady && initialLoadError === null;
 
   return (
     <div className={styles.page} ref={swipeRef}>
@@ -437,14 +426,7 @@ export function AuthFilesOAuthModelAliasEditPage() {
         </div>
       ) : (
         <div className={styles.pageContent}>
-          {modelAliasUnsupported ? (
-            <Card>
-              <EmptyState
-                title={t('oauth_model_alias.upgrade_required_title')}
-                description={t('oauth_model_alias.upgrade_required_desc')}
-              />
-            </Card>
-          ) : initialLoadError !== null ? (
+          {initialLoadError !== null ? (
             <Card>
               <EmptyState
                 title={t('notification.refresh_failed')}
@@ -497,7 +479,7 @@ export function AuthFilesOAuthModelAliasEditPage() {
                     variant="secondary"
                     size="sm"
                     onClick={addMappingEntry}
-                    disabled={disableControls || saving || modelAliasUnsupported}
+                    disabled={disableControls || saving}
                   >
                     <IconPlus size={14} aria-hidden="true" />
                     {t('oauth_model_alias.add_alias')}

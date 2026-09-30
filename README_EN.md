@@ -6,14 +6,16 @@ A single-file Web UI (React + TypeScript) for operating and troubleshooting the 
 
 **Main Project**: https://github.com/router-for-me/CLIProxyAPI<br>
 **Original WebUI Repository**: https://github.com/router-for-me/Cli-Proxy-API-Management-Center<br>
-**Supported Version**: CLIProxyAPI 7.2.147 or later
+**Supported Version**: CLIProxyAPI 8.0.0 or later
 
 After the service starts, access the Web UI via `/management.html` on the API port.
 
 ## What this is (and isn’t)
 
-- This repository is the Web UI only. It talks to the CLI Proxy API **Management API** (`/v0/management`) to read/update config, upload credentials, and view logs.
+- This repository is the Web UI only. It talks to the CLI Proxy API **Management API** (`/v8/management`) to read/update config, upload credentials, and view logs.
 - It is **not** a proxy and does not forward traffic.
+
+Back up the backend `config.yaml` and upgrade the backend to **8.0.0 or later** first. The v8 backend can read and normalize older config files; successful writes persist the v8 format. This UI no longer uses the legacy management API for operations.
 
 ## Quick start
 
@@ -56,7 +58,7 @@ You can enter any of the following; the UI will normalize it:
 - `localhost:8317`
 - `http://192.168.1.10:8317`
 - `https://example.com:8317`
-- `http://example.com:8317/v0/management` (also accepted; the suffix is removed internally)
+- `http://example.com:8317/v8/management` (also accepted; the suffix is removed internally)
 
 ### Management key (not the same as API keys)
 
@@ -64,25 +66,25 @@ The management key is sent with every request as:
 
 - `Authorization: Bearer <MANAGEMENT_KEY>` (default)
 
-This is different from the proxy `api-keys` managed in the Config Panel (those are for client requests to the proxy endpoints).
+This is different from the proxy `access.api-keys` managed in the Config Panel (those are for client requests to the proxy endpoints).
 
 ### Remote management
 
-If you connect from a non-localhost browser, the server must allow remote management (e.g. `allow-remote-management: true`).  
+If you connect from a non-localhost browser, the server must allow remote management (e.g. `management.allow-remote: true`).
 Check the CLI Proxy API server documentation/config comments for the full authentication rules, server-side limits, and edge cases.
 
 ## What you can manage (mapped to the UI pages)
 
 - **Dashboard**: connection status, server version/build date, quick counts, model availability snapshot.
-- **Config Panel**: visual editor for common `config.yaml` fields, basic settings, proxy `api-keys`, and source editing with YAML highlighting/search plus a save diff preview.
+- **Config Panel**: visual editor for common `config.yaml` fields, basic settings, proxy `access.api-keys`, and source editing with YAML highlighting/search plus a save diff preview.
 - **AI Providers**:
   - Gemini/Codex/Claude/Vertex key entries (base URL, headers, proxy, model aliases, excluded models, prefix).
-  - OpenAI-compatible providers (multiple API keys, custom headers, model alias import via `/v1/models`, optional browser-side "chat/completions" test).
+  - OpenAI-compatible providers (multiple API keys, custom headers, model alias import via `/v1/models`, backend connectivity tests with explicit proxy support).
 - **Auth Files**: upload/download/delete JSON credentials, filter/search/pagination, runtime-only indicators, view supported models per credential (when the server supports it), manage OAuth excluded models (supports `*` wildcards), configure OAuth model alias mappings.
 - **OAuth**: start OAuth/device flows for Codex, Anthropic/Claude, Antigravity, Kimi, and xAI/Grok; poll status; submit callback URLs or xAI/Grok displayed codes; import Vertex JSON credentials.
 - **Quota Management**: manage quota limits and usage for Claude, Antigravity, Codex, Kimi, xAI/Grok, and other providers.
-- **Logs**: tail logs with incremental polling, auto-refresh, search, hide management traffic, clear logs; download request error log files.
-- **System**: quick links, update check, request logging toggle, local login data cleanup, and fetch `/v1/models` (grouped view). Requires at least one proxy API key to query models.
+- **Logs**: cursor-based incremental polling, auto-refresh, search and structured filters, hide management traffic, line wrapping and fullscreen, clear logs; download request error log files.
+- **System**: quick links, update check, local login data cleanup, and fetch `/v1/models` (grouped view). Requires at least one proxy API key to query models.
 
 ## Tech Stack
 

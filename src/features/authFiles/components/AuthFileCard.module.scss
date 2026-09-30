@@ -21,6 +21,14 @@
   }
 }
 
+.cardDisabled {
+  background: color-mix(in srgb, var(--bg-primary) 55%, var(--bg-tertiary));
+}
+
+.cardDisabled > :not(.actions) {
+  opacity: 0.68;
+}
+
 .cardCompact {
   padding: 12px;
   gap: 10px;
@@ -29,18 +37,6 @@
 .cardSelected {
   border-color: color-mix(in srgb, var(--primary-color) 55%, var(--border-color));
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 28%, transparent);
-}
-
-.cardDisabled {
-  background: color-mix(in srgb, var(--bg-primary) 70%, var(--bg-secondary));
-
-  .head,
-  .fileName,
-  .note,
-  .health,
-  .metaRow {
-    opacity: 0.56;
-  }
 }
 
 .cardEnter {

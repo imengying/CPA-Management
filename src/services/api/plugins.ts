@@ -1,4 +1,5 @@
 import { apiClient } from './client';
+import { getConfigValue, guardConfigConnection } from './configValue';
 import { isRecord } from '@/utils/helpers';
 import {
   isManagementOAuthProviderKey,
@@ -280,7 +281,7 @@ export const pluginsApi = {
   },
 
   updateEnabled: (id: string, enabled: boolean) =>
-    apiClient.patch(`/plugins/${encodeURIComponent(id)}/enabled`, { enabled }),
+    apiClient.put(`/config/plugins/configs/${encodeURIComponent(id)}/enabled`, enabled),
 
   async deletePlugin(id: string): Promise<PluginDeleteResult> {
     const data = await apiClient.delete(`/plugins/${encodeURIComponent(id)}`);
@@ -288,17 +289,29 @@ export const pluginsApi = {
   },
 
   async getConfig(id: string): Promise<PluginConfigObject> {
-    const data = await apiClient.get(`/plugins/${encodeURIComponent(id)}/config`);
+    const data = await getConfigValue(`/config/plugins/configs/${encodeURIComponent(id)}`, {});
     return normalizePluginConfig(data);
   },
 
-  patchConfig: (id: string, patch: PluginConfigObject) =>
-    apiClient.patch(`/plugins/${encodeURIComponent(id)}/config`, patch),
+  async patchConfig(id: string, changes: PluginConfigObject) {
+    // Form fields are complete values: clearing removes a field and editing an
+    // object replaces that object. A v8 PATCH would instead retain nulls and
+    // recursively merge objects, so merge touched fields into the latest object
+    // and replace only this plugin instance (never the complete config tree).
+    const assertConnection = guardConfigConnection();
+    const next = { ...(await pluginsApi.getConfig(id)) };
+    assertConnection();
+    for (const [key, value] of Object.entries(changes)) {
+      if (value === null) delete next[key];
+      else next[key] = value;
+    }
+    return apiClient.put(`/config/plugins/configs/${encodeURIComponent(id)}`, next);
+  },
 };
 
 export const pluginStoreApi = {
   async list(): Promise<PluginStoreResponse> {
-    const data = await apiClient.get('/plugin-store');
+    const data = await apiClient.get('/plugins/store');
     return normalizeStoreList(data);
   },
 
@@ -306,7 +319,7 @@ export const pluginStoreApi = {
     id: string,
     options: PluginStoreInstallOptions = {}
   ): Promise<PluginStoreInstallResult> {
-    const path = `/plugin-store/${encodeURIComponent(id)}/install`;
+    const path = `/plugins/store/${encodeURIComponent(id)}/install`;
     const params = new URLSearchParams();
     const sourceId = options.sourceId?.trim();
     const version = options.version?.trim();

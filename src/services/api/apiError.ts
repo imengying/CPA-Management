@@ -7,7 +7,7 @@ export interface ParsedApiErrorResponse {
 
 const readString = (value: unknown): string => (typeof value === 'string' ? value.trim() : '');
 
-/** Parse current and legacy Management API error envelopes. */
+/** Parse structured and plain-text errors from Management API endpoints. */
 export const parseApiErrorResponse = (
   responseData: unknown,
   fallbackMessage: string

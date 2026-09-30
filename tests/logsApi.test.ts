@@ -1,58 +1,201 @@
-import { afterEach, describe, expect, test } from 'bun:test';
-import { apiClient } from '../src/services/api/client';
-import { logsApi } from '../src/services/api/logs';
-import { LOGS_TIMEOUT_MS } from '../src/utils/constants';
+import { describe, expect, spyOn, test } from 'bun:test';
+import { AxiosError, AxiosHeaders, type AxiosInstance } from 'axios';
+import { apiClient } from '@/services/api/client';
+import { logsApi, responseDataToText } from '@/services/api/logs';
+import type { ApiError } from '@/types';
+import { LOGS_TIMEOUT_MS } from '@/utils/constants';
 
-const originalGet = apiClient.get;
-
-afterEach(() => {
-  apiClient.get = originalGet;
-});
-
-describe('logs API', () => {
-  test('preserves cursor pagination and filters invalid log lines', async () => {
-    let request: unknown;
-    apiClient.get = (async (url: string, config?: unknown) => {
-      request = { url, config };
-      return {
-        lines: ['first', null, 42, 'second'],
-        'next-cursor': ' next-page ',
-        'cursor-reset': ' TRUE ',
-      };
-    }) as typeof apiClient.get;
-
-    expect(await logsApi.fetchLogs({ cursor: 'current-page', limit: 20 })).toEqual({
-      lines: ['first', 'second'],
-      nextCursor: 'next-page',
-      cursorReset: true,
+describe('logs domain response normalization', () => {
+  test('normalizes lines without altering opaque cursors', async () => {
+    const get = spyOn(apiClient, 'get').mockResolvedValue({
+      lines: [' first ', null, 2, ''],
+      'next-cursor': ' opaque cursor ',
+      'cursor-reset': 'TRUE',
     });
-    expect(request).toEqual({
-      url: '/logs',
-      config: {
-        params: { cursor: 'current-page', limit: 20 },
-        timeout: LOGS_TIMEOUT_MS,
-      },
-    });
-  });
-
-  test('returns an empty log list for malformed payloads', async () => {
-    for (const payload of [null, undefined, [], {}, { lines: 'invalid', 'next-cursor': 'bad' }]) {
-      apiClient.get = (async () => payload) as typeof apiClient.get;
+    try {
+      expect(await logsApi.fetchLogs()).toEqual({
+        lines: [' first ', ''],
+        nextCursor: ' opaque cursor ',
+        cursorReset: true,
+      });
+      get.mockResolvedValue({ lines: null });
       expect(await logsApi.fetchLogs()).toEqual({ lines: [] });
+      get.mockResolvedValue(null);
+      expect(await logsApi.fetchLogs()).toEqual({ lines: [] });
+    } finally {
+      get.mockRestore();
     }
   });
 
-  test('preserves empty responses without inventing a cursor or reset', async () => {
-    apiClient.get = (async () => ({
+  test('preserves explicit empty cursor on reset and forwards cursor queries and cancellation', async () => {
+    const get = spyOn(apiClient, 'get').mockResolvedValue({
       lines: [],
-      'next-cursor': ' ',
-      'cursor-reset': false,
-    })) as typeof apiClient.get;
-
-    expect(await logsApi.fetchLogs()).toEqual({
-      lines: [],
-      nextCursor: undefined,
-      cursorReset: false,
+      'next-cursor': '',
+      'cursor-reset': true,
     });
+    try {
+      const signal = new AbortController().signal;
+      const params = { cursor: 'previous', limit: 100 };
+      expect(await logsApi.fetchLogs(params, { signal })).toEqual({
+        lines: [],
+        nextCursor: '',
+        cursorReset: true,
+      });
+      expect(get).toHaveBeenCalledWith('/observability/logs', {
+        params,
+        signal,
+        timeout: LOGS_TIMEOUT_MS,
+      });
+    } finally {
+      get.mockRestore();
+    }
+  });
+
+  test('normalizes malformed error-file lists without changing filenames', async () => {
+    const get = spyOn(apiClient, 'get').mockResolvedValue({
+      files: [
+        null,
+        {},
+        { name: '' },
+        { name: 123 },
+        { name: ' file.log ', size: 0, modified: '123' },
+        { name: 'bad.log', size: -1, modified: 'invalid' },
+      ],
+    });
+    try {
+      expect(await logsApi.fetchErrorLogs()).toEqual({
+        files: [
+          { name: ' file.log ', size: 0, modified: 123 },
+          { name: 'bad.log', size: undefined, modified: undefined },
+        ],
+      });
+      for (const data of [null, {}, { files: 'invalid' }]) {
+        get.mockResolvedValue(data);
+        expect(await logsApi.fetchErrorLogs()).toEqual({ files: [] });
+      }
+    } finally {
+      get.mockRestore();
+    }
+  });
+});
+
+describe('log downloads', () => {
+  test('preserves raw successful downloads, encoded paths, timeout and signal', async () => {
+    const response = { data: new Blob(['{"error":"this is log content"}']) };
+    const raw = spyOn(apiClient, 'getRaw').mockResolvedValue(response as never);
+    try {
+      const signal = new AbortController().signal;
+      expect(await logsApi.downloadErrorLog('a/b #.log', { signal })).toBe(response);
+      expect(raw).toHaveBeenLastCalledWith('/observability/logs/errors/a%2Fb%20%23.log', {
+        signal,
+        responseType: 'blob',
+        timeout: LOGS_TIMEOUT_MS,
+      });
+      expect(await logsApi.downloadRequestLogById('a/b', { signal })).toBe(response);
+      expect(raw).toHaveBeenLastCalledWith('/observability/logs/requests/a%2Fb', {
+        signal,
+        responseType: 'blob',
+        timeout: LOGS_TIMEOUT_MS,
+      });
+    } finally {
+      raw.mockRestore();
+    }
+  });
+
+  test('decodes Blob JSON from the actual client interceptor and emits unauthorized exactly once', async () => {
+    const instance = (apiClient as unknown as { instance: AxiosInstance }).instance;
+    const adapter = instance.defaults.adapter;
+    const windowDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'window');
+    const events: string[] = [];
+    Object.defineProperty(globalThis, 'window', {
+      configurable: true,
+      value: { dispatchEvent: (event: Event) => events.push(event.type) },
+    });
+    const body = new Blob([JSON.stringify({ error: 'unauthorized', message: 'Key rejected' })], {
+      type: 'application/json',
+    });
+    instance.defaults.adapter = async (config) => {
+      throw new AxiosError(
+        'Request failed with status code 401',
+        'ERR_BAD_REQUEST',
+        config,
+        undefined,
+        { data: body, status: 401, statusText: 'Unauthorized', headers: new AxiosHeaders(), config }
+      );
+    };
+    try {
+      const error = await logsApi.downloadErrorLog('error.log').catch((err: ApiError) => err);
+      expect(error).toMatchObject({
+        name: 'ApiError',
+        message: 'Key rejected',
+        status: 401,
+        code: 'ERR_BAD_REQUEST',
+        apiCode: 'unauthorized',
+        data: body,
+        details: body,
+      });
+      expect('response' in error).toBe(false);
+      expect(events).toEqual(['unauthorized']);
+    } finally {
+      instance.defaults.adapter = adapter;
+      if (windowDescriptor) Object.defineProperty(globalThis, 'window', windowDescriptor);
+      else Reflect.deleteProperty(globalThis, 'window');
+    }
+  });
+
+  test('preserves error identity/status and supports details-only nested JSON errors', async () => {
+    const error = Object.assign(new Error('transport fallback'), {
+      status: 404,
+      code: 'ERR_BAD_REQUEST',
+      details: new Blob(['{"error":{"code":"not_found","message":"Log missing"}}']),
+    });
+    const raw = spyOn(apiClient, 'getRaw').mockRejectedValue(error);
+    try {
+      await expect(logsApi.downloadRequestLogById('missing')).rejects.toBe(error);
+      expect(error).toMatchObject({
+        message: 'Log missing',
+        apiCode: 'not_found',
+        status: 404,
+        code: 'ERR_BAD_REQUEST',
+      });
+    } finally {
+      raw.mockRestore();
+    }
+  });
+
+  test('does not mask cancellation, network errors or unreadable/non-JSON failure bodies', async () => {
+    const unreadable = new Blob(['ignored']);
+    unreadable.text = async () => {
+      throw new Error('read failed');
+    };
+    const raw = spyOn(apiClient, 'getRaw');
+    try {
+      for (const data of [
+        undefined,
+        new Blob(['<html>Bad gateway</html>']),
+        new Blob(['']),
+        unreadable,
+      ]) {
+        const error = Object.assign(new Error('original'), { status: 502, data });
+        raw.mockRejectedValue(error);
+        await expect(logsApi.downloadErrorLog('x')).rejects.toBe(error);
+        expect(error.message).toBe('original');
+      }
+      const canceled = Object.assign(new Error('canceled'), { code: 'ERR_CANCELED' });
+      raw.mockRejectedValue(canceled);
+      await expect(logsApi.downloadErrorLog('x')).rejects.toBe(canceled);
+    } finally {
+      raw.mockRestore();
+    }
+  });
+
+  test('decodes reusable text, Blob and binary bodies', async () => {
+    const bytes = new TextEncoder().encode('日志');
+    for (const body of ['日志', new Blob([bytes]), bytes.buffer, bytes]) {
+      expect(await responseDataToText(body)).toBe('日志');
+    }
+    expect(await responseDataToText(null)).toBe('');
+    expect(await responseDataToText(undefined)).toBe('');
+    expect(await responseDataToText({ message: 'ok' })).toBe('{\n  "message": "ok"\n}');
   });
 });

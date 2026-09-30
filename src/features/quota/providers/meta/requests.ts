@@ -3,7 +3,7 @@ import type { ApiCallRequest, ApiCallResult } from '@/services/api/apiCall';
 import { parseMetaQuotaPayload } from '@/services/api/metaQuota';
 import { normalizeAuthIndex } from '@/utils/authIndex';
 
-export const META_MUSE_QUOTA_URL = 'https://api.meta.ai/muse-code/key';
+const META_MUSE_QUOTA_URL = 'https://api.meta.ai/muse-code/key';
 
 export type MetaQuotaErrorCode =
   | 'missing_auth_index'

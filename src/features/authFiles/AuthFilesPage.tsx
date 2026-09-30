@@ -1,11 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ChangeEvent,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { usePageTransitionLayer } from '@/components/common/PageTransitionLayer';
@@ -92,13 +85,11 @@ const readInitialState = (): AuthFilesPageInitialState => {
         : 1,
     pageSizeByMode: {
       regular:
-        typeof persisted?.regularPageSize === 'number' &&
-        Number.isFinite(persisted.regularPageSize)
+        typeof persisted?.regularPageSize === 'number' && Number.isFinite(persisted.regularPageSize)
           ? clampCardPageSize(persisted.regularPageSize)
           : DEFAULT_REGULAR_PAGE_SIZE,
       compact:
-        typeof persisted?.compactPageSize === 'number' &&
-        Number.isFinite(persisted.compactPageSize)
+        typeof persisted?.compactPageSize === 'number' && Number.isFinite(persisted.compactPageSize)
           ? clampCardPageSize(persisted.compactPageSize)
           : DEFAULT_COMPACT_PAGE_SIZE,
     },
@@ -161,6 +152,7 @@ export function AuthFilesPage() {
     deletingAll,
     statusUpdating,
     manualRefreshing,
+    cooldownResetting,
     batchStatusUpdating,
     fileInputRef,
     loadFiles,
@@ -170,6 +162,7 @@ export function AuthFilesPage() {
     handleDeleteAll,
     handleDownload,
     handleManualRefresh,
+    handleCooldownReset,
     handleStatusToggle,
     toggleSelect,
     selectAllVisible,
@@ -382,15 +375,11 @@ export function AuthFilesPage() {
     batchStatusUpdating ||
     selectedHasStatusUpdating;
 
-  const activeCount = useMemo(
-    () => files.filter((file) => file.disabled !== true).length,
-    [files]
-  );
+  const activeCount = useMemo(() => files.filter((file) => file.disabled !== true).length, [files]);
   const problemCount = useMemo(() => files.filter(isProblemAuthFile).length, [files]);
 
   const [cardsAnimated, setCardsAnimated] = useState(false);
-  const enableCardEntrance =
-    !cardsAnimated && isCurrentLayer && !loading && pageItems.length > 0;
+  const enableCardEntrance = !cardsAnimated && isCurrentLayer && !loading && pageItems.length > 0;
   useEffect(() => {
     if (enableCardEntrance) setCardsAnimated(true);
   }, [enableCardEntrance]);
@@ -558,7 +547,11 @@ export function AuthFilesPage() {
             description={t('auth_files.empty_desc')}
             action={
               <div className={styles.emptyActions}>
-                <Button size="sm" onClick={handleUploadClick} disabled={disableControls || uploading}>
+                <Button
+                  size="sm"
+                  onClick={handleUploadClick}
+                  disabled={disableControls || uploading}
+                >
                   {t('auth_files.upload_button')}
                 </Button>
                 <Button variant="ghost" size="sm" onClick={() => navigate('/oauth')}>
@@ -590,12 +583,14 @@ export function AuthFilesPage() {
                 deleting={deleting}
                 statusUpdating={statusUpdating}
                 manualRefreshing={manualRefreshing}
+                cooldownResetting={cooldownResetting}
                 quotaFilterType={activeQuotaFilter}
                 statusBarCache={statusBarCache}
                 entranceDelayMs={cardEntranceDelay(index)}
                 onShowModels={showModels}
                 onDownload={handleDownload}
                 onManualRefresh={handleManualRefresh}
+                onCooldownReset={handleCooldownReset}
                 onOpenPrefixProxyEditor={openPrefixProxyEditor}
                 onDelete={handleDelete}
                 onToggleStatus={handleStatusToggle}

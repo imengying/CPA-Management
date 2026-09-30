@@ -1,6 +1,8 @@
 import { describe, expect, test } from 'bun:test';
 import { parseApiErrorResponse } from '../src/services/api/apiError';
 import { getErrorStatus } from '../src/utils/helpers';
+import { resolveQuotaErrorMessage } from '../src/utils/quota/errors';
+import i18n from '../src/i18n';
 
 describe('Management API error parsing', () => {
   test('prefers the human-readable message and preserves the API error code', () => {
@@ -18,7 +20,7 @@ describe('Management API error parsing', () => {
     });
   });
 
-  test('falls back to a string error used by legacy endpoints', () => {
+  test('falls back to an endpoint string error', () => {
     expect(parseApiErrorResponse({ error: 'invalid body' }, 'Bad Request')).toEqual({
       message: 'invalid body',
       apiCode: 'invalid body',
@@ -61,5 +63,24 @@ describe('API error status parsing', () => {
     expect(getErrorStatus(null)).toBeUndefined();
     expect(getErrorStatus({ status: '' })).toBeUndefined();
     expect(getErrorStatus({ status: 'not-a-status' })).toBeUndefined();
+  });
+});
+
+describe('quota error messages', () => {
+  const t = i18n.getFixedT('en');
+
+  test('preserves 404 details instead of treating them as an old backend', () => {
+    expect(resolveQuotaErrorMessage(t, 404, 'Quota resource not found')).toBe(
+      'Quota resource not found'
+    );
+  });
+
+  test('keeps the credential hint for denied requests', () => {
+    expect(resolveQuotaErrorMessage(t, 403, 'Forbidden')).toBe(t('common.quota_check_credential'));
+  });
+
+  test('preserves network and server failures', () => {
+    expect(resolveQuotaErrorMessage(t, undefined, 'Network Error')).toBe('Network Error');
+    expect(resolveQuotaErrorMessage(t, 500, 'Provider unavailable')).toBe('Provider unavailable');
   });
 });

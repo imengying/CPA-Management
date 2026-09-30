@@ -34,7 +34,7 @@ describe('provider thinking levels', () => {
 
   test('serializes thinking for common and Vertex provider model payloads', async () => {
     const writes: Array<{ url: string; data: unknown }> = [];
-    apiClient.get = (async () => ({})) as typeof apiClient.get;
+    apiClient.get = (async () => ({ 'api-keys': {} })) as typeof apiClient.get;
     apiClient.put = (async (url: string, data?: unknown) => {
       writes.push({ url, data });
       return undefined;
@@ -52,20 +52,30 @@ describe('provider thinking levels', () => {
 
     expect(writes).toEqual([
       {
-        url: '/interactions-api-key',
+        url: '/config/api-keys/interactions',
         data: [
           {
-            'api-key': 'interactions-key',
-            models: [{ name: 'gemini-3.1-flash-lite', thinking }],
+            name: 'interactions-1',
+            keys: [
+              {
+                'api-key': 'interactions-key',
+                models: [{ name: 'gemini-3.1-flash-lite', thinking }],
+              },
+            ],
           },
         ],
       },
       {
-        url: '/vertex-api-key',
+        url: '/config/api-keys/vertex',
         data: [
           {
-            'api-key': 'vertex-key',
-            models: [{ name: 'gemini-3.1-pro', alias: 'pro', thinking }],
+            name: 'vertex-1',
+            keys: [
+              {
+                'api-key': 'vertex-key',
+                models: [{ name: 'gemini-3.1-pro', alias: 'pro', thinking }],
+              },
+            ],
           },
         ],
       },

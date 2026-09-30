@@ -811,6 +811,7 @@
 
   &.content-logs {
     overflow: hidden;
+    scrollbar-gutter: auto;
   }
 
   &.content-plugin-resource {
@@ -1044,9 +1045,9 @@
     overflow-y: auto;
 
     &.content-logs {
-      overflow: visible;
-      overflow-y: auto;
-      height: auto;
+      height: 100dvh;
+      min-height: 0;
+      overflow: hidden;
     }
 
     &.content-plugin-resource {
@@ -1069,12 +1070,6 @@
       min-height: 0;
       padding: var(--header-height) 0 0;
       overflow: hidden;
-    }
-
-    &.main-content-logs {
-      flex: 0 0 auto;
-      min-height: auto;
-      overflow: visible;
     }
   }
 }

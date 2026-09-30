@@ -9,11 +9,10 @@ import { useAuthStore, useNotificationStore, useThemeStore } from '@/stores';
 import { oauthApi, pluginsApi, type BuiltInOAuthProvider } from '@/services/api';
 import { vertexApi, type VertexImportResponse } from '@/services/api/vertex';
 import { copyToClipboard } from '@/utils/clipboard';
-import { getErrorMessage, getErrorStatus } from '@/utils/helpers';
+import { getErrorMessage } from '@/utils/helpers';
 import { getPluginTitle, resolvePluginAssetURL } from '@/features/plugins/pluginResources';
 import type { PluginListEntry } from '@/types';
 import { createOAuthAttempts, type OAuthAttempt } from './oauthAttempts';
-import { notifyAuthFilesChanged } from '@/features/authFiles/authFilesEvents';
 import { validateDevinCallback } from './devinOAuth';
 import styles from './OAuthPage.module.scss';
 import iconMeta from '@/assets/icons/meta.svg';
@@ -372,7 +371,6 @@ export function OAuthPage() {
 
   const completeProviderAuth = (provider: string) => {
     const resetAttempt = attempts.current.begin(provider);
-    notifyAuthFilesChanged();
     updateProviderState(provider, {
       url: undefined,
       state: undefined,
@@ -580,14 +578,7 @@ export function OAuthPage() {
       showNotification(t('auth_login.oauth_callback_success'), 'success');
     } catch (err: unknown) {
       if (!attempt.isCurrent()) return;
-      const status = getErrorStatus(err);
-      const message = getErrorMessage(err);
-      const errorMessage =
-        status === 404
-          ? t('auth_login.oauth_callback_upgrade_hint', {
-              defaultValue: 'Please update CLI Proxy API or check the connection.',
-            })
-          : message || undefined;
+      const errorMessage = getErrorMessage(err) || undefined;
       updateProviderState(provider, {
         callbackSubmitting: false,
         callbackStatus: 'error',
@@ -695,9 +686,7 @@ export function OAuthPage() {
         }
       >
         <div className={styles.cardContent}>
-          <div className={styles.cardHint}>
-            {getProviderText(provider, 'oauth_hint')}
-          </div>
+          <div className={styles.cardHint}>{getProviderText(provider, 'oauth_hint')}</div>
           {state.url && (
             <div className={styles.authUrlBox}>
               <div className={styles.authUrlLabel}>

@@ -85,6 +85,7 @@ export const useAuthStore = create<AuthStoreState>()(
             serverBuildDate: null,
             supportsPlugin: false,
           });
+          useConfigStore.getState().clearCache();
           useModelsStore.getState().clearCache();
           useQuotaStore.getState().clearQuotaCache();
 
@@ -94,7 +95,7 @@ export const useAuthStore = create<AuthStoreState>()(
             managementKey,
           });
 
-          // 测试连接 - 获取配置
+          // 使用 v8 配置接口验证连接。
           await useConfigStore.getState().fetchConfig(true);
 
           // 登录成功
@@ -114,6 +115,7 @@ export const useAuthStore = create<AuthStoreState>()(
       // 登出
       logout: () => {
         restoreSessionPromise = null;
+        apiClient.setConfig({ apiBase: '', managementKey: '' });
         useConfigStore.getState().clearCache();
         useModelsStore.getState().clearCache();
         useQuotaStore.getState().clearQuotaCache();

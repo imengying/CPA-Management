@@ -53,12 +53,14 @@ export type AuthFileCardProps = {
   deleting: string | null;
   statusUpdating: Record<string, boolean>;
   manualRefreshing: Record<string, boolean>;
+  cooldownResetting: Record<string, boolean>;
   quotaFilterType: AuthFileQuotaFilter;
   statusBarCache: Map<string, AuthFileStatusBarData>;
   entranceDelayMs?: number | null;
   onShowModels: (file: AuthFileItem) => void;
   onDownload: (name: string) => void;
   onManualRefresh: (file: AuthFileItem) => void;
+  onCooldownReset: (file: AuthFileItem) => void;
   onOpenPrefixProxyEditor: (file: AuthFileItem) => void;
   onDelete: (name: string) => void;
   onToggleStatus: (file: AuthFileItem, enabled: boolean) => void;
@@ -75,12 +77,14 @@ export function AuthFileCard(props: AuthFileCardProps) {
     deleting,
     statusUpdating,
     manualRefreshing,
+    cooldownResetting,
     quotaFilterType,
     statusBarCache,
     entranceDelayMs,
     onShowModels,
     onDownload,
     onManualRefresh,
+    onCooldownReset,
     onOpenPrefixProxyEditor,
     onDelete,
     onToggleStatus,
@@ -106,13 +110,14 @@ export function AuthFileCard(props: AuthFileCardProps) {
   const successCount = file.successCount ?? normalizeUsageTotal(file.success);
   const failureCount = file.failureCount ?? normalizeUsageTotal(file.failed);
   const authIndexKey = normalizeRecentRequestAuthIndex(file['auth_index'] ?? file.authIndex);
+  const isCooldownResetting = Boolean(authIndexKey && cooldownResetting[authIndexKey]);
   const statusData =
     (authIndexKey && statusBarCache.get(authIndexKey)) ||
     statusBarDataFromRecentRequests(recentBuckets);
   const statusMessage = getAuthFileStatusMessage(file);
   const hasStatusWarning = hasAuthFileStatusWarning(file);
-  const priorityValue = parsePriorityValue(file.priority ?? file['priority']);
-  const weightValue = parsePriorityValue(file.weight ?? file['weight']);
+  const priorityValue = parsePriorityValue(file.priority);
+  const weightValue = parsePriorityValue(file.weight);
   const noteValue = typeof file.note === 'string' ? file.note.trim() : '';
   const identity = deriveAuthFileIdentity(file);
 
@@ -226,7 +231,12 @@ export function AuthFileCard(props: AuthFileCardProps) {
         </div>
       )}
 
-      <AuthFileCooldownSection snapshot={file.cooldownSnapshot} />
+      <AuthFileCooldownSection
+        snapshot={file.cooldownSnapshot}
+        resetting={isCooldownResetting}
+        resetDisabled={disableControls || statusUpdating[file.name] === true || isManualRefreshing}
+        onReset={authIndexKey ? () => onCooldownReset(file) : undefined}
+      />
 
       <div className={styles.health}>
         <div className={styles.healthHead}>

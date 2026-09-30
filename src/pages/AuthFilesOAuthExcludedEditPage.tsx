@@ -48,14 +48,13 @@ export function AuthFilesOAuthExcludedEditPage() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [initialLoadError, setInitialLoadError] = useState<string | null>(null);
   const [baselineReady, setBaselineReady] = useState(false);
-  const [excludedUnsupported, setExcludedUnsupported] = useState(false);
   const loadRequestRef = useRef(0);
   const modelsRequestRef = useRef(0);
 
   const [selectedModels, setSelectedModels] = useState<Set<string>>(new Set());
   const [modelsList, setModelsList] = useState<AuthFileModelItem[]>([]);
   const [modelsLoading, setModelsLoading] = useState(false);
-  const [modelsError, setModelsError] = useState<'unsupported' | 'error' | null>(null);
+  const [modelsError, setModelsError] = useState<'unavailable' | 'error' | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -106,7 +105,7 @@ export function AuthFilesOAuthExcludedEditPage() {
   );
   const catalogState: ExcludedModelsCatalogState = modelsLoading
     ? 'loading'
-    : modelsError === 'unsupported'
+    : modelsError === 'unavailable'
       ? 'unavailable'
       : modelsError === 'error'
         ? 'error'
@@ -164,7 +163,6 @@ export function AuthFilesOAuthExcludedEditPage() {
     setInitialLoading(true);
     setInitialLoadError(null);
     setBaselineReady(false);
-    setExcludedUnsupported(false);
 
     try {
       const [filesResult, excludedResult, aliasResult] = await Promise.allSettled([
@@ -189,10 +187,6 @@ export function AuthFilesOAuthExcludedEditPage() {
         return;
       }
 
-      if (getErrorStatus(excludedResult.reason) === 404) {
-        setExcludedUnsupported(true);
-        return;
-      }
       setInitialLoadError(getErrorMessage(excludedResult.reason));
     } catch (err: unknown) {
       if (requestId === loadRequestRef.current) {
@@ -237,7 +231,7 @@ export function AuthFilesOAuthExcludedEditPage() {
     async (providerKey: string) => {
       const requestId = ++modelsRequestRef.current;
 
-      if (!providerKey || excludedUnsupported) {
+      if (!providerKey) {
         setModelsList([]);
         setModelsError(null);
         setModelsLoading(false);
@@ -256,7 +250,7 @@ export function AuthFilesOAuthExcludedEditPage() {
         if (requestId !== modelsRequestRef.current) return;
         const status = getErrorStatus(err);
         if (status === 400 || status === 404) {
-          setModelsError('unsupported');
+          setModelsError('unavailable');
           return;
         }
         setModelsError('error');
@@ -270,7 +264,7 @@ export function AuthFilesOAuthExcludedEditPage() {
         }
       }
     },
-    [excludedUnsupported, showNotification, t]
+    [showNotification, t]
   );
 
   useEffect(() => {
@@ -344,12 +338,7 @@ export function AuthFilesOAuthExcludedEditPage() {
     }
   }, [allowNextNavigation, effectiveRules, handleBack, isEditing, provider, showNotification, t]);
 
-  const canSave =
-    !disableControls &&
-    !saving &&
-    baselineReady &&
-    !excludedUnsupported &&
-    initialLoadError === null;
+  const canSave = !disableControls && !saving && baselineReady && initialLoadError === null;
 
   return (
     <div className={styles.page} ref={swipeRef}>
@@ -381,14 +370,7 @@ export function AuthFilesOAuthExcludedEditPage() {
         </div>
       ) : (
         <div className={styles.pageContent}>
-          {excludedUnsupported ? (
-            <Card>
-              <EmptyState
-                title={t('oauth_excluded.upgrade_required_title')}
-                description={t('oauth_excluded.upgrade_required_desc')}
-              />
-            </Card>
-          ) : initialLoadError !== null ? (
+          {initialLoadError !== null ? (
             <Card>
               <EmptyState
                 title={t('notification.refresh_failed')}

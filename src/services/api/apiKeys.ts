@@ -1,13 +1,11 @@
-/**
- * API 密钥管理
- */
+/** Client access keys are a direct config list, not upstream provider groups. */
+import { getConfigValue } from './configValue';
 
-import { apiClient } from './client';
+const PATH = '/config/access/api-keys';
 
 export const apiKeysApi = {
   async list(): Promise<string[]> {
-    const data = await apiClient.get<Record<string, unknown>>('/api-keys');
-    const keys = data['api-keys'];
-    return Array.isArray(keys) ? keys.map((key) => String(key)) : [];
+    const data = await getConfigValue<unknown>(PATH, []);
+    return Array.isArray(data) ? data.map((key) => String(key)) : [];
   },
 };

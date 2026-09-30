@@ -38,7 +38,6 @@
     "alias": "別名",
     "failure": "失敗",
     "unknown_error": "未知錯誤",
-    "quota_update_required": "請更新 CPA 版本或檢查更新",
     "quota_check_credential": "請檢查憑證狀態",
     "copy": "複製",
     "expand": "展開",
@@ -64,7 +63,7 @@
     "subtitle": "管理中心"
   },
   "login": {
-    "subtitle": "請輸入連線資訊以存取管理介面",
+    "subtitle": "連線至 CLI Proxy API v8 或更新版本",
     "connection_title": "連線位址",
     "connection_current": "目前位址",
     "connection_auto_hint": "系統將自動使用目前存取位址進行連線",
@@ -86,7 +85,7 @@
     "error_timeout": "連線逾時，伺服器無回應",
     "error_unauthorized": "驗證失敗，管理金鑰缺失或無效",
     "error_forbidden": "存取被拒絕，遠端管理未啟用、管理金鑰未設定或 IP 被暫時封鎖",
-    "error_not_found": "找不到 Management API，請確認服務位址指向 CLIProxyAPI 後端",
+    "error_not_found": "找不到 v8 管理介面，請檢查服務位址，並確認 CLIProxyAPI 版本為 8.0.0 或以上。",
     "error_server": "後端處理管理介面時發生錯誤，請查看服務日誌",
     "error_cors": "跨域請求被阻擋，請檢查伺服器設定",
     "error_ssl": "SSL/TLS 憑證驗證失敗",
@@ -392,7 +391,13 @@
     "quota_refresh_failed": "重新整理「{{name}}」的配額失敗：{{message}}",
     "delete_title": "刪除檔案",
     "delete_all_title": "刪除全部檔案",
-    "weight_tooltip": "預設值為 1；小於或等於 0 時不參與加權調度；最大值為 1,000,000。填入後開啟加權輪詢設定即可生效。"
+    "weight_tooltip": "預設值為 1；小於或等於 0 時不參與加權調度；最大值為 1,000,000。填入後開啟加權輪詢設定即可生效。",
+    "cooldown_reset_button": "清除冷卻",
+    "cooldown_reset_hint": "清除此憑證的本機路由冷卻狀態",
+    "cooldown_reset_title": "清除憑證冷卻？",
+    "cooldown_reset_confirm": "確定清除「{{name}}」的本機路由冷卻狀態嗎？清除後此憑證可能立即再次參與請求，但不會恢復上游額度。",
+    "cooldown_reset_success": "已清除 {{name}} 的冷卻狀態。",
+    "cooldown_reset_failed": "無法清除 {{name}} 的冷卻狀態：{{message}}"
   },
   "antigravity_subscription": {
     "subscription_label": "訂閱",
@@ -643,9 +648,6 @@
     "scope_all": "目前範圍：全域（顯示所有供應商）",
     "scope_provider": "目前範圍：{{provider}}",
     "delete_title": "刪除模型停用",
-    "upgrade_required": "目前 CPA 版本不支援 OAuth 模型停用，請升級 CPA 版本",
-    "upgrade_required_title": "需要升級 CPA 版本",
-    "upgrade_required_desc": "目前伺服器版本不支援取得 OAuth 模型停用功能，請升級到最新版本的 CPA（CLI Proxy API）後重試。",
     "editor_description": "為供應商設定不對外顯示的模型，支援精確選取和萬用字元規則。",
     "models_hint": "展開清單選取模型，或在下方輸入萬用字元規則。"
   },
@@ -740,9 +742,7 @@
     "view_mode_list": "管理",
     "provider_required": "請先填寫供應商名稱",
     "delete_title": "刪除模型別名",
-    "upgrade_required_title": "需要升級 CPA 版本",
-    "upgrade_required_desc": "目前伺服器版本不支援 OAuth 模型別名功能，請升級到最新版本的 CPA（CLI Proxy API）後重試。",
-    "model_source_unsupported": "目前 CPA 版本不支援取得模型清單（仍可手動輸入）。",
+    "model_source_unavailable": "暫時無法取得此提供商的模型清單，仍可手動輸入。",
     "editor_description": "為供應商的模型設定呼叫別名，統一用戶端使用的模型名稱。",
     "edit_title": "編輯 {{provider}} 的模型別名",
     "mapping_hint": "選取原模型，並填寫用戶端使用的別名。",
@@ -758,7 +758,7 @@
     "devin_oauth_retry_hint": "伺服器可能仍在等待授權。請先取消本次登入，再重新開始。",
     "devin_oauth_title": "Devin OAuth",
     "devin_oauth_button": "開始 Devin 登入",
-    "devin_oauth_hint": "透過瀏覽器 OAuth 登入 Devin / Cognition，自動儲存認證檔案。需要 CLI Proxy API v7.3.1 或更新版本，請在五分鐘內完成授權。",
+    "devin_oauth_hint": "透過瀏覽器 OAuth 登入 Devin / Cognition，自動儲存認證檔案。請在五分鐘內完成授權。",
     "devin_oauth_url_label": "授權連結：",
     "devin_copy_link": "複製連結",
     "devin_open_link": "開啟連結",
@@ -862,7 +862,6 @@
     "oauth_callback_required": "請先貼上完整的回調 URL。",
     "oauth_callback_success": "回調 URL 已提交，請繼續等待驗證。",
     "oauth_callback_error": "提交回調 URL 失敗:",
-    "oauth_callback_upgrade_hint": "請更新 CLI Proxy API 或檢查連線",
     "oauth_callback_status_success": "回調 URL 已提交，等待驗證中...",
     "oauth_callback_status_error": "回調 URL 提交失敗:",
     "missing_state": "無法取得驗證狀態參數",
@@ -891,10 +890,10 @@
     "no_requests": "無請求"
   },
   "logs": {
+    "fullscreen_button": "全螢幕顯示",
+    "exit_fullscreen_button": "退出全螢幕",
     "refresh_button": "重新整理記錄",
     "clear_button": "清空記錄",
-    "download_button": "下載記錄",
-    "error_log_button": "選擇錯誤記錄",
     "error_logs_modal_title": "錯誤請求記錄",
     "error_logs_description": "請選擇要開啟或下載的錯誤請求記錄檔案（僅在關閉請求記錄時產生）。",
     "error_logs_request_log_enabled": "目前已開啟請求記錄，按介面約定錯誤請求記錄清單會始終為空。關閉請求記錄後再重新整理即可查看。",
@@ -909,8 +908,6 @@
     "error_log_empty_content": "此錯誤記錄沒有內容",
     "error_log_copy_success": "錯誤記錄內容已複製",
     "error_log_download_success": "錯誤記錄下載成功",
-    "request_log_download_title": "下載封包",
-    "request_log_download_confirm": "是否要下載 id 為 {{id}} 的封包？",
     "request_log_download_success": "封包下載成功",
     "empty_title": "暫無記錄",
     "empty_desc": "當啟用「記錄到檔案」功能後，記錄將顯示在這裡",
@@ -923,13 +920,8 @@
     "log_content": "記錄內容",
     "loading": "正在載入記錄...",
     "load_error": "載入記錄失敗",
-    "clear_confirm": "確定要清空所有記錄嗎？此操作無法還原！",
     "clear_success": "記錄已清空",
     "download_success": "記錄下載成功",
-    "auto_refresh": "自動重新整理",
-    "auto_refresh_enabled": "自動重新整理已開啟",
-    "auto_refresh_disabled": "自動重新整理已關閉",
-    "load_more_hint": "向上滾動載入更多",
     "hidden_lines": "已隱藏 {{count}} 行",
     "loaded_lines": "已載入 {{count}} 行",
     "filtered_lines": "已篩選 {{count}} 行",
@@ -937,9 +929,7 @@
     "show_raw_logs": "顯示原始記錄",
     "show_raw_logs_hint": "直接顯示原始記錄文字，方便多行複製",
     "search_placeholder": "搜尋記錄內容或關鍵字",
-    "filter_panel_title": "結構化篩選",
-    "filter_panel_expand": "展開結構化篩選",
-    "filter_panel_collapse": "收起結構化篩選",
+    "filter_panel_title": "篩選與顯示",
     "filter_panel_active_count": "已選 {{count}} 項",
     "filter_method": "請求方法",
     "filter_status": "狀態碼",
@@ -955,11 +945,27 @@
     "double_click_copy_hint": "雙擊複製記錄原文",
     "copy_success": "已複製記錄原文",
     "copy_failed": "複製失敗",
-    "lines": "行",
-    "removed": "已篩選",
-    "upgrade_required_title": "需要升級 CLI Proxy API",
-    "upgrade_required_desc": "目前伺服器版本不支援記錄檢視功能，請升級到最新版本的 CLI Proxy API 以使用此功能。",
-    "clear_confirm_title": "清空記錄"
+    "clear_confirm_title": "清空記錄",
+    "preview_too_large": "封包超過 2 MiB 預覽限制，請下載查看",
+    "read_status_live": "持續讀取",
+    "read_status_paused": "讀取已暫停",
+    "read_status_catching_up": "正在追趕積壓記錄",
+    "last_updated": "最後成功更新：{{time}}",
+    "buffer_scope": "僅搜尋已載入記錄：快取 {{count}} 行，符合 {{matched}} 行",
+    "cursor_reset_notice": "記錄已輪替或重設，已重新載入最新內容",
+    "history_evicted": "閱讀位置已移出快取，請重新定位",
+    "resume_following": "回到最新 · 新增 {{count}} 行",
+    "level_filter": "記錄等級",
+    "all_levels": "全部等級",
+    "view_request": "查看請求 {{id}} 的封包",
+    "copy_line": "複製此行",
+    "request_log_missing": "未找到封包：可能未記錄或已被清理。關閉請求記錄時通常僅保留錯誤封包。",
+    "download_cached": "下載已快取記錄",
+    "clear_application_confirm": "清空伺服器上的應用程式記錄？請求封包檔案不會被刪除，此操作無法復原。",
+    "clear_search": "清除搜尋",
+    "reading_enabled": "持續讀取",
+    "filter_load_more": "展開更多符合的記錄",
+    "wrap_lines": "長日誌自動換行"
   },
   "config_management": {
     "title": "設定面板",
@@ -1061,7 +1067,7 @@
           "panel_repo": "面板儲存庫"
         },
         "auth": {
-          "auth_dir": "驗證檔案目錄（auth-dir）",
+          "auth_dir": "OAuth 驗證檔案目錄（oauth.auth-dir）",
           "auth_dir_hint": "存放驗證檔案的目錄路徑（支援 ~）"
         },
         "system": {
@@ -1110,12 +1116,12 @@
           "redis_usage_retention_hint": "RESP 介面 LPOP/RPOP 用量佇列的記憶體保留時間，最大 3600 秒",
           "antigravity_sensitive_words": "敏感詞混淆",
           "antigravity_sensitive_words_desc": "在 Antigravity 系統提示詞的匹配項中插入零寬字元，降低上游精確關鍵詞匹配",
-          "antigravity_sensitive_words_label": "敏感詞（antigravity.sensitive-words）",
+          "antigravity_sensitive_words_label": "OAuth 敏感詞（oauth.providers.antigravity.sensitive-words）",
           "antigravity_sensitive_words_placeholder": "proxy",
           "antigravity_sensitive_words_hint": "每項填寫一個詞或短語；匹配不分大小寫，儲存時移除空項，少於 2 個字元的項目會被後端忽略",
           "devin_sensitive_words": "Devin 系統提示詞敏感詞",
           "devin_sensitive_words_desc": "僅處理 Devin 系統提示詞：含設定詞的整行會被刪除，剩餘系統提示詞再進行混淆；一般訊息和工具參數不會被修改",
-          "devin_sensitive_words_label": "敏感詞（devin.sensitive-words）",
+          "devin_sensitive_words_label": "OAuth 敏感詞（oauth.providers.devin.sensitive-words）",
           "devin_sensitive_words_placeholder": "敏感短語",
           "devin_sensitive_words_hint": "每項填寫一個詞或短語。請謹慎設定：命中內容會導致整行系統提示詞被刪除；儲存時移除空項",
           "antigravity_signature_cache": "啟用 Antigravity 簽名快取",
@@ -1126,8 +1132,8 @@
         "headers": {
           "title": "Header 預設值",
           "description": "Claude 與 Codex OAuth 請求在客戶端缺少 Header 時使用的預設值",
-          "claude_title": "Claude Header Defaults",
-          "codex_title": "Codex Header Defaults",
+          "claude_title": "Claude OAuth 預設請求標頭",
+          "codex_title": "Codex OAuth 預設請求標頭",
           "user_agent": "User-Agent",
           "package_version": "Package Version",
           "runtime_version": "Runtime Version",
@@ -1171,7 +1177,7 @@
           "disable_cooling_desc": "全域停用驗證/模型失敗後的冷卻視窗",
           "session_affinity": "會話黏性路由",
           "ws_auth": "WebSocket 驗證",
-          "ws_auth_desc": "啟用 WebSocket 連線驗證（/v1/ws）"
+          "ws_auth_desc": "啟用 AI Studio WebSocket 連線驗證（oauth.providers.aistudio.ws-auth）"
         },
         "quota": {
           "title": "配額回退",
@@ -1209,7 +1215,7 @@
         }
       },
       "api_keys": {
-        "label": "API 金鑰清單（api-keys）",
+        "label": "用戶端 API 金鑰（access.api-keys）",
         "add": "新增 API 金鑰",
         "generate": "產生",
         "empty": "暫無 API 金鑰",
@@ -1218,7 +1224,7 @@
         "add_title": "新增 API 金鑰",
         "input_label": "API 金鑰",
         "input_placeholder": "貼上你的 API 金鑰",
-        "input_hint": "此處僅修改本地設定檔內容，不會自動同步到 API 金鑰管理介面",
+        "input_hint": "儲存設定後生效。上游提供商金鑰獨立管理，不受此處修改影響。",
         "error_empty": "請輸入 API 金鑰",
         "error_invalid": "API 金鑰包含無效字元",
         "strength": {
@@ -1297,7 +1303,11 @@
         "update": "更新",
         "add": "新增"
       }
-    }
+    },
+    "source_changes_before_visual": "原始碼有未儲存的修改，請先儲存或放棄修改，再切換到視覺化模式。",
+    "precise_save_incomplete": "精準儲存未完成，部分修改可能已生效。草稿已保留，請再次儲存以重新核對伺服器差異。",
+    "concurrent_list_conflict": "伺服器清單 {{path}} 已在草稿基準之後發生變更。為避免覆蓋這些修改，已阻止儲存。草稿仍保留；請記下本機修改，再重新載入設定並核對合併。",
+    "precise_save_recovery_required": "無法回讀儲存結果，已暫停編輯。請再次儲存以恢復草稿基準，或重新載入設定。"
   },
   "quota_management": {
     "title": "配額管理",
@@ -1806,6 +1816,9 @@
     },
     "modelCatalog": {
       "notLoaded": "未載入"
+    },
+    "groups": {
+      "rowHint": "未修改的欄位保留組繼承。修改基礎 URL 將影響組內所有金鑰。新增行會建立新組。"
     }
   }
 }
