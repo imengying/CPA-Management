@@ -1,13 +1,14 @@
 import {
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
   type ChangeEvent,
   type CSSProperties,
   type KeyboardEvent,
 } from 'react';
-
+import { createPortal } from 'react-dom';
 import { IconChevronDown } from './icons';
 import styles from './AutocompleteInput.module.scss';
 
@@ -39,6 +40,9 @@ export function AutocompleteInput({
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputWrapRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownStyle, setDropdownStyle] = useState<CSSProperties | null>(null);
   const generatedId = useId();
   const inputId = id ?? generatedId;
   const listboxId = `${inputId}-listbox`;
@@ -61,13 +65,38 @@ export function AutocompleteInput({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
+      const target = event.target as Node;
+      if (containerRef.current?.contains(target) || dropdownRef.current?.contains(target)) return;
+      setIsOpen(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useLayoutEffect(() => {
+    if (!dropdownOpen) return;
+    const updateDropdownStyle = () => {
+      if (!inputWrapRef.current) return;
+      const rect = inputWrapRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom - 14;
+      const opensUp = spaceBelow < 200 && rect.top > spaceBelow;
+      setDropdownStyle({
+        position: 'fixed',
+        ...(opensUp ? { bottom: window.innerHeight - rect.top + 6 } : { top: rect.bottom + 6 }),
+        left: rect.left,
+        width: rect.width,
+        maxHeight: Math.max(0, Math.min(240, opensUp ? rect.top - 14 : spaceBelow)),
+        zIndex: 2010,
+      });
+    };
+    updateDropdownStyle();
+    window.addEventListener('resize', updateDropdownStyle);
+    window.addEventListener('scroll', updateDropdownStyle, true);
+    return () => {
+      window.removeEventListener('resize', updateDropdownStyle);
+      window.removeEventListener('scroll', updateDropdownStyle, true);
+    };
+  }, [dropdownOpen]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
@@ -102,6 +131,10 @@ export function AutocompleteInput({
         setIsOpen(false);
       }
     } else if (e.key === 'Escape') {
+      if (dropdownOpen) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       setIsOpen(false);
     } else if (e.key === 'Tab') {
       setIsOpen(false);
@@ -115,7 +148,7 @@ export function AutocompleteInput({
       style={wrapperStyle}
     >
       {label && <label htmlFor={inputId}>{label}</label>}
-      <div className={styles.control}>
+      <div className={styles.control} ref={inputWrapRef}>
         <input
           id={inputId}
           className={`input ${styles.input} ${className ?? ''}`.trim()}
@@ -150,29 +183,41 @@ export function AutocompleteInput({
           />
         </button>
 
-        {dropdownOpen && (
-          <div className={styles.dropdown} id={listboxId} role="listbox">
-            {filteredOptions.map((opt, index) => (
-              <button
-                type="button"
-                key={`${opt.value}-${index}`}
-                id={`${inputId}-option-${index}`}
-                role="option"
-                tabIndex={-1}
-                aria-selected={opt.value === value}
-                className={`${styles.option} ${
-                  index === highlightedIndex ? styles.optionHighlighted : ''
-                }`}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => handleSelect(opt.value)}
-                onMouseEnter={() => setHighlightedIndex(index)}
-              >
-                <span className={styles.optionValue}>{opt.value}</span>
-                {opt.label !== opt.value && <span className={styles.optionLabel}>{opt.label}</span>}
-              </button>
-            ))}
-          </div>
-        )}
+        {dropdownOpen &&
+          dropdownStyle &&
+          typeof document !== 'undefined' &&
+          createPortal(
+            <div
+              className={styles.dropdown}
+              ref={dropdownRef}
+              style={dropdownStyle}
+              id={listboxId}
+              role="listbox"
+            >
+              {filteredOptions.map((opt, index) => (
+                <button
+                  type="button"
+                  key={`${opt.value}-${index}`}
+                  id={`${inputId}-option-${index}`}
+                  role="option"
+                  tabIndex={-1}
+                  aria-selected={opt.value === value}
+                  className={`${styles.option} ${
+                    index === highlightedIndex ? styles.optionHighlighted : ''
+                  }`}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => handleSelect(opt.value)}
+                  onMouseEnter={() => setHighlightedIndex(index)}
+                >
+                  <span className={styles.optionValue}>{opt.value}</span>
+                  {opt.label !== opt.value && (
+                    <span className={styles.optionLabel}>{opt.label}</span>
+                  )}
+                </button>
+              ))}
+            </div>,
+            document.body
+          )}
       </div>
     </div>
   );

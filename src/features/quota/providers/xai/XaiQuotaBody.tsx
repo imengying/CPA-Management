@@ -51,6 +51,15 @@ const formatXaiPercent = (value: number | null): string => {
 const XAI_SUPERGROK_LIMIT_CENTS = 15_000;
 const XAI_SUPERGROK_HEAVY_LIMIT_CENTS = 150_000;
 
+const planValueClass = (
+  tier: XaiBillingSummary['planTier'],
+  classes: QuotaBodyProps<XaiQuotaState>['classes']
+) => {
+  if (tier === 'elite') return classes.elitePlanValue;
+  if (tier === 'premium') return classes.premiumPlanValue;
+  return classes.codexPlanValue;
+};
+
 const resolveXaiPlan = (
   monthlyLimitCents: number | null
 ): { labelKey: string; premium: boolean } | null => {
@@ -82,7 +91,15 @@ export function XaiQuotaBody({ quota, classes }: QuotaBodyProps<XaiQuotaState>) 
       <>
         <div className={classes.codexPlan}>
           <span className={classes.codexPlanLabel}>{t('xai_quota.plan_label')}</span>
-          <span className={classes.premiumPlanValue}>{t('xai_quota.plan_paid')}</span>
+          <span
+            className={
+              billing.planLabel
+                ? planValueClass(billing.planTier, classes)
+                : classes.premiumPlanValue
+            }
+          >
+            {billing.planLabel ?? t('xai_quota.plan_paid')}
+          </span>
         </div>
         <div className={classes.quotaMessage}>{t('xai_quota.paid_health')}</div>
       </>
@@ -133,13 +150,45 @@ export function XaiQuotaBody({ quota, classes }: QuotaBodyProps<XaiQuotaState>) 
     // 周额度生效且月度为 0 时，月度行只是账单端点的空壳，显示会误导为"已用满"。
     !(hasWeeklyData && billing.monthlyLimitCents === 0 && billing.usedCents === 0);
 
+  const subscriptionLabel = billing.planLabel ?? (plan ? t(`xai_quota.${plan.labelKey}`) : null);
+  const subscriptionClass = billing.planLabel
+    ? planValueClass(billing.planTier, classes)
+    : plan?.premium
+      ? classes.premiumPlanValue
+      : classes.codexPlanValue;
+  const headerReset = buildResetDisplay(
+    null,
+    hasWeeklyData ? billing.resetAtMs : parseIsoToMs(billing.billingPeriodEnd),
+    now,
+    locale
+  );
+
   return (
     <>
-      {plan && (
+      {(subscriptionLabel || headerReset) && (
         <div className={classes.codexPlan}>
-          <span className={classes.codexPlanLabel}>{t('xai_quota.plan_label')}</span>
-          <span className={plan.premium ? classes.premiumPlanValue : classes.codexPlanValue}>
-            {t(`xai_quota.${plan.labelKey}`)}
+          {subscriptionLabel && (
+            <span className={classes.codexPlanItem}>
+              <span className={classes.codexPlanLabel}>{t('xai_quota.plan_label')}</span>
+              <span className={subscriptionClass}>{subscriptionLabel}</span>
+            </span>
+          )}
+          {headerReset && (
+            <span className={classes.codexPlanItem}>
+              <span className={classes.codexPlanLabel}>{t('xai_quota.resets_label')}</span>
+              <span className={classes.codexPlanValue}>{headerReset.absolute}</span>
+              {headerReset.relative && (
+                <span className={classes.quotaResetRelative}>{headerReset.relative}</span>
+              )}
+            </span>
+          )}
+        </div>
+      )}
+      {typeof billing.prepaidBalanceCents === 'number' && billing.prepaidBalanceCents > 0 && (
+        <div className={classes.codexPlan}>
+          <span className={classes.codexPlanLabel}>{t('xai_quota.prepaid')}</span>
+          <span className={classes.quotaAmount}>
+            {formatUsdFromCents(billing.prepaidBalanceCents)}
           </span>
         </div>
       )}

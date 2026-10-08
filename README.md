@@ -6,6 +6,7 @@
 
 **主项目**: https://github.com/router-for-me/CLIProxyAPI<br>
 **原版WebUI 仓库**: https://github.com/router-for-me/Cli-Proxy-API-Management-Center<br>
+**上游同步版本**: [v1.25.1](https://github.com/router-for-me/Cli-Proxy-API-Management-Center/releases/tag/v1.25.1)<br>
 **支持版本**: CLIProxyAPI 8.0.0 及以上
 
 服务运行后，通过 API 端口上的 `/management.html` 访问 Web UI。
@@ -76,13 +77,14 @@ bun run build
 ## 功能一览（按页面对应）
 
 - **仪表盘**：连接状态、服务版本/构建时间、关键数量概览、可用模型概览。
-- **配置面板**：可视化编辑常用 `config.yaml` 字段、基础设置与代理 `access.api-keys`；也支持源码编辑、YAML 高亮/搜索与保存前差异预览。
+- **配置面板**：可视化编辑常用 `config.yaml` 字段、可信代理、服务发现与 OAuth 行为；管理代理 `access.api-keys` 和浏览器本地备注；也支持源码编辑、YAML 高亮/搜索与保存前差异预览。
 - **AI 提供商**：
   - Gemini/Codex/Claude/Vertex 配置（Base URL、Headers、代理、模型别名、排除模型、Prefix）。
   - OpenAI 兼容提供商（多 Key、Header、自助从 `/v1/models` 拉取并导入模型别名、通过后端发起连通性测试，支持指定代理）。
-- **认证文件**：上传/下载/删除 JSON 凭据，筛选/搜索/分页，标记 runtime-only；查看单个凭据可用模型（依赖后端支持）；管理 OAuth 排除模型（支持 `*` 通配符）；配置 OAuth 模型别名映射。
+  - 独立重试、冷却与错误处理策略，供应商专属请求选项，以及模型上下文、输入输出类型与 thinking 预算配置。
+- **认证文件**：上传/下载/删除 JSON 凭据，筛选/搜索错误信息/分页，标记 runtime-only；单个或全量刷新凭据并查看结果；配置独立重试、模型别名与错误策略；查看可用模型（依赖后端支持）；管理 OAuth 排除模型（支持 `*` 通配符）与模型别名映射。
 - **OAuth**：对 Codex、Anthropic/Claude、Antigravity、Kimi、xAI/Grok 发起 OAuth/设备码流程并轮询状态；支持提交回调 URL 或 xAI/Grok 页面显示的 code；包含 Vertex JSON 凭据导入。
-- **配额管理**：管理 Claude、Antigravity、Codex、Kimi、xAI/Grok 等提供商的配额上限与使用情况。
+- **配额管理**：查看 Claude、Antigravity、Codex、Kimi、xAI/Grok 等提供商的配额与使用情况，包括 Codex 积分余额、Kimi 月度额度与国际版账号、xAI 套餐与预付余额。
 - **日志**：游标增量拉取、自动刷新、搜索与多条件筛选、隐藏管理端流量、换行与全屏、清空日志；下载请求错误日志文件。
 - **系统信息**：快捷链接、版本检查、本地登录信息清理，以及拉取 `/v1/models` 并分组展示（需要至少一个代理 API Key 才能查询模型）。
 
@@ -123,7 +125,8 @@ bun run build
 
 ## 安全提示
 
-- 管理密钥会存入浏览器 `localStorage`，并使用轻量混淆格式（`enc::v1::...`）避免明文；仍应视为敏感信息。
+- 启用“记住密码”时，管理密钥会存入浏览器 `localStorage`，并使用可逆的轻量混淆格式；这不是加密，仍应视为敏感信息。
+- 客户端 API Key 备注仅保存在当前浏览器，按实例隔离，并通过 SHA-256 指纹关联密钥；备注存储不包含密钥原文。
 - 建议使用独立浏览器配置/设备进行管理；开启远程管理时请谨慎评估暴露面。
 
 ## 常见问题
@@ -132,7 +135,7 @@ bun run build
 - **反复输错密钥**：服务端可能对远程 IP 进行临时封禁。
 - **日志页面不显示**：需要在“基础设置”里开启“写入日志文件”，导航项才会出现。
 - **功能加载失败**：确认对应接口可访问，并检查反向代理与服务日志（如认证文件模型列表、排除模型、日志相关接口）。
-- **OpenAI 提供商测试失败**：测试在浏览器侧执行，会受网络与 CORS 影响；这里失败不一定代表服务端不可用。
+- **OpenAI 提供商测试失败**：连通性测试通过后端执行，检查提供商地址、密钥、所选代理以及服务端网络。
 
 ## 开发命令
 
@@ -141,7 +144,7 @@ bun run dev        # 启动开发服务器
 bun run build      # tsc + Vite 构建
 bun run preview    # 本地预览 dist
 bun run test       # Bun 测试套件
-bun run lint       # ESLint（warnings 视为失败）
+bun run lint       # ESLint（warnings 不导致失败）
 bun run verify     # 测试 + lint + 构建
 bun run format     # Prettier
 bun run type-check # tsc --noEmit

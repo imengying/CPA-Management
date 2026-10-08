@@ -54,12 +54,6 @@
 }
 
 .dropdown {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  left: 0;
-  z-index: $z-dropdown;
-  max-height: 240px;
   padding: 6px;
   display: flex;
   flex-direction: column;

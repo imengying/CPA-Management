@@ -6,6 +6,7 @@ A single-file Web UI (React + TypeScript) for operating and troubleshooting the 
 
 **Main Project**: https://github.com/router-for-me/CLIProxyAPI<br>
 **Original WebUI Repository**: https://github.com/router-for-me/Cli-Proxy-API-Management-Center<br>
+**Upstream Sync Version**: [v1.25.1](https://github.com/router-for-me/Cli-Proxy-API-Management-Center/releases/tag/v1.25.1)<br>
 **Supported Version**: CLIProxyAPI 8.0.0 or later
 
 After the service starts, access the Web UI via `/management.html` on the API port.
@@ -76,13 +77,14 @@ Check the CLI Proxy API server documentation/config comments for the full authen
 ## What you can manage (mapped to the UI pages)
 
 - **Dashboard**: connection status, server version/build date, quick counts, model availability snapshot.
-- **Config Panel**: visual editor for common `config.yaml` fields, basic settings, proxy `access.api-keys`, and source editing with YAML highlighting/search plus a save diff preview.
+- **Config Panel**: visual editor for common `config.yaml` fields, trusted proxies, service discovery and OAuth behavior; manage proxy `access.api-keys` and browser-local names; source editing with YAML highlighting/search plus a save diff preview.
 - **AI Providers**:
   - Gemini/Codex/Claude/Vertex key entries (base URL, headers, proxy, model aliases, excluded models, prefix).
   - OpenAI-compatible providers (multiple API keys, custom headers, model alias import via `/v1/models`, backend connectivity tests with explicit proxy support).
-- **Auth Files**: upload/download/delete JSON credentials, filter/search/pagination, runtime-only indicators, view supported models per credential (when the server supports it), manage OAuth excluded models (supports `*` wildcards), configure OAuth model alias mappings.
+  - Per-credential retry, cooldown and error policies; provider-specific request options; model context, modalities and thinking budgets.
+- **Auth Files**: upload/download/delete JSON credentials, filter/search errors/pagination, runtime-only indicators, individual or bulk credential refresh with results; per-credential retry, model aliases and error policies; view supported models (when the server supports it), manage OAuth excluded models (supports `*` wildcards) and model alias mappings.
 - **OAuth**: start OAuth/device flows for Codex, Anthropic/Claude, Antigravity, Kimi, and xAI/Grok; poll status; submit callback URLs or xAI/Grok displayed codes; import Vertex JSON credentials.
-- **Quota Management**: manage quota limits and usage for Claude, Antigravity, Codex, Kimi, xAI/Grok, and other providers.
+- **Quota Management**: inspect quotas and usage for Claude, Antigravity, Codex, Kimi, xAI/Grok, and other providers, including Codex credit balances, Kimi monthly limits and international accounts, and xAI subscriptions and prepaid balances.
 - **Logs**: cursor-based incremental polling, auto-refresh, search and structured filters, hide management traffic, line wrapping and fullscreen, clear logs; download request error log files.
 - **System**: quick links, update check, local login data cleanup, and fetch `/v1/models` (grouped view). Requires at least one proxy API key to query models.
 
@@ -123,7 +125,8 @@ The UI language is automatically detected from browser settings and can be manua
 
 ## Security notes
 
-- The management key is stored in browser `localStorage` using a lightweight obfuscation format (`enc::v1::...`) to avoid plaintext storage; treat it as sensitive.
+- When remember password is enabled, the management key is stored in browser `localStorage` using reversible obfuscation, not encryption; treat it as sensitive.
+- Client API key names are stored only in this browser, scoped to the instance and associated with SHA-256 fingerprints; name storage does not contain the original keys.
 - Use a dedicated browser profile/device for management. Be cautious when enabling remote management and evaluate its exposure surface.
 
 ## Troubleshooting
@@ -132,7 +135,7 @@ The UI language is automatically detected from browser settings and can be manua
 - **Repeated auth failures**: the server may temporarily block remote IPs.
 - **Logs page missing**: enable “Logging to file” in Basic Settings; the navigation item is shown only when file logging is enabled.
 - **A feature fails to load**: confirm its endpoint is reachable and check the reverse proxy and server logs (common for auth-file model lists, excluded models, and logs).
-- **OpenAI provider test fails**: the test runs in the browser and depends on network/CORS of the provider endpoint; a failure here does not always mean the server cannot reach it.
+- **OpenAI provider test fails**: connectivity tests run through the backend; check the provider address, key, selected proxy and server network.
 
 ## Development
 
@@ -141,7 +144,7 @@ bun run dev        # Vite dev server
 bun run build      # tsc + Vite build
 bun run preview    # serve dist locally
 bun run test       # Bun test suite
-bun run lint       # ESLint (fails on warnings)
+bun run lint       # ESLint (warnings do not cause failure)
 bun run verify     # test + lint + build
 bun run format     # Prettier
 bun run type-check # tsc --noEmit

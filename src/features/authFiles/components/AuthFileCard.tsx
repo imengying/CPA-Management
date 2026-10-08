@@ -1,4 +1,5 @@
 import { useState, type CSSProperties } from 'react';
+import { getAuthFileRefreshKey } from '@/features/authFiles/manualRefresh';
 import { useTranslation } from 'react-i18next';
 import { ProviderStatusBar } from '@/components/providers/ProviderStatusBar';
 import { Button } from '@/components/ui/Button';
@@ -96,7 +97,7 @@ export function AuthFileCard(props: AuthFileCardProps) {
   const providerKey = normalizeProviderKey(String(file.type ?? file.provider ?? 'unknown'));
   const showModelsButton = !isRuntimeOnly || providerKey === 'aistudio';
   const showManualRefreshButton = !isRuntimeOnly && supportsAuthFileManualRefresh(providerKey);
-  const isManualRefreshing = manualRefreshing[file.name] === true;
+  const isManualRefreshing = manualRefreshing[getAuthFileRefreshKey(file)] === true;
   const typeColor = getTypeColor(providerKey, resolvedTheme);
   const typeLabel = getTypeLabel(t, providerKey);
   const providerIcon = getAuthFileIcon(providerKey, resolvedTheme);
@@ -234,7 +235,11 @@ export function AuthFileCard(props: AuthFileCardProps) {
       <AuthFileCooldownSection
         snapshot={file.cooldownSnapshot}
         resetting={isCooldownResetting}
-        resetDisabled={disableControls || statusUpdating[file.name] === true || isManualRefreshing}
+        resetDisabled={
+          disableControls ||
+          statusUpdating[getAuthFileRefreshKey(file)] === true ||
+          isManualRefreshing
+        }
         onReset={authIndexKey ? () => onCooldownReset(file) : undefined}
       />
 
@@ -314,7 +319,7 @@ export function AuthFileCard(props: AuthFileCardProps) {
                   disabled={
                     disableControls ||
                     file.disabled ||
-                    statusUpdating[file.name] === true ||
+                    statusUpdating[getAuthFileRefreshKey(file)] === true ||
                     isManualRefreshing ||
                     quotaControls.quotaLoading
                   }
@@ -364,8 +369,12 @@ export function AuthFileCard(props: AuthFileCardProps) {
             <ToggleSwitch
               ariaLabel={t('auth_files.status_toggle_label')}
               checked={!file.disabled}
-              disabled={disableControls || statusUpdating[file.name] === true || isManualRefreshing}
-              onChange={(enabled) => onToggleStatus(file, enabled)}
+              disabled={
+                disableControls ||
+                statusUpdating[getAuthFileRefreshKey(file)] === true ||
+                isManualRefreshing
+              }
+              onChange={(value) => onToggleStatus(file, value)}
             />
           </div>
         )}

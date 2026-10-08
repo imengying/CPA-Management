@@ -37,9 +37,20 @@ export function Divider() {
 
 // Stable, stateless anchor around a searchable field. Search jumps target its DOM id
 // (see searchIndex.ts) and the highlight pulse is applied to it imperatively.
-export function FieldAnchor({ fieldId, children }: { fieldId: string; children: ReactNode }) {
+export function FieldAnchor({
+  fieldId,
+  children,
+  wide = false,
+}: {
+  fieldId: string;
+  children: ReactNode;
+  wide?: boolean;
+}) {
   return (
-    <div id={configFieldDomId(fieldId)} className={styles.fieldAnchor}>
+    <div
+      id={configFieldDomId(fieldId)}
+      className={`${styles.fieldAnchor} ${wide ? styles.fieldAnchorWide : ''}`.trim()}
+    >
       {children}
     </div>
   );
