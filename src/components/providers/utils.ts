@@ -35,7 +35,6 @@ export const withoutDisableAllModelsRule = (models?: string[]) => stripDisableAl
 const normalizeUpstreamBaseUrl = (baseUrl: string, fallback = ''): string => {
   let trimmed = String(baseUrl || '').trim();
   if (!trimmed) return fallback;
-  trimmed = trimmed.replace(/\/?v0\/management\/?$/i, '');
   trimmed = trimmed.replace(/\/+$/g, '');
   if (!/^https?:\/\//i.test(trimmed)) {
     trimmed = `http://${trimmed}`;
