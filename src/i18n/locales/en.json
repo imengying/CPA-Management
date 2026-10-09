@@ -1827,8 +1827,7 @@
   },
   "providersPage": {
     "header": {
-      "title": "AI Providers",
-      "issueCount": "{{count}} issues"
+      "title": "AI Providers"
     },
     "actions": {
       "refresh": "Refresh",
@@ -1871,8 +1870,7 @@
       },
       "empty": "No resources yet. Click {{action}} to get started.",
       "filterPlaceholder": "Search keys, URLs, models…",
-      "description": "Manage resources under {{route}}",
-      "providerIssue": "This provider has an issue"
+      "description": "Manage resources under {{route}}"
     },
     "status": {
       "active": "Active",
@@ -1923,7 +1921,6 @@
       "headersSection": "Request headers",
       "addHeader": "Add header",
       "headers": "Headers",
-      "headersHint": "One per line, format Key: Value",
       "excludedSection": "Excluded models",
       "excludedDisabledNote": "“*” means the whole provider is disabled — use the Disabled switch above instead.",
       "cloakSection": "Cloak settings",
@@ -1936,8 +1933,6 @@
       "showApiKey": "Show API key",
       "hideApiKey": "Hide API key",
       "disableCooling": "Disable cooling",
-      "disableCoolingHint": "Disable failure cooldown windows only for this credential or provider",
-      "modelEntry": "Model #{{index}}",
       "modelImage": "Allow image endpoints",
       "modelImageHint": "Allow this model on /v1/images/generations and /v1/images/edits",
       "showAllEntries": "Show all ({{count}})",
@@ -2031,9 +2026,6 @@
         "clear": "Clear",
         "empty": "No models configured yet"
       }
-    },
-    "modelCatalog": {
-      "notLoaded": "Not loaded"
     },
     "behavior": {
       "title": "Provider-specific behavior",

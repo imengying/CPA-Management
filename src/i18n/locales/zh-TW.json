@@ -1825,8 +1825,7 @@
   },
   "providersPage": {
     "header": {
-      "title": "AI 提供商",
-      "issueCount": "{{count}} 個問題"
+      "title": "AI 提供商"
     },
     "actions": {
       "refresh": "重新整理",
@@ -1869,8 +1868,7 @@
       },
       "empty": "尚未新增設定,點擊{{action}}開始。",
       "filterPlaceholder": "搜尋金鑰、位址、模型…",
-      "description": "在 {{route}} 下管理資源",
-      "providerIssue": "此提供商存在問題"
+      "description": "在 {{route}} 下管理資源"
     },
     "status": {
       "active": "活躍",
@@ -1921,7 +1919,6 @@
       "headersSection": "請求標頭",
       "addHeader": "新增請求標頭",
       "headers": "請求標頭",
-      "headersHint": "每行一條,格式 Key: Value",
       "excludedSection": "排除模型",
       "excludedDisabledNote": "「*」表示整個 provider 已停用，請改用上方的「已停用」開關。",
       "cloakSection": "Cloak 設定",
@@ -1934,8 +1931,6 @@
       "showApiKey": "顯示金鑰",
       "hideApiKey": "隱藏金鑰",
       "disableCooling": "停用冷卻調度",
-      "disableCoolingHint": "僅對目前憑證或提供商停用失敗後的冷卻視窗",
-      "modelEntry": "模型 #{{index}}",
       "modelImage": "允許圖片端點",
       "modelImageHint": "允許該模型用於 /v1/images/generations 和 /v1/images/edits",
       "showAllEntries": "顯示全部（{{count}}）",
@@ -2029,9 +2024,6 @@
         "clear": "清空",
         "empty": "尚無已設定模型"
       }
-    },
-    "modelCatalog": {
-      "notLoaded": "未載入"
     },
     "behavior": {
       "title": "提供商專屬行為",

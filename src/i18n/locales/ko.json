@@ -1911,8 +1911,7 @@
       }
     },
     "header": {
-      "title": "AI 공급자",
-      "issueCount": "{{count}}개 문제"
+      "title": "AI 공급자"
     },
     "actions": {
       "refresh": "새로 고침",
@@ -1955,8 +1954,7 @@
       "filterPlaceholder": "키, URL, 접두사 검색…",
       "description": "{{route}}의 리소스를 관리합니다.",
       "recentSuccess": "최근 요청",
-      "enabled": "활성화됨",
-      "providerIssue": "이 공급자에 문제가 있습니다"
+      "enabled": "활성화됨"
     },
     "status": {
       "active": "활성",
@@ -2019,7 +2017,6 @@
       "showApiKey": "API 키 표시",
       "hideApiKey": "API 키 숨기기",
       "disableCooling": "쿨다운 비활성화",
-      "disableCoolingHint": "이 자격 증명 또는 공급자에 대해서만 실패 쿨다운 대기 시간을 비활성화합니다.",
       "modelImage": "이미지 엔드포인트 허용",
       "modelImageHint": "이 모델을 /v1/images/generations 및 /v1/images/edits에서 허용합니다.",
       "showAllEntries": "전체 표시 ({{count}})",
@@ -2052,9 +2049,7 @@
         "weightInteger": "스케줄링 가중치는 정수여야 합니다.",
         "weightMax": "스케줄링 가중치는 {{max}}을(를) 초과할 수 없습니다."
       },
-      "headers": "헤더",
-      "headersHint": "한 줄에 하나씩, 형식 키: 값",
-      "modelEntry": "모델 #{{index}}"
+      "headers": "헤더"
     },
     "delete": {
       "title": "리소스 삭제",
@@ -2115,9 +2110,6 @@
         "clear": "선택 해제",
         "empty": "아직 설정된 모델이 없습니다."
       }
-    },
-    "modelCatalog": {
-      "notLoaded": "로드되지 않음"
     }
   },
   "claude_reset": {

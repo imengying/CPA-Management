@@ -62,7 +62,8 @@ const isDollarDenominatedWindow = (window: ClaudeUsageWindow) =>
  * 旧版 `iguana_necktie` 字段只在携带美元金额时渲染成「云端会话额度」。
  *
  * 分支取舍：上游还会把非美元形态的该字段兜底当作 Fable 周窗口，本仓库已
- * 移除这条旧兼容（见 README 的同步说明），只保留新的额度池口径。
+ * 移除这条旧兼容，只保留新的额度池口径。字段本身仍要保留——Anthropic 仍在
+ * 下发它，且带 `*_dollars` 时是额度池的唯一来源（覆盖见 claudeFableQuota 测试）。
  */
 const buildClaudeCreditPoolWindow = (
   payload: ClaudeUsagePayload,

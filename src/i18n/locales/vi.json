@@ -1784,8 +1784,7 @@
   },
   "providersPage": {
     "header": {
-      "title": "AI Provider",
-      "issueCount": "{{count}} sự cố"
+      "title": "AI Provider"
     },
     "actions": {
       "refresh": "Làm mới",
@@ -1828,8 +1827,7 @@
       "filterPlaceholder": "Tìm key, URL, tiền tố…",
       "description": "Quản lý tài nguyên trong {{route}}",
       "recentSuccess": "Yêu cầu gần nhất",
-      "enabled": "Đã bật",
-      "providerIssue": "Provider này có sự cố"
+      "enabled": "Đã bật"
     },
     "status": {
       "active": "Đang hoạt động",
@@ -1892,7 +1890,6 @@
       "showApiKey": "Hiện API key",
       "hideApiKey": "Ẩn API key",
       "disableCooling": "Tắt cooling",
-      "disableCoolingHint": "Chỉ tắt cửa sổ cooldown thất bại cho credential hoặc provider này",
       "modelImage": "Cho phép endpoint ảnh",
       "modelImageHint": "Cho phép model này trên /v1/images/generations và /v1/images/edits",
       "showAllEntries": "Hiện tất cả ({{count}})",
@@ -1925,9 +1922,7 @@
       "fingerprintProfileDefault": "Mặc định (do phía gọi kiểm soát)",
       "fingerprintProfileClaudeCodeCli": "Claude Code CLI",
       "fingerprintProfileHint": "Mặc định giữ nguyên prompt và header của phía gọi, hoặc chọn sử dụng dấu vân tay yêu cầu của Claude Code CLI.",
-      "headers": "Header",
-      "headersHint": "Mỗi dòng một header, định dạng Khóa: Giá trị",
-      "modelEntry": "Model #{{index}}"
+      "headers": "Header"
     },
     "delete": {
       "title": "Xóa tài nguyên",
@@ -1988,9 +1983,6 @@
         "clear": "Xóa",
         "empty": "Chưa cấu hình model nào"
       }
-    },
-    "modelCatalog": {
-      "notLoaded": "Chưa tải"
     },
     "behavior": {
       "title": "Hành vi dành riêng cho provider",
