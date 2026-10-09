@@ -80,4 +80,91 @@ describe('Claude Fable quota', () => {
       { id: 'seven-day', usedPercent: 20 },
     ]);
   });
+
+  test('shows a dollar-denominated legacy field as cloud session credits, not Fable', () => {
+    const reset = '2026-11-05T07:59:00+00:00';
+    const windows = buildClaudeQuotaWindows(
+      {
+        iguana_necktie: {
+          utilization: 5.043595,
+          resets_at: reset,
+          limit_dollars: 100,
+          used_dollars: 5.043595,
+          remaining_dollars: 94.956405,
+        },
+        limits: [{ kind: 'weekly_all', percent: 9, resets_at: modernReset, is_active: false }],
+      },
+      t
+    );
+
+    expect(windows).toEqual([
+      {
+        id: 'cloud-session-credits',
+        label: 'claude_quota.cloud_session_credits',
+        labelKey: 'claude_quota.cloud_session_credits',
+        usedPercent: 5.043595,
+        resetLabel: formatQuotaResetTime(reset),
+        resetAtMs: Date.parse(reset),
+        periodHours: null,
+      },
+    ]);
+  });
+
+  test('shows both cloud session credits and the scoped Fable limit', () => {
+    const windows = buildClaudeQuotaWindows(
+      {
+        iguana_necktie: {
+          utilization: 5,
+          resets_at: '2026-11-05T07:59:00+00:00',
+          limit_dollars: 100,
+          used_dollars: 5,
+        },
+        limits: [
+          {
+            kind: 'weekly_scoped',
+            percent: 64,
+            resets_at: modernReset,
+            is_active: true,
+            scope: { model: { display_name: 'Fable' } },
+          },
+        ],
+      },
+      t
+    );
+
+    expect(windows.map((window) => [window.id, window.usedPercent])).toEqual([
+      ['cloud-session-credits', 5],
+      ['seven-day-fable', 64],
+    ]);
+  });
+
+  test('treats a legacy field with only remaining_dollars as cloud session credits', () => {
+    const windows = buildClaudeQuotaWindows(
+      {
+        iguana_necktie: {
+          utilization: 5,
+          resets_at: '2026-11-05T07:59:00+00:00',
+          remaining_dollars: 95,
+        },
+      },
+      t
+    );
+
+    expect(windows.map((window) => [window.id, window.usedPercent])).toEqual([
+      ['cloud-session-credits', 5],
+    ]);
+  });
+
+  test('drops the legacy field when it carries no dollar amounts', () => {
+    // This fork removed the old Fable fallback; without money fields the
+    // payload would otherwise resurface as a second Fable row.
+    const windows = buildClaudeQuotaWindows(
+      {
+        iguana_necktie: { utilization: 41, resets_at: modernReset },
+      },
+      t
+    );
+
+    expect(windows).toEqual([]);
+  });
 });

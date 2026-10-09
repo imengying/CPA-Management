@@ -10,6 +10,7 @@ import type {
   ClaudeProfileResponse,
   ClaudeQuotaState,
   ClaudeQuotaWindow,
+  ClaudeUsageWindow,
   ClaudeUsagePayload,
 } from '@/types';
 import { apiCallApi, getApiCallErrorMessage } from '@/services/api';
@@ -52,6 +53,35 @@ const findFableUsageLimit = (payload: ClaudeUsagePayload) => {
   return candidates.find((limit) => limit.is_active === true) ?? candidates[0] ?? null;
 };
 
+const isDollarDenominatedWindow = (window: ClaudeUsageWindow) =>
+  normalizeNumberValue(window.limit_dollars) !== null ||
+  normalizeNumberValue(window.used_dollars) !== null ||
+  normalizeNumberValue(window.remaining_dollars) !== null;
+
+/**
+ * 旧版 `iguana_necktie` 字段只在携带美元金额时渲染成「云端会话额度」。
+ *
+ * 分支取舍：上游还会把非美元形态的该字段兜底当作 Fable 周窗口，本仓库已
+ * 移除这条旧兼容（见 README 的同步说明），只保留新的额度池口径。
+ */
+const buildClaudeCreditPoolWindow = (
+  payload: ClaudeUsagePayload,
+  t: TFunction
+): ClaudeQuotaWindow | null => {
+  const window = payload.iguana_necktie;
+  if (!window || typeof window !== 'object' || !isDollarDenominatedWindow(window)) return null;
+
+  return {
+    id: 'cloud-session-credits',
+    label: t('claude_quota.cloud_session_credits'),
+    labelKey: 'claude_quota.cloud_session_credits',
+    usedPercent: normalizeNumberValue(window.utilization),
+    resetLabel: formatQuotaResetTime(window.resets_at ?? undefined),
+    resetAtMs: resolveResetMs([window.resets_at]),
+    periodHours: null,
+  };
+};
+
 export const buildClaudeQuotaWindows = (
   payload: ClaudeUsagePayload,
   t: TFunction
@@ -76,6 +106,11 @@ export const buildClaudeQuotaWindows = (
       resetAtMs: resolveResetMs([typedWindow.resets_at]),
       periodHours: claudePeriodHours(key),
     });
+  }
+
+  const creditPoolWindow = buildClaudeCreditPoolWindow(payload, t);
+  if (creditPoolWindow) {
+    windows.push(creditPoolWindow);
   }
 
   if (fableLimit) {

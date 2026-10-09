@@ -99,9 +99,13 @@ export interface CodexUsagePayload {
 }
 
 // Claude API payload types
-interface ClaudeUsageWindow {
+export interface ClaudeUsageWindow {
   utilization: number;
   resets_at: string | null;
+  /** 旧版额度池字段：三者任一存在即按「云端会话额度」渲染。 */
+  limit_dollars?: number | null;
+  used_dollars?: number | null;
+  remaining_dollars?: number | null;
 }
 
 interface ClaudeUsageLimit {
@@ -132,6 +136,11 @@ export interface ClaudeUsagePayload {
   seven_day_opus?: ClaudeUsageWindow | null;
   seven_day_sonnet?: ClaudeUsageWindow | null;
   seven_day_cowork?: ClaudeUsageWindow | null;
+  /**
+   * 旧版用量窗口字段。仅在携带 `*_dollars` 金额时按「云端会话额度」渲染；
+   * 本仓库不再把它兜底当作 Fable 周窗口。
+   */
+  iguana_necktie?: ClaudeUsageWindow | null;
   limits?: ClaudeUsageLimit[] | null;
   extra_usage?: ClaudeExtraUsage | null;
 }

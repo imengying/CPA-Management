@@ -14,7 +14,9 @@ import type {
   CodexQuotaWindow,
   CodexUsagePayload,
 } from '@/types';
-import { apiCallApi, getApiCallErrorMessage } from '@/services/api';
+import { apiCallApi, authFilesApi, getApiCallErrorMessage } from '@/services/api';
+import { guardConfigConnection } from '@/services/api/configValue';
+import { isRecord } from '@/utils/helpers';
 import {
   CODEX_RATE_LIMIT_RESET_CREDITS_URL,
   CODEX_RATE_LIMIT_RESET_CREDITS_CONSUME_URL,
@@ -482,7 +484,7 @@ const createCodexRedeemRequestId = (): string => {
 const consumeCodexRateLimitResetCredit = async (
   file: AuthFileItem,
   t: TFunction
-): Promise<void> => {
+): Promise<string> => {
   const rawAuthIndex = file['auth_index'] ?? file.authIndex;
   const authIndex = normalizeAuthIndex(rawAuthIndex);
   if (!authIndex) {
@@ -504,10 +506,29 @@ const consumeCodexRateLimitResetCredit = async (
   if (result.statusCode < 200 || result.statusCode >= 300) {
     throw createStatusError(getApiCallErrorMessage(result), result.statusCode);
   }
+
+  const code = isRecord(result.body) ? result.body.code : undefined;
+  if (code !== 'reset' && code !== 'already_redeemed') {
+    throw new Error(t('codex_quota.reset_not_confirmed'));
+  }
+  return authIndex;
 };
 
 const resetCodexQuota = async (file: AuthFileItem, t: TFunction): Promise<CodexQuotaData> => {
-  await consumeCodexRateLimitResetCredit(file, t);
+  const assertConnection = guardConfigConnection();
+  const authIndex = await consumeCodexRateLimitResetCredit(file, t);
+  try {
+    // 兑换成功后才清冷却；绝不能把另一个连接的冷却清掉。
+    assertConnection();
+    const result = await authFilesApi.resetCooldown(authIndex);
+    assertConnection();
+    if (result.status !== 'ok' || result.auth_index !== authIndex) {
+      throw new Error('Invalid cooldown reset response');
+    }
+  } catch {
+    // 兑换已经发生：引导用户去既有的「清除冷却」动作，而不是再消耗一次重置。
+    throw new Error(t('codex_quota.reset_cooldown_failed'));
+  }
   return fetchCodexQuota(file, t);
 };
 

@@ -6,7 +6,7 @@
 
 **主项目**: https://github.com/router-for-me/CLIProxyAPI<br>
 **原版WebUI 仓库**: https://github.com/router-for-me/Cli-Proxy-API-Management-Center<br>
-**上游同步版本**: [v1.25.1](https://github.com/router-for-me/Cli-Proxy-API-Management-Center/releases/tag/v1.25.1)<br>
+**上游同步版本**: [v1.25.6](https://github.com/router-for-me/Cli-Proxy-API-Management-Center/releases/tag/v1.25.6)<br>
 **支持版本**: CLIProxyAPI 8.0.0 及以上
 
 服务运行后，通过 API 端口上的 `/management.html` 访问 Web UI。
@@ -102,12 +102,14 @@ bun run build
 
 ## 多语言支持
 
-目前支持四种语言：
+目前支持六种语言：
 
 - 英文 (en)
 - 简体中文 (zh-CN)
 - 繁体中文 (zh-TW)
 - 俄文 (ru)
+- 越南文 (vi)
+- 韩文 (ko)
 
 界面语言会根据浏览器设置自动切换，也可在登录页或顶部语言菜单手动切换。
 

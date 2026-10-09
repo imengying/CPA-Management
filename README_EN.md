@@ -6,7 +6,7 @@ A single-file Web UI (React + TypeScript) for operating and troubleshooting the 
 
 **Main Project**: https://github.com/router-for-me/CLIProxyAPI<br>
 **Original WebUI Repository**: https://github.com/router-for-me/Cli-Proxy-API-Management-Center<br>
-**Upstream Sync Version**: [v1.25.1](https://github.com/router-for-me/Cli-Proxy-API-Management-Center/releases/tag/v1.25.1)<br>
+**Upstream Sync Version**: [v1.25.6](https://github.com/router-for-me/Cli-Proxy-API-Management-Center/releases/tag/v1.25.6)<br>
 **Supported Version**: CLIProxyAPI 8.0.0 or later
 
 After the service starts, access the Web UI via `/management.html` on the API port.
@@ -102,12 +102,14 @@ Check the CLI Proxy API server documentation/config comments for the full authen
 
 ## Internationalization
 
-Currently supports four languages:
+Currently supports six languages:
 
 - English (en)
 - Simplified Chinese (zh-CN)
 - Traditional Chinese (zh-TW)
 - Russian (ru)
+- Vietnamese (vi)
+- Korean (ko)
 
 The UI language is automatically detected from browser settings and can be manually switched from the login page or header language menu.
 
