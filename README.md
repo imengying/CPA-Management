@@ -146,23 +146,33 @@ bun run dev        # 启动开发服务器
 bun run build      # tsc + Vite 构建
 bun run preview    # 本地预览 dist
 bun run test       # Bun 测试套件
-bun run lint       # ESLint（warnings 不导致失败）
+bun run lint       # oxlint（error 会导致失败）
 bun run verify     # 测试 + lint + 构建
 bun run format     # Prettier
 bun run type-check # tsc --noEmit
 ```
 
-### 关于 TypeScript 双版本
+### 关于 Lint 与 TypeScript 7
 
-`tsc` 使用 TypeScript 7（类型检查从约 11.5s 降到约 1.2s），但 `typescript-eslint`
-及其依赖仍要求 TS 6 的编译器 API（peer 范围为 `>=4.8.4 <6.1.0`），在导入时
-遇到 TS 7 会直接报错。因此 `typescript6` 以别名方式并存，由 `postinstall`
-（`scripts/nest-ts6.cjs`）把这份 TS 6 提供给上述包解析——这也是 TS 7 升级
-指南推荐的 side-by-side 用法。bun 的 `overrides` 只支持扁平映射，无法像
-npm/pnpm 那样做嵌套覆盖，所以改用脚本实现。
+项目使用 TypeScript 7 作为唯一的 TypeScript（类型检查约 1.2s，此前 TS 6 约 11.5s）。
+TS 7 移除了编译器 JS API，而 `typescript-eslint` 至今仍要求 TS 6（peer 范围为
+`>=4.8.4 <6.1.0`，且上游尚未发布支持 TS 7 的版本），此前必须并存一份 TS 6 才能
+运行 lint。为让 TS 7 单独工作，lint 改用 [oxlint](https://oxlint.rs)（Rust 实现，
+自带解析器，不依赖 TypeScript）：
 
-等 `typescript-eslint` 支持 TS 7 后，删掉 `typescript6` 依赖、`postinstall`
-脚本与 `scripts/nest-ts6.cjs` 即可。
+- 已逐一核对：原 ESLint 配置启用的 70 条规则中，69 条有同名 oxlint 规则；
+  仅 `no-octal` 无对应项，但 `tsc` 已覆盖（八进制字面量与转义均报 TS1121/TS1487）。
+- `.oxlintrc.json` 保留了原有的 `no-explicit-any`、`no-unused-vars`
+  （`argsIgnorePattern: ^_`）与 `react-refresh/only-export-components`
+  （`allowConstantExport`）设置，并对齐了严重级别。
+- `lint` 脚本带 `--report-unused-disable-directives-severity=error`，与原先
+  `eslint --report-unused-disable-directives` 一样会让陈旧的 disable 注释导致失败。
+- React Compiler 系列检查（`set-state-in-effect`、`exhaustive-deps` 等）随 react
+  插件提供，但原 ESLint 配置并未安装 `eslint-plugin-react-hooks`，因此这些检查
+  此前从未运行。为保持切换行为中性，它们暂时关闭；它们确实指出了真问题，
+  建议后续单独开启处理。
+
+lint 耗时从约 8s 降到约 0.3s。
 
 ## 贡献
 

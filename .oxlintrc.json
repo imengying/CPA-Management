@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript"],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "no-unused-vars": "off",
+    "typescript/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "typescript/no-explicit-any": "warn",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }],
+
+    // The React Compiler checks below ship with the `react` plugin but were
+    // never enabled in the ESLint config this replaces (`eslint-plugin-react-hooks`
+    // was not installed), so they stay off to keep the switch behaviour-neutral.
+    // They flag real issues, though — worth enabling as a follow-up.
+    "react/set-state-in-effect": "off",
+    "react/globals": "off",
+    "react/refs": "off",
+    "react-hooks/exhaustive-deps": "off"
+  },
+  "ignorePatterns": ["dist", "node_modules"]
+}

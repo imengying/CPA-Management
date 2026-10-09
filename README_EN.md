@@ -146,24 +146,38 @@ bun run dev        # Vite dev server
 bun run build      # tsc + Vite build
 bun run preview    # serve dist locally
 bun run test       # Bun test suite
-bun run lint       # ESLint (warnings do not cause failure)
+bun run lint       # oxlint (errors fail the run)
 bun run verify     # test + lint + build
 bun run format     # Prettier
 bun run type-check # tsc --noEmit
 ```
 
-### On the two TypeScript versions
+### On linting and TypeScript 7
 
-`tsc` runs on TypeScript 7 (type-checking drops from ~11.5s to ~1.2s), but
-`typescript-eslint` and its dependencies still require the TS 6 compiler API
-(peer range `>=4.8.4 <6.1.0`) and throw on import when they resolve TS 7. A TS 6
-copy therefore coexists through the `typescript6` alias, handed to those
-packages by `postinstall` (`scripts/nest-ts6.cjs`) — the side-by-side setup the
-TS 7 upgrade guide recommends. bun's `overrides` only accept a flat map, so a
-nested override (as npm/pnpm support) is emulated with that script instead.
+The project runs TypeScript 7 as its only TypeScript (type-checking ~1.2s, down
+from ~11.5s on TS 6). TS 7 dropped the compiler's JS API, while
+`typescript-eslint` still requires TS 6 (`peerDependencies.typescript:
+>=4.8.4 <6.1.0`, with no TS 7-compatible release published), so a second TS 6
+copy used to be necessary just to run lint. To let TS 7 stand alone, linting now
+uses [oxlint](https://oxlint.rs) (Rust, ships its own parser, needs no
+TypeScript):
 
-Once `typescript-eslint` supports TS 7, remove the `typescript6` dependency, the
-`postinstall` script, and `scripts/nest-ts6.cjs`.
+- Verified rule by rule: of the 70 rules the previous ESLint config enabled, 69
+  have an oxlint equivalent. Only `no-octal` has none, and `tsc` already covers
+  it (octal literals and escapes both fail with TS1121/TS1487).
+- `.oxlintrc.json` keeps the previous `no-explicit-any`, `no-unused-vars`
+  (`argsIgnorePattern: ^_`) and `react-refresh/only-export-components`
+  (`allowConstantExport`) settings, with matching severities.
+- The `lint` script passes `--report-unused-disable-directives-severity=error`,
+  so a stale disable comment still fails the run exactly as
+  `eslint --report-unused-disable-directives` did.
+- The React Compiler checks (`set-state-in-effect`, `exhaustive-deps`, …) ship
+  with the react plugin, but the previous ESLint config never installed
+  `eslint-plugin-react-hooks`, so they had never run. They are off for a
+  behaviour-neutral switch — though they do flag real issues and are worth
+  enabling in a follow-up.
+
+Lint drops from ~8s to ~0.3s.
 
 ## Contributing
 
