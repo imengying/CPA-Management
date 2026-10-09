@@ -152,6 +152,19 @@ bun run format     # Prettier
 bun run type-check # tsc --noEmit
 ```
 
+### On the two TypeScript versions
+
+`tsc` runs on TypeScript 7 (type-checking drops from ~11.5s to ~1.2s), but
+`typescript-eslint` and its dependencies still require the TS 6 compiler API
+(peer range `>=4.8.4 <6.1.0`) and throw on import when they resolve TS 7. A TS 6
+copy therefore coexists through the `typescript6` alias, handed to those
+packages by `postinstall` (`scripts/nest-ts6.cjs`) — the side-by-side setup the
+TS 7 upgrade guide recommends. bun's `overrides` only accept a flat map, so a
+nested override (as npm/pnpm support) is emulated with that script instead.
+
+Once `typescript-eslint` supports TS 7, remove the `typescript6` dependency, the
+`postinstall` script, and `scripts/nest-ts6.cjs`.
+
 ## Contributing
 
 Issues and PRs are welcome. Please include:

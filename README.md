@@ -152,6 +152,18 @@ bun run format     # Prettier
 bun run type-check # tsc --noEmit
 ```
 
+### 关于 TypeScript 双版本
+
+`tsc` 使用 TypeScript 7（类型检查从约 11.5s 降到约 1.2s），但 `typescript-eslint`
+及其依赖仍要求 TS 6 的编译器 API（peer 范围为 `>=4.8.4 <6.1.0`），在导入时
+遇到 TS 7 会直接报错。因此 `typescript6` 以别名方式并存，由 `postinstall`
+（`scripts/nest-ts6.cjs`）把这份 TS 6 提供给上述包解析——这也是 TS 7 升级
+指南推荐的 side-by-side 用法。bun 的 `overrides` 只支持扁平映射，无法像
+npm/pnpm 那样做嵌套覆盖，所以改用脚本实现。
+
+等 `typescript-eslint` 支持 TS 7 后，删掉 `typescript6` 依赖、`postinstall`
+脚本与 `scripts/nest-ts6.cjs` 即可。
+
 ## 贡献
 
 欢迎提 Issue 与 PR。建议附上：
