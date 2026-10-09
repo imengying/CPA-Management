@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
-import ts from 'typescript';
 import { getAuthFileRefreshKey } from '../src/features/authFiles/manualRefresh';
+import { stripTypes } from './helpers/stripTypes';
 
 const source = readFileSync('src/features/authFiles/hooks/useAuthFilesData.ts', 'utf8');
 function harness() {
@@ -54,12 +54,9 @@ function harness() {
     source.indexOf('  const handleManualRefresh = useCallback('),
     source.indexOf('  const handleCooldownReset = useCallback(')
   );
-  const js = ts.transpileModule(
-    `${block}\nreturn {single: handleManualRefresh, all: handleRefreshAllCredentials};`,
-    {
-      compilerOptions: { target: ts.ScriptTarget.ES2022 },
-    }
-  ).outputText;
+  const js = stripTypes(
+    `${block}\nreturn {single: handleManualRefresh, all: handleRefreshAllCredentials};`
+  );
   const callbacks = new Function(...Object.keys(env), js)(...Object.values(env));
   return {
     ...callbacks,
