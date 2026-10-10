@@ -36,7 +36,11 @@
   --info-color: var(--primary-color);
   --viz-success: #0f9f6e;
   --viz-failure: #c45143;
+  // 动效词汇表：内置 ease 太弱，交互反馈统一用强减速曲线。
+  // 按压 160ms / 悬停 200ms，UI 动效不超过 300ms。
   --ease-out-strong: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-press: 160ms;
+  --dur-hover: 200ms;
 
   --warning-bg: rgba(217, 119, 6, 0.1);
   --warning-border: rgba(217, 119, 6, 0.3);
