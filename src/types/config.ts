@@ -6,8 +6,6 @@
 import type { GeminiKeyConfig, ProviderKeyConfig, OpenAIProviderConfig } from './provider';
 
 interface QuotaExceededConfig {
-  switchProject?: boolean;
-  switchPreviewModel?: boolean;
   antigravityCredits?: boolean;
 }
 

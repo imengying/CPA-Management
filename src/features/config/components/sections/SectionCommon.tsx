@@ -10,12 +10,10 @@ import {
   LoggingToFileToggle,
   PortField,
   ProxyUrlField,
-  QuotaSwitchPreviewModelToggle,
-  QuotaSwitchProjectToggle,
 } from '../fields/sharedFields';
 
 /**
- * 「常用」tab：原简单模式的 8 个高频字段，别名视图（不占分区序号）。
+ * 「常用」tab：原简单模式的 6 个高频字段，别名视图（不占分区序号）。
  * 渲染源与正典分区共享（sharedFields），数据同为 useVisualConfig 一份状态。
  *
  * 不渲染卡头：tab 已经显示「常用」，卡片再重复一次标题与说明会读成
@@ -45,8 +43,6 @@ export function SectionCommon({
         <FieldGrid>
           <DebugToggle values={values} disabled={disabled} onChange={onChange} />
           <LoggingToFileToggle values={values} disabled={disabled} onChange={onChange} />
-          <QuotaSwitchProjectToggle values={values} disabled={disabled} onChange={onChange} />
-          <QuotaSwitchPreviewModelToggle values={values} disabled={disabled} onChange={onChange} />
         </FieldGrid>
       </FieldStack>
     </SectionCard>
