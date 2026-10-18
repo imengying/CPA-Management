@@ -165,7 +165,7 @@ export function XaiQuotaBody({ quota, classes }: QuotaBodyProps<XaiQuotaState>) 
 
   return (
     <>
-      {(subscriptionLabel || headerReset) && (
+      {(subscriptionLabel || headerReset || onDemandCap <= 0) && (
         <div className={classes.codexPlan}>
           {subscriptionLabel && (
             <span className={classes.codexPlanItem}>
@@ -180,6 +180,14 @@ export function XaiQuotaBody({ quota, classes }: QuotaBodyProps<XaiQuotaState>) 
               {headerReset.relative && (
                 <span className={classes.quotaResetRelative}>{headerReset.relative}</span>
               )}
+            </span>
+          )}
+          {onDemandCap <= 0 && (
+            <span className={classes.codexPlanItem}>
+              <span className={classes.codexPlanLabel}>{t('xai_quota.pay_as_you_go_label')}</span>
+              <span className={classes.codexPlanValue}>
+                {t('xai_quota.pay_as_you_go_disabled')}
+              </span>
             </span>
           )}
         </div>
@@ -233,7 +241,7 @@ export function XaiQuotaBody({ quota, classes }: QuotaBodyProps<XaiQuotaState>) 
           ))}
         </div>
       )}
-      {onDemandCap > 0 ? (
+      {onDemandCap > 0 && (
         <div className={classes.quotaRow}>
           <div className={classes.quotaRowHeader}>
             <span className={classes.quotaModel}>{t('xai_quota.pay_as_you_go_label')}</span>
@@ -242,16 +250,7 @@ export function XaiQuotaBody({ quota, classes }: QuotaBodyProps<XaiQuotaState>) 
               <span className={classes.quotaAmount}>{onDemandAmountLabel}</span>
             </div>
           </div>
-          <QuotaMeter
-            percent={onDemandRemaining}
-            classes={classes}
-            index={1}
-          />
-        </div>
-      ) : (
-        <div className={classes.codexPlan}>
-          <span className={classes.codexPlanLabel}>{t('xai_quota.pay_as_you_go_label')}</span>
-          <span className={classes.codexPlanValue}>{t('xai_quota.pay_as_you_go_disabled')}</span>
+          <QuotaMeter percent={onDemandRemaining} classes={classes} index={1} />
         </div>
       )}
       {hasMonthlyData && (
