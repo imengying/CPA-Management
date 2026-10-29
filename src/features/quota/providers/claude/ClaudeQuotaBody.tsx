@@ -1,11 +1,11 @@
 /**
- * Claude 额度渲染体：套餐/额外用量 chip 行 + 用量窗口水位条。
+ * Claude 额度渲染体：套餐行 + 额外用量 + 独立美元余额 + 用量窗口水位条。
  */
 
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ClaudeQuotaState } from '@/types';
-import { buildResetDisplay } from '@/utils/quota';
+import { buildResetDisplay, formatQuotaResetTime, resolveResetMs } from '@/utils/quota';
 import { useNow } from '@/hooks/useNow';
 import { QuotaMeter } from '../../components/QuotaMeter';
 import { QuotaResetLabel } from '../../components/QuotaResetLabel';
@@ -27,9 +27,38 @@ export function ClaudeQuotaBody({
   const windows = quota.windows ?? [];
   const extraUsage = quota.extraUsage ?? null;
   const planType = quota.planType ?? null;
+  const language = i18n.resolvedLanguage;
+  const formatMoney = (value: number | null, currency = 'USD', divisor = 1): string => {
+    if (value === null) return '--';
+    try {
+      return new Intl.NumberFormat(language, {
+        style: 'currency',
+        currency,
+      }).format(value / divisor);
+    } catch {
+      return `${(value / divisor).toFixed(2)} ${currency}`;
+    }
+  };
+
+  const extraUsageNotes = extraUsage
+    ? [
+        extraUsage.userDisabled ? t('claude_quota.extra_usage_user_disabled') : '',
+        extraUsage.spendLimitReached ? t('claude_quota.extra_usage_spend_limit_reached') : '',
+        extraUsage.disabledReason
+          ? t('claude_quota.extra_usage_disabled_reason', { reason: extraUsage.disabledReason })
+          : '',
+      ].filter(Boolean)
+    : [];
 
   return (
     <>
+      {quota.stale && (
+        <div role="status" className={classes.codexResetCreditsError}>
+          {t('claude_quota.stale_snapshot', {
+            time: quota.observedAt ? new Date(quota.observedAt).toLocaleString(language) : '--',
+          })}
+        </div>
+      )}
       {(planType || planItems) && (
         <div className={classes.codexPlan}>
           {planType && (
@@ -42,18 +71,94 @@ export function ClaudeQuotaBody({
         </div>
       )}
       {afterPlan}
-      {extraUsage && extraUsage.is_enabled && (
-        <div className={classes.codexPlan}>
-          <span className={classes.codexPlanLabel}>{t('claude_quota.extra_usage_label')}</span>
-          <span className={classes.codexPlanValue}>
-            {`$${(extraUsage.used_credits / 100).toFixed(2)} / $${(extraUsage.monthly_limit / 100).toFixed(2)}`}
-          </span>
+      {/* Extra usage and dollar balances share the window-row anatomy:
+          label + mono telemetry header, then one mono detail line. */}
+      {extraUsage && (
+        <div className={classes.quotaRow}>
+          <div className={classes.quotaRowHeader}>
+            <span className={classes.quotaModel}>{t('claude_quota.extra_usage_label')}</span>
+            <div className={classes.quotaMeta}>
+              <span className={classes.quotaPercent}>
+                {t(
+                  extraUsage.isEnabled === null
+                    ? 'claude_quota.plan_unknown'
+                    : extraUsage.isEnabled
+                      ? 'claude_quota.extra_usage_enabled'
+                      : 'claude_quota.extra_usage_disabled'
+                )}
+              </span>
+              {extraUsage.utilization !== null && (
+                <span className={classes.quotaResetRelative}>
+                  {t('claude_quota.usage_utilization', { percent: extraUsage.utilization })}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className={classes.quotaAmount}>
+            {t('claude_quota.usage_spent_limit', {
+              // Extra-usage amounts are minor units; dollar windows are already dollars.
+              spent: formatMoney(extraUsage.usedCredits, extraUsage.currency ?? 'USD', 100),
+              limit: formatMoney(extraUsage.monthlyLimit, extraUsage.currency ?? 'USD', 100),
+            })}
+          </div>
+          {extraUsageNotes.length > 0 && (
+            <div className={classes.quotaMeta}>
+              {extraUsageNotes.map((note, index) => (
+                <span
+                  key={note}
+                  className={index === 0 ? classes.quotaReset : classes.quotaResetRelative}
+                >
+                  {note}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       )}
-      {windows.length === 0 ? (
+      {(quota.dollarWindows ?? []).map((balance) => {
+        const resetDisplay = buildResetDisplay(
+          formatQuotaResetTime(balance.resetsAt ?? undefined),
+          resolveResetMs([balance.resetsAt]),
+          now,
+          language
+        );
+        return (
+          <div key={balance.key} className={classes.quotaRow}>
+            <div className={classes.quotaRowHeader}>
+              <span className={classes.quotaModel} title={balance.key}>
+                {balance.key}
+              </span>
+              <div className={classes.quotaMeta}>
+                <span className={classes.quotaPercent}>
+                  {t('claude_quota.dollar_balance_remaining', {
+                    amount: formatMoney(balance.remainingDollars),
+                  })}
+                </span>
+              </div>
+            </div>
+            <div className={classes.quotaAmount}>
+              {t('claude_quota.usage_spent_limit', {
+                spent: formatMoney(balance.usedDollars),
+                limit: formatMoney(balance.limitDollars),
+              })}
+            </div>
+            <div className={classes.quotaMeta}>
+              <span className={classes.quotaReset}>{t('claude_quota.balance_reset')}</span>
+              {resetDisplay ? (
+                <QuotaResetLabel display={resetDisplay} classes={classes} />
+              ) : (
+                <span className={classes.quotaReset}>
+                  {t('claude_quota.balance_reset_unknown')}
+                </span>
+              )}
+            </div>
+          </div>
+        );
+      })}
+      {windows.length === 0 && !extraUsage && !quota.dollarWindows?.length ? (
         <div className={classes.quotaMessage}>{t('claude_quota.empty_windows')}</div>
       ) : (
-        windows.map((window, index) => {
+        windows.map((window) => {
           const used = window.usedPercent;
           const clampedUsed = used === null ? null : Math.max(0, Math.min(100, used));
           const remaining =
@@ -64,7 +169,7 @@ export function ClaudeQuotaBody({
             window.resetLabel,
             window.resetAtMs,
             now,
-            i18n.resolvedLanguage
+            language
           );
           const urgent = window.id === urgentRowId;
 
@@ -83,7 +188,7 @@ export function ClaudeQuotaBody({
                   )}
                 </div>
               </div>
-              <QuotaMeter percent={remaining} classes={classes} index={index} />
+              <QuotaMeter percent={remaining} classes={classes} index={0} />
             </div>
           );
         })

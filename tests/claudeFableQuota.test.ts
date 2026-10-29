@@ -155,9 +155,9 @@ describe('Claude Fable quota', () => {
     ]);
   });
 
-  test('drops the legacy field when it carries no dollar amounts', () => {
-    // This fork removed the old Fable fallback; without money fields the
-    // payload would otherwise resurface as a second Fable row.
+  test('falls back to a Fable weekly window when it carries no dollar amounts', () => {
+    // Upstream's fallback, adopted deliberately: a legacy-shaped payload with
+    // no money fields renders as the Fable weekly window instead of vanishing.
     const windows = buildClaudeQuotaWindows(
       {
         iguana_necktie: { utilization: 41, resets_at: modernReset },
@@ -165,6 +165,8 @@ describe('Claude Fable quota', () => {
       t
     );
 
-    expect(windows).toEqual([]);
-  });
+    expect(windows.map((window) => [window.id, window.usedPercent])).toEqual([
+        ['seven-day-fable', 41],
+      ]);
+    });
 });

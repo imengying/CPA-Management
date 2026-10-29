@@ -10,7 +10,7 @@
 import { useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IconRefreshCw } from '@/components/ui/icons';
-import type { ResolvedTheme } from '@/types';
+import type { ClaudeQuotaState, ResolvedTheme } from '@/types';
 import { resolveQuotaErrorMessage } from '@/utils/quota';
 import { getQuotaDisplayName } from '@/utils/quota/identity';
 import {
@@ -22,6 +22,7 @@ import {
 import { bindQuotaClasses } from '../types';
 import { QUOTA_ADAPTERS, type QuotaCardState } from '../providers';
 import { useClaudeResetGrants } from '../providers/claude/ClaudeResetGrants';
+import { hasClaudeUsageData } from '../providers/claude/data';
 import { ClaudeResetGrantDetails } from '../providers/claude/ClaudeResetGrantDetails';
 import type { QuotaFileEntry } from '../logic';
 import bodyStyles from './QuotaBody.module.scss';
@@ -56,6 +57,8 @@ export function QuotaCard(props: QuotaCardProps) {
   const { t } = useTranslation();
   const adapter = QUOTA_ADAPTERS[entry.type];
   const file = entry.file;
+  const retainedClaudeUsage =
+    entry.type === 'claude' && hasClaudeUsageData(quota as ClaudeQuotaState | undefined);
   const displayName = getQuotaDisplayName(file);
 
   // 挂载时捕获一次延迟：后续 props 变 null 不影响本卡（React 19 禁渲染期读 ref）
@@ -142,7 +145,7 @@ export function QuotaCard(props: QuotaCardProps) {
             <IconRefreshCw size={15} aria-hidden="true" className={styles.idleGlyph} />
             <span className={styles.idleHint}>{t(`${adapter.i18nPrefix}.idle`)}</span>
           </button>
-        ) : loading ? (
+        ) : loading && !retainedClaudeUsage ? (
           <div className={styles.skeleton} aria-busy="true">
             <span className={styles.srOnly}>{t(`${adapter.i18nPrefix}.loading`)}</span>
             {[0, 1].map((row) => (
@@ -152,21 +155,34 @@ export function QuotaCard(props: QuotaCardProps) {
               </div>
             ))}
           </div>
-        ) : status === 'error' ? (
+        ) : status === 'error' && !retainedClaudeUsage ? (
           <div className={styles.errorStrip} role="alert">
             {t(`${adapter.i18nPrefix}.load_failed`, { message: errorMessage })}
           </div>
-        ) : quota ? (
+        ) : quota && !retainedClaudeUsage ? (
           <adapter.Body
             quota={quota}
             classes={quotaClasses}
             planItems={claudePlanItems}
             afterPlan={claudeAfterPlan}
           />
-        ) : (
+        ) : !retainedClaudeUsage ? (
           <div className={styles.idleHint}>{t(`${adapter.i18nPrefix}.idle`)}</div>
-        )}
-      </div>
+        ) : null}
+          {loading && retainedClaudeUsage && (
+            <div role="status" aria-busy="true" className={quotaClasses.quotaMessage}>
+              {t(`${adapter.i18nPrefix}.loading`)}
+            </div>
+          )}
+          {retainedClaudeUsage && quota && (
+            <adapter.Body
+              quota={quota}
+              classes={quotaClasses}
+              planItems={claudePlanItems}
+              afterPlan={claudeAfterPlan}
+            />
+          )}
+        </div>
 
       {status !== 'idle' && (
         <footer className={styles.actionRow}>
