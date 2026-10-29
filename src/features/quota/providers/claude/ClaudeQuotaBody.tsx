@@ -12,7 +12,12 @@ import { QuotaResetLabel } from '../../components/QuotaResetLabel';
 import { collectQuotaRowInstants, pickUrgentRowId } from '../../resetSchedule';
 import type { QuotaBodyProps } from '../../types';
 
-export function ClaudeQuotaBody({ quota, classes }: QuotaBodyProps<ClaudeQuotaState>) {
+export function ClaudeQuotaBody({
+  quota,
+  classes,
+  planItems,
+  afterPlan,
+}: QuotaBodyProps<ClaudeQuotaState>) {
   const { t, i18n } = useTranslation();
   const now = useNow();
   const urgentRowId = useMemo(
@@ -25,12 +30,18 @@ export function ClaudeQuotaBody({ quota, classes }: QuotaBodyProps<ClaudeQuotaSt
 
   return (
     <>
-      {planType && (
+      {(planType || planItems) && (
         <div className={classes.codexPlan}>
-          <span className={classes.codexPlanLabel}>{t('claude_quota.plan_label')}</span>
-          <span className={classes.codexPlanValue}>{t(`claude_quota.${planType}`)}</span>
+          {planType && (
+            <span className={classes.codexPlanItem}>
+              <span className={classes.codexPlanLabel}>{t('claude_quota.plan_label')}</span>
+              <span className={classes.codexPlanValue}>{t(`claude_quota.${planType}`)}</span>
+            </span>
+          )}
+          {planItems}
         </div>
       )}
+      {afterPlan}
       {extraUsage && extraUsage.is_enabled && (
         <div className={classes.codexPlan}>
           <span className={classes.codexPlanLabel}>{t('claude_quota.extra_usage_label')}</span>
