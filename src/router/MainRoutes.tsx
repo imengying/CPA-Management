@@ -1,4 +1,5 @@
 import { Navigate, useRoutes, type Location, type RouteObject } from 'react-router';
+import { RoutingPage } from '@/features/routing/RoutingPage';
 import { DashboardPage } from '@/features/dashboard/DashboardPage';
 import { ProvidersWorkbenchPage } from '@/features/providers/ProvidersWorkbenchPage';
 import { AuthFilesPage } from '@/features/authFiles/AuthFilesPage';
@@ -29,6 +30,7 @@ export function MainRoutes({ location }: { location?: Location }) {
     { path: '/auth-files/oauth-model-alias', element: <AuthFilesOAuthModelAliasEditPage /> },
     { path: '/oauth', element: <OAuthPage /> },
     { path: '/quota', element: <QuotaPage /> },
+    { path: '/routing', element: <RoutingPage /> },
     ...(pluginUiEnabled
       ? [
           { path: '/plugin-pages/:pluginId/:menuIndex', element: <PluginResourcePage /> },

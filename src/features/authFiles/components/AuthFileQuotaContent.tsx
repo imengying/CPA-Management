@@ -2,8 +2,16 @@ import { useTranslation } from 'react-i18next';
 import type { AuthFileQuotaControls } from '@/features/authFiles/hooks/useAuthFileQuotaControls';
 import { bindQuotaClasses } from '@/features/quota/types';
 import styles from './AuthFileQuota.module.scss';
+import quotaBodyStyles from '@/features/quota/components/QuotaBody.module.scss';
 
-const compactQuotaClasses = bindQuotaClasses(styles, 'AuthFileQuota.module.scss');
+const compactQuotaClasses = bindQuotaClasses(
+  {
+    ...styles,
+    premiumPlanValue: quotaBodyStyles.premiumPlanValue,
+    elitePlanValue: quotaBodyStyles.elitePlanValue,
+  },
+  'AuthFileQuota.module.scss'
+);
 
 export function AuthFileQuotaContent({
   controls,

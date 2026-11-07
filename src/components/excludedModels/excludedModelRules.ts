@@ -162,7 +162,7 @@ export function getModelExclusionState(
   return { state: 'included' };
 }
 
-const isModelExcluded = (rules: readonly string[], modelId: string): boolean =>
+export const isModelExcluded = (rules: readonly string[], modelId: string): boolean =>
   getModelExclusionState(rules, modelId).state === 'excluded';
 
 export interface RuleMatchSummary {

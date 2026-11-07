@@ -53,10 +53,12 @@
     "model_alias_placeholder": "模型別名（選填）",
     "invalid_provider_index": "無效的供應商索引。",
     "unsaved_changes_title": "未儲存的變更",
-    "unsaved_changes_message": "你有未儲存的變更，離開後將遺失這些變更。確定要離開嗎？"
+    "unsaved_changes_message": "你有未儲存的變更，離開後將遺失這些變更。確定要離開嗎？",
+    "quota_update_required": "請更新 CPA 版本或檢查更新"
   },
   "title": {
-    "login": "CPA Manager"
+    "login": "CPA Manager",
+    "abbr": "CPAMC"
   },
   "splash": {
     "title": "CPA Manager",
@@ -67,12 +69,12 @@
     "connection_title": "連線位址",
     "connection_current": "目前位址",
     "connection_auto_hint": "系統將自動使用目前存取位址進行連線",
-    "custom_connection_label": "自訂連線位址:",
+    "custom_connection_label": "自訂連線位址",
     "custom_connection_placeholder": "例如: https://example.com:8317",
     "custom_connection_hint": "預設使用目前存取位址，若需要可手動輸入其他位址。",
     "use_current_address": "使用目前位址",
     "remember_password_label": "記住密碼",
-    "management_key_label": "管理金鑰:",
+    "management_key_label": "管理金鑰",
     "management_key_placeholder": "請輸入管理金鑰",
     "connect_button": "連線",
     "submit_button": "登入",
@@ -90,7 +92,10 @@
     "error_cors": "跨域請求被阻擋，請檢查伺服器設定",
     "error_ssl": "SSL/TLS 憑證驗證失敗",
     "show_key": "顯示金鑰",
-    "hide_key": "隱藏金鑰"
+    "hide_key": "隱藏金鑰",
+    "connection_edit": "變更",
+    "connection_done": "完成",
+    "error_legacy_backend": "目前後端可使用 v0 管理介面，但不支援 v8。請將 CLIProxyAPI 升級至 v8 或更新版本後再使用此管理頁面。"
   },
   "header": {
     "refresh_all": "全部重新整理",
@@ -112,7 +117,8 @@
     "plugin_store": "插件商店",
     "config_management": "設定面板",
     "logs": "記錄檢視",
-    "system_info": "系統資訊"
+    "system_info": "系統資訊",
+    "routing": "路由編排"
   },
   "nav_groups": {
     "operate": "運行",
@@ -131,7 +137,8 @@
     "plugin_store": "探索並安裝插件",
     "logs": "請求追蹤與排查",
     "config_management": "閘道基礎設定",
-    "system_info": "運行與診斷資訊"
+    "system_info": "運行與診斷資訊",
+    "routing": "優先級分層與故障轉移"
   },
   "dashboard": {
     "hero_verdict_good": "運行平穩",
@@ -197,7 +204,16 @@
     "runtime_link": "編輯設定",
     "window_m": "{{minutes}} 分鐘",
     "window_h": "{{hours}} 小時",
-    "window_hm": "{{hours}} 小時 {{minutes}} 分"
+    "window_hm": "{{hours}} 小時 {{minutes}} 分",
+    "hero_spark_label": "最近 {{window}} 的請求量",
+    "cta_eyebrow": "下一步",
+    "cta_title": "接下來前往",
+    "cta_providers_desc": "新增 API Key、設定優先順序並測試品牌。",
+    "cta_auth_files_desc": "上傳、更新與停用 OAuth 憑證。",
+    "cta_config_desc": "調整路由、重試、日誌與存取控制。",
+    "cta_quota_desc": "查看各憑證的剩餘額度。",
+    "cta_logs_desc": "即時追蹤請求並下載錯誤報告。",
+    "cta_system_desc": "版本詳情與管理中心資訊。"
   },
   "basic_settings": {
     "debug_enable": "啟用除錯模式",
@@ -207,7 +223,10 @@
     "ws_auth_enable": "啟用 /ws/* 驗證",
     "routing_strategy_round_robin": "round-robin（輪詢）",
     "routing_strategy_weighted_round_robin": "weighted-round-robin（加權輪詢）",
-    "routing_strategy_fill_first": "fill-first（優先填充）"
+    "routing_strategy_fill_first": "fill-first（優先填充）",
+    "request_log_title": "請求記錄",
+    "request_log_enable": "啟用請求記錄",
+    "request_log_warning": "僅在需要排查問題時開啟，日常請保持關閉。"
   },
   "auth_files": {
     "title": "驗證檔案管理",
@@ -423,7 +442,12 @@
     "policy_rules_hint": "自訂規則按清單順序優先生效。選擇繼承或清空清單將使用繼承的規則，不會停用它們。正規表示式使用 Go 語法。",
     "policy_retry_invalid": "請輸入非負安全整數，或選擇繼承。",
     "policy_aliases_invalid": "請為每個新增或修改的列填寫非空模型名稱和別名。",
-    "policy_rules_invalid": "請為每條修改的規則填寫正整數狀態碼、動作和至少一個非空比對條件。"
+    "policy_rules_invalid": "請為每條修改的規則填寫正整數狀態碼、動作和至少一個非空比對條件。",
+    "filter_iflow": "iFlow",
+    "models_unsupported": "目前版本不支援此功能",
+    "models_unsupported_desc": "請更新 CLI Proxy API 到最新版本後重試",
+    "use_siwc_label": "使用 SIWC（use_siwc）",
+    "use_siwc_hint": "啟用後使用已綁定的 SIWC 憑證。關閉僅停用 SIWC，不會刪除綁定資料；啟用前請先完成綁定。"
   },
   "antigravity_subscription": {
     "subscription_label": "訂閱",
@@ -480,12 +504,12 @@
     "refresh_button": "重新整理配額",
     "fetch_all": "取得全部",
     "five_hour": "5 小時限額",
-    "seven_day": "7 天限額",
-    "seven_day_oauth_apps": "7 天 OAuth 應用",
-    "seven_day_opus": "7 天 Opus",
-    "seven_day_sonnet": "7 天 Sonnet",
-    "seven_day_cowork": "7 天 Cowork",
-    "seven_day_fable": "7 天 Fable 5",
+    "seven_day": "週限額",
+    "seven_day_oauth_apps": "OAuth 應用週限額",
+    "seven_day_opus": "Opus 週限額",
+    "seven_day_sonnet": "Sonnet 週限額",
+    "seven_day_cowork": "Cowork 週限額",
+    "seven_day_fable": "Fable 5 週限額",
     "extra_usage_label": "額外用量",
     "plan_label": "方案",
     "plan_unknown": "未知",
@@ -506,7 +530,8 @@
     "dollar_balance_remaining": "剩餘 {{amount}}",
     "balance_reset": "重設時間",
     "balance_reset_unknown": "未提供",
-    "stale_snapshot": "重新整理失敗。顯示上次成功檢查的結果：{{time}}"
+    "stale_snapshot": "重新整理失敗。顯示上次成功檢查的結果：{{time}}",
+    "iguana_necktie": "Iguana Necktie"
   },
   "codex_quota": {
     "title": "Codex 配額",
@@ -552,11 +577,12 @@
     "credit_balance_label": "Credit 餘額",
     "credit_unlimited": "無限額",
     "reset_not_confirmed": "尚未確認額度重置成功，請重新整理額度後再決定是否重試。",
-    "reset_cooldown_failed": "額度已重置，但代理冷卻清除失敗。請在原連線的認證檔案頁面使用「清除冷卻」，不要再次消耗重置卡。"
+    "reset_cooldown_failed": "額度已重置，但代理冷卻清除失敗。請在原連線的認證檔案頁面使用「清除冷卻」，不要再次消耗重置卡。",
+    "plan_promax": "Pro 500"
   },
   "devin_quota": {
-    "daily": "每日剩餘額度",
-    "weekly": "每週剩餘額度",
+    "daily": "日限額",
+    "weekly": "週限額",
     "plan_label": "方案",
     "plan_end": "訂閱到期",
     "unavailable": "暫無資料",
@@ -591,10 +617,10 @@
     "plan": "方案",
     "active": "訂閱有效",
     "inactive": "訂閱未啟用",
-    "window": "週期額度",
-    "window_duration": "{{minutes}} 分鐘週期",
-    "window_duration_hours": "{{hours}} 小時週期",
-    "weekly": "每週額度",
+    "window": "使用限額",
+    "window_duration": "{{minutes}} 分鐘限額",
+    "window_duration_hours": "{{hours}} 小時限額",
+    "weekly": "週限額",
     "unknown": "未知",
     "remaining": "剩餘 {{percent}}%"
   },
@@ -615,7 +641,9 @@
     "reset_hint": "{{hint}} 後重置",
     "domain_unavailable": "無法讀取 Kimi 憑證的網域，需要可下載且有效的驗證檔案。",
     "stale_request": "連線或憑證已變更，請重試。",
-    "monthly_limit": "月限額"
+    "monthly_limit": "月限額",
+    "plan_label": "方案",
+    "plan_unknown": "未知"
   },
   "xai_quota": {
     "title": "Grok 配額",
@@ -650,8 +678,8 @@
     "title": "Vertex",
     "description": "上傳 Google 服務帳號 JSON，使用 CLI vertex-import 同步規則寫入 auth-dir/vertex-<project>.json。",
     "location_label": "目標區域（選填）",
-    "location_placeholder": "us-central1",
-    "location_hint": "留空表示使用預設區域 us-central1。",
+    "location_placeholder": "global",
+    "location_hint": "留空表示使用預設區域 global。",
     "file_label": "服務帳號金鑰 JSON",
     "file_hint": "僅支援 Google Cloud service account key JSON 檔案，私鑰會自動規範化。",
     "file_placeholder": "尚未選擇檔案",
@@ -663,7 +691,9 @@
     "result_project": "專案 ID",
     "result_email": "服務帳號",
     "result_location": "區域",
-    "result_file": "儲存檔案"
+    "result_file": "儲存檔案",
+    "drop_hint": "選擇或拖入 JSON 檔案",
+    "import_another": "再匯入一個"
   },
   "oauth_excluded": {
     "title": "OAuth 模型停用",
@@ -698,7 +728,10 @@
     "scope_provider": "目前範圍：{{provider}}",
     "delete_title": "刪除模型停用",
     "editor_description": "為供應商設定不對外顯示的模型，支援精確選取和萬用字元規則。",
-    "models_hint": "展開清單選取模型，或在下方輸入萬用字元規則。"
+    "models_hint": "展開清單選取模型，或在下方輸入萬用字元規則。",
+    "upgrade_required": "目前 CPA 版本不支援 OAuth 模型停用，請升級 CPA 版本",
+    "upgrade_required_title": "需要升級 CPA 版本",
+    "upgrade_required_desc": "目前伺服器版本不支援取得 OAuth 模型停用功能，請升級到最新版本的 CPA（CLI Proxy API）後重試。"
   },
   "excluded_models": {
     "trigger_summary": "已排除 {{excluded}} · {{available}} 可用",
@@ -796,7 +829,11 @@
     "edit_title": "編輯 {{provider}} 的模型別名",
     "mapping_hint": "選取原模型，並填寫用戶端使用的別名。",
     "mapping_row": "別名對應 {{number}}",
-    "remove_mapping": "刪除第 {{number}} 條別名對應"
+    "remove_mapping": "刪除第 {{number}} 條別名對應",
+    "model_source_unsupported": "目前 CPA 版本不支援取得模型清單（仍可手動輸入）。",
+    "upgrade_required": "目前 CPA 版本不支援模型別名功能，請升級 CPA 版本",
+    "upgrade_required_title": "需要升級 CPA 版本",
+    "upgrade_required_desc": "目前伺服器版本不支援 OAuth 模型別名功能，請升級到最新版本的 CPA（CLI Proxy API）後重試。"
   },
   "auth_login": {
     "codex_oauth_title": "Codex OAuth",
@@ -927,7 +964,66 @@
     "kimi_ai_oauth_status_success": "驗證成功！",
     "kimi_ai_oauth_status_error": "驗證失敗:",
     "kimi_ai_oauth_start_error": "啟動 Kimi OAuth 失敗:",
-    "kimi_ai_oauth_polling_error": "檢查驗證狀態失敗:"
+    "kimi_ai_oauth_polling_error": "檢查驗證狀態失敗:",
+    "qwen_oauth_title": "Qwen OAuth",
+    "qwen_oauth_button": "開始 Qwen 登入",
+    "qwen_oauth_hint": "透過裝置授權流程登入 Qwen 服務，自動取得並儲存驗證檔案。",
+    "qwen_oauth_url_label": "授權連結:",
+    "qwen_open_link": "開啟連結",
+    "qwen_copy_link": "複製連結",
+    "qwen_oauth_status_waiting": "等待驗證中...",
+    "qwen_oauth_status_success": "驗證成功！",
+    "qwen_oauth_status_error": "驗證失敗:",
+    "qwen_oauth_start_error": "啟動 Qwen OAuth 失敗:",
+    "qwen_oauth_polling_error": "檢查驗證狀態失敗:",
+    "oauth_callback_upgrade_hint": "請更新 CLI Proxy API 或檢查連線",
+    "iflow_oauth_title": "iFlow OAuth",
+    "iflow_oauth_button": "開始 iFlow 登入",
+    "iflow_oauth_hint": "透過 OAuth 流程登入 iFlow 服務，自動取得並儲存驗證檔案。",
+    "iflow_oauth_url_label": "授權連結:",
+    "iflow_open_link": "開啟連結",
+    "iflow_copy_link": "複製連結",
+    "iflow_oauth_status_waiting": "等待驗證中...",
+    "iflow_oauth_status_success": "驗證成功！",
+    "iflow_oauth_status_error": "驗證失敗:",
+    "iflow_oauth_start_error": "啟動 iFlow OAuth 失敗:",
+    "iflow_oauth_polling_error": "檢查驗證狀態失敗:",
+    "iflow_cookie_title": "iFlow Cookie 登入",
+    "iflow_cookie_label": "Cookie 內容:",
+    "iflow_cookie_placeholder": "填入 BXAuth 值，以 BXAuth= 開頭",
+    "iflow_cookie_hint": "直接提交 Cookie 以完成登入（無需開啟授權連結），伺服器端將自動儲存憑證。",
+    "iflow_cookie_key_hint": "提示：需在平台上先建立 Key。",
+    "iflow_cookie_button": "提交 Cookie 登入",
+    "iflow_cookie_status_success": "Cookie 登入成功，憑證已儲存。",
+    "iflow_cookie_status_error": "Cookie 登入失敗:",
+    "iflow_cookie_status_duplicate": "設定檔重複:",
+    "iflow_cookie_start_error": "提交 Cookie 登入失敗:",
+    "iflow_cookie_config_duplicate": "偵測到設定檔已存在（重複），如需重新儲存請先刪除原檔案後重試。",
+    "iflow_cookie_required": "請先填寫 Cookie 內容",
+    "iflow_cookie_result_title": "Cookie 登入結果",
+    "iflow_cookie_result_email": "帳號",
+    "iflow_cookie_result_expired": "到期時間",
+    "iflow_cookie_result_path": "儲存路徑",
+    "iflow_cookie_result_type": "類型",
+    "kimi_oauth_name": "Kimi 中國站",
+    "kimi_ai_oauth_name": "Kimi 國際站",
+    "method_device": "裝置碼",
+    "method_browser": "瀏覽器授權",
+    "method_plugin": "外掛",
+    "tile_waiting": "等待授權",
+    "tile_success": "已新增憑證",
+    "tile_error": "授權失敗",
+    "meta_providers": "{{count}} 個提供商",
+    "meta_waiting": "{{count}} 個等待授權",
+    "meta_added": "本次新增 {{count}} 個憑證",
+    "step_open_auth_page": "開啟授權頁並完成登入",
+    "step_enter_device_code": "在授權頁輸入裝置碼",
+    "optional_step": "選填",
+    "generating_link": "正在產生授權連結…",
+    "waiting_background_hint": "關閉視窗不會中斷授權",
+    "restart_login": "重新開始",
+    "success_saved_hint": "憑證已儲存，可在驗證檔案頁管理。",
+    "copied": "已複製"
   },
   "stats": {
     "success": "成功",
@@ -1014,7 +1110,17 @@
     "clear_search": "清除搜尋",
     "reading_enabled": "持續讀取",
     "filter_load_more": "展開更多符合的記錄",
-    "wrap_lines": "長日誌自動換行"
+    "wrap_lines": "長日誌自動換行",
+    "buffer_evicted": "較早記錄已移出快取，無法在此檢索",
+    "title": "記錄檢視",
+    "download_button": "下載記錄",
+    "request_log_download_title": "下載封包",
+    "request_log_download_confirm": "是否要下載 id 為 {{id}} 的封包？",
+    "clear_confirm": "確定要清空所有記錄嗎？此操作無法還原！",
+    "auto_refresh": "自動重新整理",
+    "load_more_hint": "向上滾動載入更多",
+    "filter_panel_expand": "展開結構化篩選",
+    "filter_panel_collapse": "收起結構化篩選"
   },
   "config_management": {
     "title": "設定面板",
@@ -1072,7 +1178,8 @@
       },
       "sections": {
         "common": {
-          "title": "常用"
+          "title": "常用",
+          "description": "最常調整的設定項，與完整分區共享同一份資料"
         },
         "connectivity": {
           "title": "接入與認證",
@@ -1220,14 +1327,14 @@
           "strategy_round_robin": "輪詢（Round Robin）",
           "strategy_weighted_round_robin": "加權輪詢（Weighted Round Robin）",
           "strategy_fill_first": "填充優先（Fill First）",
-          "session_affinity_ttl": "會話黏性 TTL",
+          "session_affinity_ttl": "工作階段親和性 TTL",
           "force_model_prefix": "強制模型前綴",
           "force_model_prefix_desc": "未帶前綴的模型請求只使用無前綴憑證",
           "passthrough_headers": "透傳上游回應 Header",
           "passthrough_headers_desc": "將過濾後的上游回應 Header 轉發給下游客戶端",
           "disable_cooling": "停用冷卻調度",
           "disable_cooling_desc": "全域停用驗證/模型失敗後的冷卻視窗",
-          "session_affinity": "會話黏性路由",
+          "session_affinity": "工作階段親和性路由",
           "ws_auth": "WebSocket 驗證",
           "ws_auth_desc": "啟用 AI Studio WebSocket 連線驗證（oauth.providers.aistudio.ws-auth）"
         },
@@ -1524,7 +1631,8 @@
     "source_changes_before_visual": "原始碼有未儲存的修改，請先儲存或放棄修改，再切換到視覺化模式。",
     "precise_save_incomplete": "精準儲存未完成，部分修改可能已生效。草稿已保留，請再次儲存以重新核對伺服器差異。",
     "concurrent_list_conflict": "伺服器清單 {{path}} 已在草稿基準之後發生變更。為避免覆蓋這些修改，已阻止儲存。草稿仍保留；請記下本機修改，再重新載入設定並核對合併。",
-    "precise_save_recovery_required": "無法回讀儲存結果，已暫停編輯。請再次儲存以恢復草稿基準，或重新載入設定。"
+    "precise_save_recovery_required": "無法回讀儲存結果，已暫停編輯。請再次儲存以恢復草稿基準，或重新載入設定。",
+    "save": "儲存"
   },
   "quota_management": {
     "title": "配額管理",
@@ -1570,7 +1678,8 @@
     "search_placeholder": "依檔案名稱或信箱搜尋",
     "search_empty_title": "沒有符合的帳號",
     "search_empty_desc": "請嘗試其他檔案名稱或信箱，或清空搜尋。",
-    "search_clear": "清空搜尋"
+    "search_clear": "清空搜尋",
+    "description": "集中查看 OAuth 配額與剩餘情況"
   },
   "plugin_management": {
     "refresh": "重新整理",
@@ -1631,7 +1740,9 @@
     "invalid_json": "請輸入有效 JSON",
     "expected_array": "請輸入 JSON 陣列",
     "expected_object": "請輸入 JSON 物件",
-    "invalid_enum": "請選擇宣告的枚舉值"
+    "invalid_enum": "請選擇宣告的枚舉值",
+    "title": "插件管理",
+    "description": "查看已發現和已註冊的插件，管理實例開關、設定欄位和資源入口。"
   },
   "plugin_store": {
     "title": "插件商店",
@@ -1727,7 +1838,8 @@
     "gate_step2_action": "我已閱讀並理解上述風險",
     "gate_step3_prompt": "如需確認，請在下方輸入框中鍵入 “{{token}}”",
     "gate_step3_action": "安裝此插件",
-    "gate_step3_hint": "請輸入上方顯示的完整識別碼以啟用安裝。"
+    "gate_step3_hint": "請輸入上方顯示的完整識別碼以啟用安裝。",
+    "description": "瀏覽插件註冊表,為目前後端安裝或更新插件。"
   },
   "plugin_resource": {
     "title": "插件頁面",
@@ -1773,7 +1885,10 @@
     "clear_login_title": "本地登入資訊",
     "clear_login_desc": "清理本地儲存的登入資訊並登出。",
     "clear_login_button": "清理登入資訊",
-    "clear_login_confirm": "確認清理本地登入資訊並登出？"
+    "clear_login_confirm": "確認清理本地登入資訊並登出？",
+    "title": "管理中心資訊",
+    "about_title": "CLI Proxy API Management Center",
+    "quick_links_desc": "存取專案儲存庫和文件，取得協助和更新。"
   },
   "notification": {
     "region_label": "通知",
@@ -1796,7 +1911,8 @@
     "commercial_mode_restart_required": "商業模式開關已變更，請重啟服務後生效",
     "copy_failed": "複製失敗",
     "link_copied": "已複製",
-    "trusted_proxies_restart_required": "可信任代理設定已儲存，重新啟動後端後生效。"
+    "trusted_proxies_restart_required": "可信任代理設定已儲存，重新啟動後端後生效。",
+    "add_failed": "新增失敗"
   },
   "language": {
     "switch": "語言",
@@ -1805,7 +1921,8 @@
     "english": "英文",
     "russian": "俄文",
     "vietnamese": "Tiếng Việt",
-    "korean": "한국어"
+    "korean": "한국어",
+    "turkish": "土耳其文"
   },
   "theme": {
     "switch": "主題",
@@ -1813,13 +1930,16 @@
     "dark": "深色",
     "switch_to_light": "切換到淺色模式",
     "switch_to_dark": "切換到深色模式",
-    "auto": "跟隨系統"
+    "auto": "跟隨系統",
+    "white": "純白"
   },
   "sidebar": {
     "toggle_expand": "展開側邊欄",
     "toggle_collapse": "收起側邊欄",
     "expand": "展開",
-    "collapse": "收起"
+    "collapse": "收起",
+    "subtitle": "CLI Proxy API 管理控制台",
+    "auth_files_count": "驗證檔案：{{count}} 個"
   },
   "footer": {
     "api_version": "CLI Proxy API 版本",
@@ -1829,7 +1949,10 @@
   },
   "providersPage": {
     "header": {
-      "title": "AI 提供商"
+      "title": "AI 提供商",
+      "activeResources": "{{active}}/{{total}} 個活躍資源",
+      "providerFamilies": "{{count}} 個提供商家族",
+      "updatedAt": "更新於 {{time}}"
     },
     "actions": {
       "refresh": "重新整理",
@@ -1847,7 +1970,8 @@
     },
     "categories": {
       "title": "提供商",
-      "activeCount": "{{active}}/{{total}} 活躍"
+      "activeCount": "{{active}}/{{total}} 活躍",
+      "quickFill": "快速接入"
     },
     "providerNames": {
       "meta": "Muse (Meta)",
@@ -1857,7 +1981,8 @@
       "xai": "xAI",
       "claude": "Claude",
       "vertex": "Vertex",
-      "openaiCompatibility": "OpenAI"
+      "openaiCompatibility": "OpenAI",
+      "kimi": "Kimi"
     },
     "table": {
       "key": "金鑰",
@@ -1868,11 +1993,17 @@
       "enabled": "啟用",
       "actions": "操作",
       "metrics": {
-        "models": "模型"
+        "models": "模型",
+        "keys": "金鑰",
+        "headers": "請求標頭"
       },
       "empty": "尚未新增設定,點擊{{action}}開始。",
       "filterPlaceholder": "搜尋金鑰、位址、模型…",
-      "description": "在 {{route}} 下管理資源"
+      "description": "在 {{route}} 下管理資源",
+      "prefix": "前綴",
+      "websocketsTag": "WebSockets",
+      "cloakTag": "Cloak",
+      "cliProfileTag": "CLI 指紋"
     },
     "status": {
       "active": "活躍",
@@ -1967,7 +2098,8 @@
         "weightInteger": "調度權重必須是整數",
         "weightMax": "調度權重不能超過 {{max}}"
       },
-      "testModelHint": "僅用於連通性測試,不會被儲存"
+      "testModelHint": "僅用於連通性測試,不會被儲存",
+      "disableCoolingHint": "僅對目前憑證或提供商停用失敗後的冷卻視窗"
     },
     "delete": {
       "title": "刪除資源",
@@ -2005,12 +2137,14 @@
       "loading": "正在載入模型…",
       "empty": "端點未回傳任何模型",
       "notLoaded": "點擊重新載入以取得模型",
-      "selectAll": "全選",
-      "clearAll": "清空選擇",
+      "selectAll": "選取搜尋結果",
+      "clearAll": "取消選取搜尋結果",
       "selectedCount": "{{selected}} / {{total}}",
       "alreadyAdded": "已新增",
       "close": "關閉",
-      "apply": "套用 ({{count}})"
+      "apply": "套用 ({{count}})",
+      "applyChanges": "套用 (+{{added}} / −{{removed}})",
+      "syncHint": "勾選或取消勾選取得的模型，然後套用。結果之外的模型以及保留模型的設定均維持不變。設定清單為空時將遵循後端預設行為，並不一定會停用所有模型。"
     },
     "toolbar": {
       "sortBy": "排序",
@@ -2112,6 +2246,9 @@
         "continue": "繼續",
         "continue-and-cooldown": "繼續並冷卻"
       }
+    },
+    "modelCatalog": {
+      "notLoaded": "未載入"
     }
   },
   "claude_reset": {
@@ -2147,5 +2284,146 @@
     "unavailable": "重置暫不可用。",
     "rate_limited": "請求過於頻繁。",
     "auth_error": "授權遭拒。"
+  },
+  "plugin_quota": {
+    "empty_title": "暫無插件憑證",
+    "empty_desc": "連接插件帳戶後即可查看剩餘額度。",
+    "idle": "點擊此處重新整理配額",
+    "loading": "正在載入配額…",
+    "load_failed": "配額取得失敗：{{message}}",
+    "missing_auth_index": "驗證檔案缺少 auth_index",
+    "probe_unsupported": "v8 管理介面暫不支援宣告式配額探測（quota_probe）",
+    "plugin_not_found": "找不到為 {{provider}} 提供配額查詢的已啟用插件",
+    "empty_data": "暫無可用配額資料",
+    "plan_label": "方案",
+    "remaining_percent": "剩餘 {{percent}}%"
+  },
+  "routing": {
+    "title": "路由編排",
+    "refresh": "重新整理",
+    "refresh_discards": "重新整理會捨棄未儲存的路由調整。",
+    "loading": "正在讀取路由…",
+    "load_failed": "讀取路由失敗：{{message}}",
+    "retry": "重試",
+    "empty_title": "尚無可調度的上游",
+    "empty_desc": "請先在 AI 提供商或認證檔案中新增 API Key 或 OAuth 憑證。",
+    "entry": "請求進入",
+    "model_placeholder": "所有模型（輸入模型名稱預覽路由）",
+    "models_loading": "正在讀取模型 {{done}}/{{total}}",
+    "tier_primary": "首選",
+    "tier_backup": "備用 {{index}}",
+    "tier_priority": "優先級 {{priority}}",
+    "tier_priority_changed": "優先級 {{from}} → {{to}}",
+    "tier_state_active": "正在承接請求",
+    "tier_state_standby": "待命，上層全部不可用時啟用",
+    "tier_state_skipped_model": "不提供此模型，請求會略過這一層",
+    "tier_state_skipped": "沒有可用成員，請求會略過這一層",
+    "tier_state_cooling": "冷卻中或不可用，請求會略過這一層",
+    "tier_state_unknown": "部分成員的模型未知，可能承接請求",
+    "connector": "整層不可用時轉入下一層",
+    "drop_new_tier": "放到這裡，成為新的一層",
+    "exhausted": "全部不可用",
+    "exhausted_retry": "再重試 {{count}} 輪後回傳錯誤",
+    "exhausted_no_retry": "直接回傳錯誤",
+    "footnote": "預覽不含會話黏著、API Key 的即時冷卻與 WebSocket 優先；API Key 的可用模型依設定推算，外掛註冊的模型顯示為未知。",
+    "kind_api_key": "API Key",
+    "kind_oauth": "OAuth",
+    "kind_compat_keys": "{{count}} 個金鑰",
+    "state_disabled": "已停用",
+    "state_cooling": "冷卻 {{time}}",
+    "state_blocked": "不可用",
+    "state_unknown": "模型未知",
+    "state_ineligible": "不提供此模型",
+    "state_excluded": "權重 0",
+    "no_runtime_state": "無冷卻資訊",
+    "weight_badge": "權重 {{weight}}",
+    "share": "{{share}}%",
+    "locked_priority_conflict": "無法在此新增層級：鎖定憑證之間沒有可用的優先級，請加入現有層級。",
+    "locked": "執行階段憑證沒有檔案可儲存優先級，無法移動",
+    "member_actions": "{{name}} 的操作",
+    "drag_handle": "拖曳 {{name}}，或用上下方向鍵調整層級",
+    "move_up": "上移一層",
+    "move_down": "下移一層",
+    "edit_weight": "設定權重…",
+    "weight_title": "設定權重：{{name}}",
+    "weight_hint": "僅在加權輪詢下生效。留空以 1 計算，0 表示不參與分配。",
+    "weight_placeholder": "1",
+    "weight_apply": "套用",
+    "weight_inactive": "目前策略不是加權輪詢，權重暫不生效。",
+    "policy_title": "閘道策略",
+    "policy_subtitle": "對每一層都生效。",
+    "strategy_label": "同層分配",
+    "strategy_round_robin": "輪詢",
+    "strategy_weighted_round_robin": "加權輪詢",
+    "strategy_fill_first": "優先填滿",
+    "strategy_round_robin_desc": "同層每個憑證輪流接收請求。",
+    "strategy_weighted_round_robin_desc": "同層依權重比例分配請求。",
+    "strategy_fill_first_desc": "同層先用滿一個憑證，不可用時再換下一個。",
+    "affinity_label": "啟用會話親和性",
+    "affinity_desc": "同一會話的請求固定送往同一憑證，憑證不可用時自動轉移。",
+    "retry_label": "故障轉移",
+    "request_retry": "重試輪數",
+    "request_retry_desc": "首輪所有憑證都失敗後，再重試的輪數。",
+    "max_retry_credentials": "每輪最多憑證",
+    "max_retry_credentials_desc": "每輪最多嘗試的憑證數，0 表示不限。",
+    "unlimited": "不限",
+    "dirty_region": "未儲存的路由變更",
+    "dirty_count": "{{count}} 項變更未儲存",
+    "discard": "捨棄",
+    "save": "儲存",
+    "review_title": "確認儲存路由變更",
+    "review_hint": "OAuth 憑證逐一寫入，其餘變更一次寫入設定。",
+    "confirm_save": "確認儲存",
+    "change_priority": "{{name}}：優先級 {{from}} → {{to}}",
+    "change_weight": "{{name}}：權重 {{from}} → {{to}}",
+    "change_setting": "{{name}}：{{from}} → {{to}}",
+    "value_default": "預設",
+    "value_on": "開啟",
+    "value_off": "關閉",
+    "save_success": "已儲存 {{count}} 項變更",
+    "save_partial": "儲存中斷：{{name}} 寫入失敗（{{message}}）。已套用 {{applied}} 項，{{skipped}} 項未執行。",
+    "save_conflict": "設定在讀取後被修改，設定部分未寫入。已重新整理，請重新調整後儲存。",
+    "config_target": "設定",
+    "unsaved_title": "捨棄未儲存的路由變更？",
+    "unsaved_message": "離開後，未儲存的路由調整將會遺失。",
+    "unsaved_confirm": "離開",
+    "unsaved_cancel": "留下",
+    "duration_seconds": "{{count}} 秒",
+    "duration_minutes": "{{count}} 分鐘",
+    "duration_hours": "{{count}} 小時"
+  },
+  "siwc": {
+    "title": "綁定 SIWC",
+    "bind": "綁定 SIWC",
+    "tile_caption": "為 Codex 憑證綁定 SIWC",
+    "intro": "選擇一個 Codex 憑證。完成瀏覽器授權後，SIWC 會綁定到該憑證。",
+    "target": "憑證",
+    "active": "已啟用",
+    "bound": "已綁定 · 未啟用",
+    "unbound": "未綁定",
+    "expires": "到期 {{date}}",
+    "loading": "正在載入憑證…",
+    "no_targets": "暫無可綁定 SIWC 的 Codex 憑證。",
+    "load_failed": "憑證清單載入失敗，請關閉後重試。",
+    "start": "開始授權",
+    "starting": "正在產生授權連結…",
+    "wait": "等待授權…",
+    "cancel": "取消綁定",
+    "retry": "重新開始",
+    "step_open": "開啟授權頁並完成登入",
+    "open": "開啟授權頁",
+    "copy": "複製連結",
+    "callback": "貼上回呼連結",
+    "hint": "授權後瀏覽器會跳轉到 http://127.0.0.1:1455/auth/callback，即使頁面無法開啟，也請複製網址列中的完整連結貼到這裡。",
+    "submit": "提交",
+    "submitted": "回呼已提交，等待確認…",
+    "invalid_callback": "連結不完整：需包含相符的 state，以及 code 與 client_id（或 OAuth 錯誤）。",
+    "callback_failed": "回呼提交失敗，請檢查連結後重試。",
+    "ok": "SIWC 綁定完成",
+    "ok_hint": "{{name}} 已綁定 SIWC。",
+    "done": "完成",
+    "error": "綁定失敗，請重新開始。",
+    "unsupported": "目前後端不支援 SIWC 綁定。",
+    "expired": "綁定工作階段已過期，請重新開始。"
   }
 }

@@ -1,3 +1,5 @@
+import { SiwcStatusBadge } from '@/features/oauth/components/SiwcStatusBadge';
+import { supportsSiwcBinding, getSiwcBindingStatus } from '@/features/oauth/siwcBinding';
 import { useState, type CSSProperties } from 'react';
 import { getAuthFileRefreshKey } from '@/features/authFiles/manualRefresh';
 import { useTranslation } from 'react-i18next';
@@ -259,6 +261,7 @@ export function AuthFileCard(props: AuthFileCardProps) {
       </div>
 
       <div className={styles.metaRow}>
+        {supportsSiwcBinding(file) && <SiwcStatusBadge status={getSiwcBindingStatus(file)} />}
         <span title={t('auth_files.file_size')}>{file.size ? formatFileSize(file.size) : '-'}</span>
         <span className={styles.metaDivider} aria-hidden="true">
           &middot;

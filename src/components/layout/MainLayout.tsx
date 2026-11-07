@@ -1,3 +1,5 @@
+import { IconSidebarRouting } from '@/components/ui/icons';
+import { useLoginTransitionStore } from '@/stores/useLoginTransitionStore';
 import {
   ReactNode,
   RefObject,
@@ -265,6 +267,7 @@ export function MainLayout() {
   const [expandedPluginResourceIDs, setExpandedPluginResourceIDs] = useState<Set<string>>(
     () => new Set()
   );
+  const arrivingFromLogin = useLoginTransitionStore((state) => state.phase === 'revealing');
   const contentRef = useRef<HTMLDivElement | null>(null);
   const railTooltipRef = useRef<HTMLDivElement | null>(null);
   const focusedRailItemRef = useRef<HTMLElement | null>(null);
@@ -518,6 +521,12 @@ export function MainLayout() {
           labelKey: 'nav.oauth',
           metaKey: 'nav_meta.oauth',
           icon: sidebarIcons.oauth,
+        },
+        {
+          path: '/routing',
+          labelKey: 'nav.routing',
+          metaKey: 'nav_meta.routing',
+          icon: <IconSidebarRouting size={20} />,
         },
       ],
     },
@@ -848,7 +857,9 @@ export function MainLayout() {
   const sidebarToggleLabel = sidebarCollapsed ? t('sidebar.expand') : t('sidebar.collapse');
 
   return (
-    <div className={`app-shell ${sidebarCollapsed ? 'sidebar-is-collapsed' : ''}`}>
+    <div
+      className={`app-shell ${arrivingFromLogin ? 'app-shell--arriving' : ''} ${sidebarCollapsed ? 'sidebar-is-collapsed' : ''}`}
+    >
       <header className="main-header" ref={headerRef}>
         <button
           type="button"

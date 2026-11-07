@@ -8,6 +8,7 @@ import { isRuntimeOnlyAuthFile, type QuotaProviderType } from '@/features/authFi
 import { useQuotaActions } from '@/features/quota/hooks/useQuotaActions';
 import { QUOTA_ADAPTERS, type QuotaCardState } from '@/features/quota/providers';
 import type { QuotaStore } from '@/features/quota/providers/types';
+import { getQuotaCacheKey } from '@/utils/quota/identity';
 import { resolveQuotaErrorMessage } from '@/utils/quota';
 import styles from '@/features/authFiles/components/AuthFileQuota.module.scss';
 
@@ -23,26 +24,32 @@ export function useAuthFileQuotaControls(props: AuthFileQuotaControlProps) {
   const adapter = quotaType ? QUOTA_ADAPTERS[quotaType] : null;
   const runtimeOnly = isRuntimeOnlyAuthFile(file);
   const { resettingQuotaName, refreshQuota, resetQuota } = useQuotaActions(disableControls);
-  const resettingQuota = resettingQuotaName === file.name;
+  const resettingQuota = resettingQuotaName === getQuotaCacheKey(file);
 
   const quota = useQuotaStore((state) =>
-    adapter ? adapter.storeSelector(state as unknown as QuotaStore)[file.name] : undefined
+    adapter
+      ? adapter.storeSelector(state as unknown as QuotaStore)[getQuotaCacheKey(file)]
+      : undefined
   );
 
   const refreshQuotaForFile = useCallback(async () => {
-    if (!adapter || runtimeOnly) return;
+    if (!adapter || (runtimeOnly && quotaType !== 'plugin')) return;
     await refreshQuota(file, adapter);
-  }, [adapter, file, refreshQuota, runtimeOnly]);
+  }, [adapter, file, refreshQuota, runtimeOnly, quotaType]);
 
   const resetQuotaForFile = useCallback(() => {
-    if (!adapter || runtimeOnly) return;
+    if (!adapter || (runtimeOnly && quotaType !== 'plugin')) return;
     resetQuota(file, adapter);
-  }, [adapter, file, resetQuota, runtimeOnly]);
+  }, [adapter, file, resetQuota, runtimeOnly, quotaType]);
 
   const quotaStatus = quota?.status ?? 'idle';
   const quotaLoading = quotaStatus === 'loading';
   const canUseQuotaAction =
-    !disableControls && !runtimeOnly && !file.disabled && !resettingQuota && !quotaLoading;
+    !disableControls &&
+    (!runtimeOnly || quotaType === 'plugin') &&
+    !file.disabled &&
+    !resettingQuota &&
+    !quotaLoading;
   const showResetQuotaAction = quota !== undefined && Boolean(adapter?.canResetQuota?.(quota));
   const resetQuotaAction =
     adapter?.resetQuota && showResetQuotaAction ? (

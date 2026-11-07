@@ -10,23 +10,31 @@ import { useNow } from '@/hooks/useNow';
 import { QuotaMeter } from '../../components/QuotaMeter';
 import { QuotaResetLabel } from '../../components/QuotaResetLabel';
 import { collectQuotaRowInstants, pickUrgentRowId } from '../../resetSchedule';
+import { planValueClassForTier, resolveKimiCardTier } from '../../cardTier';
 import type { QuotaBodyProps } from '../../types';
 
 export function KimiQuotaBody({ quota, classes }: QuotaBodyProps<KimiQuotaState>) {
   const { t, i18n } = useTranslation();
   const now = useNow();
-  const urgentRowId = useMemo(
+  const soonestRowId = useMemo(
     () => pickUrgentRowId(collectQuotaRowInstants('kimi', quota), now),
     [quota, now]
   );
   const rows = quota.rows ?? [];
 
-  if (rows.length === 0) {
-    return <div className={classes.quotaMessage}>{t('kimi_quota.empty_data')}</div>;
-  }
-
   return (
     <>
+      <div className={classes.codexPlan}>
+        <span className={classes.codexPlanItem}>
+          <span className={classes.codexPlanLabel}>{t('kimi_quota.plan_label')}</span>
+          <span className={planValueClassForTier(resolveKimiCardTier(quota.planName), classes)}>
+            {quota.planName || t('kimi_quota.plan_unknown')}
+          </span>
+        </span>
+      </div>
+      {rows.length === 0 && (
+        <div className={classes.quotaMessage}>{t('kimi_quota.empty_data')}</div>
+      )}
       {rows.map((row, index) => {
         const limit = row.limit;
         const used = row.used;
@@ -46,20 +54,20 @@ export function KimiQuotaBody({ quota, classes }: QuotaBodyProps<KimiQuotaState>
           now,
           i18n.resolvedLanguage
         );
-        const urgent = row.id === urgentRowId;
+        const soon = row.id === soonestRowId;
 
         return (
           <div
             key={row.id}
             className={classes.quotaRow}
-            title={urgent ? t('quota_management.soonest_row_hint') : undefined}
+            title={soon ? t('quota_management.soonest_row_hint') : undefined}
           >
             <div className={classes.quotaRowHeader}>
               <span className={classes.quotaModel}>{rowLabel}</span>
               <div className={classes.quotaMeta}>
                 <span className={classes.quotaPercent}>{percentLabel}</span>
                 {resetDisplay && (
-                  <QuotaResetLabel display={resetDisplay} classes={classes} soon={urgent} />
+                  <QuotaResetLabel display={resetDisplay} classes={classes} soon={soon} />
                 )}
               </div>
             </div>

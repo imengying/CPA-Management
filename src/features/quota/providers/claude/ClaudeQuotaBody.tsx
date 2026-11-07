@@ -1,5 +1,5 @@
 /**
- * Claude 额度渲染体：套餐行 + 额外用量 + 独立美元余额 + 用量窗口水位条。
+ * Claude plan windows, extra usage, and separate read-only dollar balances.
  */
 
 import { useMemo } from 'react';
@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import type { ClaudeQuotaState } from '@/types';
 import { buildResetDisplay, formatQuotaResetTime, resolveResetMs } from '@/utils/quota';
 import { useNow } from '@/hooks/useNow';
+import { planValueClassForTier, resolveClaudeCardTier } from '../../cardTier';
 import { QuotaMeter } from '../../components/QuotaMeter';
 import { QuotaResetLabel } from '../../components/QuotaResetLabel';
 import { collectQuotaRowInstants, pickUrgentRowId } from '../../resetSchedule';
@@ -20,7 +21,7 @@ export function ClaudeQuotaBody({
 }: QuotaBodyProps<ClaudeQuotaState>) {
   const { t, i18n } = useTranslation();
   const now = useNow();
-  const urgentRowId = useMemo(
+  const soonestRowId = useMemo(
     () => pickUrgentRowId(collectQuotaRowInstants('claude', quota), now),
     [quota, now]
   );
@@ -64,7 +65,9 @@ export function ClaudeQuotaBody({
           {planType && (
             <span className={classes.codexPlanItem}>
               <span className={classes.codexPlanLabel}>{t('claude_quota.plan_label')}</span>
-              <span className={classes.codexPlanValue}>{t(`claude_quota.${planType}`)}</span>
+              <span className={planValueClassForTier(resolveClaudeCardTier(planType), classes)}>
+                {t(`claude_quota.${planType}`)}
+              </span>
             </span>
           )}
           {planItems}
@@ -158,7 +161,7 @@ export function ClaudeQuotaBody({
       {windows.length === 0 && !extraUsage && !quota.dollarWindows?.length ? (
         <div className={classes.quotaMessage}>{t('claude_quota.empty_windows')}</div>
       ) : (
-        windows.map((window) => {
+        windows.map((window, index) => {
           const used = window.usedPercent;
           const clampedUsed = used === null ? null : Math.max(0, Math.min(100, used));
           const remaining =
@@ -169,26 +172,27 @@ export function ClaudeQuotaBody({
             window.resetLabel,
             window.resetAtMs,
             now,
-            language
+            i18n.resolvedLanguage
           );
-          const urgent = window.id === urgentRowId;
+
+          const soon = window.id === soonestRowId;
 
           return (
             <div
               key={window.id}
               className={classes.quotaRow}
-              title={urgent ? t('quota_management.soonest_row_hint') : undefined}
+              title={soon ? t('quota_management.soonest_row_hint') : undefined}
             >
               <div className={classes.quotaRowHeader}>
                 <span className={classes.quotaModel}>{windowLabel}</span>
                 <div className={classes.quotaMeta}>
                   <span className={classes.quotaPercent}>{percentLabel}</span>
                   {resetDisplay && (
-                    <QuotaResetLabel display={resetDisplay} classes={classes} soon={urgent} />
+                    <QuotaResetLabel display={resetDisplay} classes={classes} soon={soon} />
                   )}
                 </div>
               </div>
-              <QuotaMeter percent={remaining} classes={classes} index={0} />
+              <QuotaMeter percent={remaining} classes={classes} index={index} />
             </div>
           );
         })

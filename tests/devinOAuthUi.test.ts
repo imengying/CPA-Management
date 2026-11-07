@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router';
 import { I18nextProvider } from 'react-i18next';
 import { createInstance } from 'i18next';
+import { OAuthFlowDialog } from '@/features/oauth/components/OAuthFlowDialog';
 import { OAuthPage } from '@/pages/OAuthPage';
 import { validateDevinCallback } from '@/pages/devinOAuth';
 import en from '@/i18n/locales/en.json';
@@ -23,9 +24,29 @@ describe('Devin OAuth login UI', () => {
         createElement(MemoryRouter, null, createElement(OAuthPage))
       )
     );
-    expect(markup).toContain('Devin OAuth');
-    expect(markup).toContain('Start Devin Login');
-    expect(markup).toContain('five minutes');
+    expect(markup).toContain('Devin');
+    const dialog = renderToStaticMarkup(
+      createElement(
+        I18nextProvider,
+        { i18n },
+        createElement(OAuthFlowDialog, {
+          open: true,
+          providerId: 'devin',
+          heading: { title: 'Devin OAuth', caption: 'Browser', icon: '' },
+          state: {},
+          text: (suffix) => i18n.t(`auth_login.devin_${suffix}`),
+          supportsCallback: true,
+          onStart: () => {},
+          onCancel: () => {},
+          onCallbackChange: () => {},
+          onCallbackSubmit: () => {},
+          onViewAuthFiles: () => {},
+          onClose: () => {},
+        })
+      )
+    );
+    expect(dialog).toContain('Start Devin Login');
+    expect(dialog).toContain('five minutes');
     expect(markup).not.toContain('auth_login.devin_');
   });
 

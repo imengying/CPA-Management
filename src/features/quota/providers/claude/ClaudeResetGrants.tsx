@@ -54,26 +54,26 @@ export function useClaudeResetGrants(
       void readResetGrantsForCard(authIndex).then(
         (result) => {
           if (current()) {
-              setStatus(result);
-              setMessage('');
-            }
-          },
-        (error: unknown) => {
-            if (current()) {
-              setMessage(
-                error instanceof AnthropicResetGrantError && error.code === 'rate_limited'
-                  ? 'rate_limited'
-                  : 'read_error'
-              );
-            }
+            setStatus(result);
+            setMessage('');
           }
-        );
-      }, current);
-      return () => {
-        cancelled = true;
-        cancelRead();
-        generation.current += 1;
-      };
+        },
+        (error: unknown) => {
+          if (current()) {
+            setMessage(
+              error instanceof AnthropicResetGrantError && error.code === 'rate_limited'
+                ? 'rate_limited'
+                : 'read_error'
+            );
+          }
+        }
+      );
+    }, current);
+    return () => {
+      cancelled = true;
+      cancelRead();
+      generation.current += 1;
+    };
   }, [authIndex, key, enabled, disabled, sessionActive, session, refreshToken, reload]);
 
   const operation = resetGrantOperations.inspect(key);
@@ -102,7 +102,12 @@ export function useClaudeResetGrants(
           const answer = await resetGrantOperations.run(key, authIndex, selected);
           if (!current()) return;
           showNotification(
-            t(`claude_reset.${answer.unresolved ? 'unknown' : answer.code}`),
+            answer.code === 'cooldown_clear_failed'
+              ? t('auth_files.cooldown_reset_failed', {
+                  name: file.name,
+                  message: t('common.unknown_error'),
+                })
+              : t(`claude_reset.${answer.unresolved ? 'unknown' : answer.code}`),
             !answer.unresolved && (answer.code === 'reset' || answer.code === 'already_used')
               ? 'success'
               : 'error'
@@ -112,15 +117,15 @@ export function useClaudeResetGrants(
           const unresolved = resetGrantOperations.inspect(key);
           showNotification(
             t(
-                unresolved && !unresolved.code
-                  ? 'claude_reset.unknown'
-                  : resetGrantFailureMessageKey(error),
-                {
-                  code: error instanceof ResetGrantPreflightError ? error.reason : '',
-                }
-              ),
-              'error'
-            );
+              unresolved && !unresolved.code
+                ? 'claude_reset.unknown'
+                : resetGrantFailureMessageKey(error),
+              {
+                code: error instanceof ResetGrantPreflightError ? error.reason : '',
+              }
+            ),
+            'error'
+          );
         } finally {
           lock.current = false;
           // A concurrent page-wide refresh can invalidate this read generation.

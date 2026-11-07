@@ -1,3 +1,4 @@
+import { AUTH_FILES_CHANGED_EVENT } from './authFilesEvents';
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
@@ -219,7 +220,7 @@ export function AuthFilesPage() {
     ? (normalizedFilter as QuotaProviderType)
     : null;
   const activeQuotaFilter: AuthFileQuotaFilter =
-    normalizedFilter === 'all' ? 'all' : quotaFilterType;
+    normalizedFilter === 'all' ? 'all' : (quotaFilterType ?? normalizedFilter) || null;
   const pageSize = compactMode ? pageSizeByMode.compact : pageSizeByMode.regular;
   const problemOnly = statusFilterMode === 'problem';
   const disabledOnly = statusFilterMode === 'disabled';
@@ -297,6 +298,14 @@ export function AuthFilesPage() {
     () => void loadFiles({ background: true }).catch(() => undefined),
     isCurrentLayer ? 240_000 : null
   );
+
+  useEffect(() => {
+    const refresh = () => {
+      if (isCurrentLayer) void loadFiles({ background: true });
+    };
+    window.addEventListener(AUTH_FILES_CHANGED_EVENT, refresh);
+    return () => window.removeEventListener(AUTH_FILES_CHANGED_EVENT, refresh);
+  }, [isCurrentLayer, loadFiles]);
 
   const existingTypes = useMemo(() => {
     const types = new Set<string>(['all']);

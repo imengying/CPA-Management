@@ -85,6 +85,9 @@ export function useLogStream({ active, isFollowing, onFollow }: LogStreamOptions
     retryDelayRef.current = 8000;
   };
 
+  // oxlint 1.92 misclassifies this recursive async callback as render work.
+  // It only runs from effects/events; timestamps are captured after network responses.
+  /* eslint-disable react/purity */
   async function loadLogs(incremental = false) {
     // Queued reloads must read live context, not the render that started the old request.
     if (useAuthStore.getState().connectionStatus !== 'connected') {
@@ -152,6 +155,8 @@ export function useLogStream({ active, isFollowing, onFollow }: LogStreamOptions
       }
     }
   }
+
+  /* eslint-enable react/purity */
 
   const clearLogs = async () => {
     if (cpaNeedsFileLogging) {

@@ -6,7 +6,7 @@
 
 **主项目**: https://github.com/router-for-me/CLIProxyAPI<br>
 **原版WebUI 仓库**: https://github.com/router-for-me/Cli-Proxy-API-Management-Center<br>
-**上游同步版本**: [v1.25.6](https://github.com/router-for-me/Cli-Proxy-API-Management-Center/releases/tag/v1.25.6)<br>
+**上游功能同步版本（不含广告与推广）**: [v1.27.3](https://github.com/router-for-me/Cli-Proxy-API-Management-Center/releases/tag/v1.27.3)<br>
 **支持版本**: CLIProxyAPI 8.0.0 及以上
 
 服务运行后，通过 API 端口上的 `/management.html` 访问 Web UI。
@@ -88,9 +88,13 @@ bun run build
 - **日志**：游标增量拉取、自动刷新、搜索与多条件筛选、隐藏管理端流量、换行与全屏、清空日志；下载请求错误日志文件。
 - **系统信息**：快捷链接、版本检查、本地登录信息清理，以及拉取 `/v1/models` 并分组展示（需要至少一个代理 API Key 才能查询模型）。
 
+本次同步新增路由管理（优先级、权重与策略）、Codex SIWC 绑定及开关、通用插件配额和多入口 OAuth；更新登录/OAuth 界面、套餐显示及模型发现的同步选择操作。
+
+升级到此版本后，旧版保存的登录凭据会按上游策略清除，需要重新输入管理密钥。新的本地存储格式不再依赖浏览器版本；它仍是可逆混淆。
+
 ## 技术栈
 
-- React 19 + TypeScript 6.0
+- React 19 + TypeScript 7.0
 - Vite 8（单文件构建）
 - Zustand（状态管理）
 - Axios（HTTP 客户端）
@@ -102,7 +106,7 @@ bun run build
 
 ## 多语言支持
 
-目前支持六种语言：
+目前支持七种语言：
 
 - 英文 (en)
 - 简体中文 (zh-CN)
@@ -110,6 +114,7 @@ bun run build
 - 俄文 (ru)
 - 越南文 (vi)
 - 韩文 (ko)
+- 土耳其文 (tr)
 
 界面语言会根据浏览器设置自动切换，也可在登录页或顶部语言菜单手动切换。
 

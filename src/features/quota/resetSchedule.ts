@@ -93,7 +93,7 @@ export function collectQuotaRowInstants(
     return [{ rowId: XAI_WEEKLY_ROW_ID, atMs: billing.resetAtMs, kind: 'window' }];
   }
 
-  if (provider === 'antigravity') {
+  if (provider === 'antigravity' || provider === 'plugin') {
     const buckets = ((quota as { groups?: { buckets?: WindowLike[] }[] }).groups ?? []).flatMap(
       (group) => group.buckets ?? []
     );

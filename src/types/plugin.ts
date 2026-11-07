@@ -25,6 +25,13 @@ export interface PluginMenu {
   description: string;
 }
 
+/** 插件为某个登录入口单独发布的展示信息。 */
+export interface PluginOAuthProviderEntry {
+  identifier: string;
+  name?: string;
+  logo?: string;
+}
+
 export interface PluginListEntry {
   id: string;
   path: string;
@@ -34,6 +41,10 @@ export interface PluginListEntry {
   effectiveEnabled: boolean;
   supportsOAuth: boolean;
   oauthProvider?: string;
+  oauthProviders?: string[];
+  oauthProviderEntries?: PluginOAuthProviderEntry[];
+  supportsQuota?: boolean;
+  quotaProvider?: string;
   logo: string;
   configFields: PluginConfigField[];
   menus: PluginMenu[];

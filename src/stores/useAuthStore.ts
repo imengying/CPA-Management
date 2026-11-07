@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { AuthState, LoginCredentials, ConnectionStatus } from '@/types';
 import { STORAGE_KEY_AUTH } from '@/utils/constants';
+import { isCurrentObfuscated } from '@/utils/encryption';
 import { obfuscatedStorage } from '@/services/storage/secureStorage';
 import { apiClient } from '@/services/api/client';
 import { useConfigStore } from './useConfigStore';
@@ -17,11 +18,18 @@ interface AuthStoreState extends AuthState {
   logout: () => void;
   checkAuth: () => Promise<boolean>;
   restoreSession: () => Promise<boolean>;
+  hasRestorableSession: () => boolean;
   updateServerVersion: (version: string | null, buildDate?: string | null) => void;
   updateSupportsPlugin: (supportsPlugin: boolean) => void;
 }
 
 let restoreSessionPromise: Promise<boolean> | null = null;
+
+export const shouldAttemptAutoLogin = (
+  rememberPassword: boolean,
+  apiBase: string,
+  managementKey: string
+): boolean => rememberPassword && Boolean(apiBase) && Boolean(managementKey);
 
 export const useAuthStore = create<AuthStoreState>()(
   persist(
@@ -52,7 +60,7 @@ export const useAuthStore = create<AuthStoreState>()(
           });
           apiClient.setConfig({ apiBase: resolvedBase, managementKey: resolvedKey });
 
-          if (rememberPassword && resolvedBase && resolvedKey) {
+          if (shouldAttemptAutoLogin(rememberPassword, resolvedBase, resolvedKey)) {
             try {
               await get().login({
                 apiBase: resolvedBase,
@@ -70,6 +78,15 @@ export const useAuthStore = create<AuthStoreState>()(
         })();
 
         return restoreSessionPromise;
+      },
+
+      hasRestorableSession: () => {
+        const { apiBase, managementKey, rememberPassword } = get();
+        return shouldAttemptAutoLogin(
+          rememberPassword,
+          apiBase || detectApiBaseFromLocation(),
+          managementKey
+        );
       },
 
       // 登录
@@ -177,6 +194,14 @@ export const useAuthStore = create<AuthStoreState>()(
       name: STORAGE_KEY_AUTH,
       storage: createJSONStorage(() => ({
         getItem: (name) => {
+          // Retire all pre-v2 login credentials without decoding or migrating them.
+          localStorage.removeItem('managementKey');
+          const raw = localStorage.getItem(name);
+          if (!raw || !isCurrentObfuscated(raw)) {
+            localStorage.removeItem(name);
+            localStorage.removeItem('isLoggedIn');
+            return null;
+          }
           const data = obfuscatedStorage.getItem<AuthStoreState>(name);
           return data ? JSON.stringify(data) : null;
         },

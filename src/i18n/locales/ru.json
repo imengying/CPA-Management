@@ -53,10 +53,12 @@
     "model_alias_placeholder": "Псевдоним модели (необязательно)",
     "invalid_provider_index": "Неверный индекс провайдера.",
     "unsaved_changes_title": "Несохранённые изменения",
-    "unsaved_changes_message": "У вас есть несохранённые изменения. Если вы уйдёте, они будут потеряны. Выйти?"
+    "unsaved_changes_message": "У вас есть несохранённые изменения. Если вы уйдёте, они будут потеряны. Выйти?",
+    "quota_update_required": "Пожалуйста, обновите CPA или проверьте наличие обновлений"
   },
   "title": {
-    "login": "CPA Manager"
+    "login": "CPA Manager",
+    "abbr": "CPAMC"
   },
   "splash": {
     "title": "CPA Manager",
@@ -67,12 +69,12 @@
     "connection_title": "Адрес подключения",
     "connection_current": "Текущий URL",
     "connection_auto_hint": "Система автоматически использует текущий URL для подключения",
-    "custom_connection_label": "Пользовательский URL подключения:",
+    "custom_connection_label": "Пользовательский URL подключения",
     "custom_connection_placeholder": "Напр.: https://example.com:8317",
     "custom_connection_hint": "По умолчанию используется текущий URL. При необходимости замените его.",
     "use_current_address": "Использовать текущий URL",
     "remember_password_label": "Запомнить пароль",
-    "management_key_label": "Ключ управления:",
+    "management_key_label": "Ключ управления",
     "management_key_placeholder": "Введите ключ управления",
     "connect_button": "Подключиться",
     "submit_button": "Войти",
@@ -90,7 +92,10 @@
     "error_cors": "Блокировка CORS, проверьте конфигурацию сервера",
     "error_ssl": "Ошибка проверки SSL/TLS сертификата",
     "show_key": "Показать ключ",
-    "hide_key": "Скрыть ключ"
+    "hide_key": "Скрыть ключ",
+    "connection_edit": "Изменить",
+    "connection_done": "Готово",
+    "error_legacy_backend": "Этот сервер поддерживает Management API v0, но не v8. Обновите CLIProxyAPI до v8 или новее, чтобы использовать эту страницу управления."
   },
   "header": {
     "refresh_all": "Обновить всё",
@@ -112,7 +117,8 @@
     "plugin_store": "Магазин плагинов",
     "config_management": "Панель конфигурации",
     "logs": "Просмотр логов",
-    "system_info": "Информация системы"
+    "system_info": "Информация системы",
+    "routing": "Маршрутизация"
   },
   "nav_groups": {
     "operate": "Работа",
@@ -131,7 +137,8 @@
     "plugin_store": "Поиск и установка плагинов",
     "logs": "Трассировка запросов",
     "config_management": "Базовая конфигурация шлюза",
-    "system_info": "Состояние и диагностика"
+    "system_info": "Состояние и диагностика",
+    "routing": "Уровни приоритета и отказоустойчивость"
   },
   "dashboard": {
     "hero_verdict_good": "Всё стабильно",
@@ -197,7 +204,16 @@
     "runtime_link": "Изменить конфигурацию",
     "window_m": "{{minutes}} мин",
     "window_h": "{{hours}} ч",
-    "window_hm": "{{hours}} ч {{minutes}} мин"
+    "window_hm": "{{hours}} ч {{minutes}} мин",
+    "hero_spark_label": "Объём запросов за последние {{window}}",
+    "cta_eyebrow": "Далее",
+    "cta_title": "Куда двигаться дальше",
+    "cta_providers_desc": "Добавляйте API-ключи, задавайте приоритеты и проверяйте бренды.",
+    "cta_auth_files_desc": "Загрузка, обновление и отключение OAuth-данных.",
+    "cta_config_desc": "Настройка маршрутизации, повторов, логов и доступа.",
+    "cta_quota_desc": "Проверка остатка квоты по каждым учётным данным.",
+    "cta_logs_desc": "Следите за запросами и скачивайте отчёты об ошибках.",
+    "cta_system_desc": "Информация о версии и центре управления."
   },
   "basic_settings": {
     "debug_enable": "Включить режим отладки",
@@ -207,7 +223,10 @@
     "ws_auth_enable": "Требовать аутентификацию для /ws/*",
     "routing_strategy_round_robin": "round-robin (цикл)",
     "routing_strategy_weighted_round_robin": "weighted-round-robin (взвешенный цикл)",
-    "routing_strategy_fill_first": "fill-first (приоритет)"
+    "routing_strategy_fill_first": "fill-first (приоритет)",
+    "request_log_title": "Журналирование запросов",
+    "request_log_enable": "Включить журналирование запросов",
+    "request_log_warning": "Оставьте выключенным, если подробная диагностика не нужна."
   },
   "auth_files": {
     "title": "Управление файлами авторизации",
@@ -429,7 +448,12 @@
     "policy_rules_hint": "Свои правила применяются в порядке списка. Наследование или пустой список использует унаследованные правила, а не отключает их. Регулярные выражения используют синтаксис Go.",
     "policy_retry_invalid": "Введите неотрицательное безопасное целое число или выберите наследование.",
     "policy_aliases_invalid": "Укажите непустые имя модели и псевдоним в каждой новой или изменённой строке.",
-    "policy_rules_invalid": "В каждом изменённом правиле укажите положительный код статуса, действие и хотя бы одно непустое условие."
+    "policy_rules_invalid": "В каждом изменённом правиле укажите положительный код статуса, действие и хотя бы одно непустое условие.",
+    "filter_iflow": "iFlow",
+    "models_unsupported": "Функция не поддерживается в текущей версии",
+    "models_unsupported_desc": "Обновите CLI Proxy API до последней версии и повторите попытку",
+    "use_siwc_label": "Использовать SIWC (use_siwc)",
+    "use_siwc_hint": "Использовать привязанные учётные данные SIWC. Выключение отключает SIWC, сохраняя данные привязки. Перед включением выполните привязку."
   },
   "antigravity_subscription": {
     "subscription_label": "Подписка",
@@ -486,12 +510,12 @@
     "refresh_button": "Обновить квоту",
     "fetch_all": "Получить все",
     "five_hour": "Лимит на 5 часов",
-    "seven_day": "Лимит на 7 дней",
-    "seven_day_oauth_apps": "7 дней OAuth приложения",
-    "seven_day_opus": "7 дней Opus",
-    "seven_day_sonnet": "7 дней Sonnet",
-    "seven_day_cowork": "7 дней Cowork",
-    "seven_day_fable": "7 дней Fable 5",
+    "seven_day": "Недельный лимит",
+    "seven_day_oauth_apps": "OAuth-приложения: недельный лимит",
+    "seven_day_opus": "Opus: недельный лимит",
+    "seven_day_sonnet": "Sonnet: недельный лимит",
+    "seven_day_cowork": "Cowork: недельный лимит",
+    "seven_day_fable": "Fable 5: недельный лимит",
     "extra_usage_label": "Дополнительное использование",
     "plan_label": "План",
     "plan_unknown": "Неизвестно",
@@ -512,7 +536,8 @@
     "dollar_balance_remaining": "Осталось {{amount}}",
     "balance_reset": "Сброс",
     "balance_reset_unknown": "Не указан",
-    "stale_snapshot": "Не удалось обновить. Последняя успешная проверка: {{time}}"
+    "stale_snapshot": "Не удалось обновить. Последняя успешная проверка: {{time}}",
+    "iguana_necktie": "Iguana Necktie"
   },
   "codex_quota": {
     "title": "Квота Codex",
@@ -558,11 +583,12 @@
     "credit_balance_label": "Остаток кредитов",
     "credit_unlimited": "Без ограничений",
     "reset_not_confirmed": "Сброс квоты не подтверждён. Обновите квоту перед повторной попыткой.",
-    "reset_cooldown_failed": "Квота сброшена, но период ожидания шлюза не снят. В исходном подключении используйте очистку периода ожидания на странице учётных данных; не расходуйте ещё один сброс."
+    "reset_cooldown_failed": "Квота сброшена, но период ожидания шлюза не снят. В исходном подключении используйте очистку периода ожидания на странице учётных данных; не расходуйте ещё один сброс.",
+    "plan_promax": "Pro 500"
   },
   "devin_quota": {
-    "daily": "Остаток на день",
-    "weekly": "Остаток на неделю",
+    "daily": "Дневной лимит",
+    "weekly": "Недельный лимит",
     "plan_label": "Тариф",
     "plan_end": "Окончание подписки",
     "unavailable": "Нет данных",
@@ -597,10 +623,10 @@
     "plan": "Тариф",
     "active": "Подписка активна",
     "inactive": "Подписка неактивна",
-    "window": "Квота за период",
-    "window_duration": "Период: {{minutes}} мин.",
-    "window_duration_hours": "Период: {{hours}} ч.",
-    "weekly": "Недельная квота",
+    "window": "Лимит использования",
+    "window_duration": "Лимит на {{minutes}} мин.",
+    "window_duration_hours": "Лимит на {{hours}} ч.",
+    "weekly": "Недельный лимит",
     "unknown": "Неизвестно",
     "remaining": "Осталось {{percent}}%"
   },
@@ -621,7 +647,9 @@
     "reset_hint": "сброс через {{hint}}",
     "domain_unavailable": "Не удалось прочитать домен учётных данных Kimi. Требуется доступный для скачивания корректный файл авторизации.",
     "stale_request": "Подключение или учётные данные изменились. Повторите попытку.",
-    "monthly_limit": "Месячный лимит"
+    "monthly_limit": "Месячный лимит",
+    "plan_label": "Тариф",
+    "plan_unknown": "Неизвестно"
   },
   "xai_quota": {
     "title": "Квота Grok",
@@ -656,8 +684,8 @@
     "title": "Vertex",
     "description": "Загрузите JSON ключа сервисного аккаунта Google, чтобы сохранить его как auth-dir/vertex-<project>.json по тем же правилам, что и помощник CLI vertex-import.",
     "location_label": "Регион (необязательно)",
-    "location_placeholder": "us-central1",
-    "location_hint": "Оставьте пустым, чтобы использовать регион us-central1 по умолчанию.",
+    "location_placeholder": "global",
+    "location_hint": "Оставьте пустым, чтобы использовать регион global по умолчанию.",
     "file_label": "JSON ключ сервисного аккаунта",
     "file_hint": "Принимаются только JSON-файлы ключей сервисных аккаунтов Google Cloud.",
     "file_placeholder": "Файл не выбран",
@@ -669,7 +697,9 @@
     "result_project": "ID проекта",
     "result_email": "Сервисный аккаунт",
     "result_location": "Регион",
-    "result_file": "Сохранённый файл"
+    "result_file": "Сохранённый файл",
+    "drop_hint": "Выберите или перетащите JSON-файл",
+    "import_another": "Импортировать ещё"
   },
   "oauth_excluded": {
     "title": "Отключение OAuth-моделей",
@@ -704,7 +734,10 @@
     "scope_provider": "Область: {{provider}}",
     "delete_title": "Удалить отключение моделей",
     "editor_description": "Настройте скрытые модели провайдера: выберите отдельные модели или задайте шаблоны.",
-    "models_hint": "Разверните список для выбора моделей или введите шаблоны ниже."
+    "models_hint": "Разверните список для выбора моделей или введите шаблоны ниже.",
+    "upgrade_required": "Текущая версия CPA не поддерживает отключение OAuth-моделей. Пожалуйста, обновите систему.",
+    "upgrade_required_title": "Пожалуйста, обновите CLI Proxy API",
+    "upgrade_required_desc": "Текущая версия сервера не поддерживает получение отключения OAuth-моделей. Обновите CPA (CLI Proxy API) до последней версии и повторите попытку."
   },
   "excluded_models": {
     "trigger_summary": "Исключено: {{excluded}} · доступно: {{available}}",
@@ -802,7 +835,11 @@
     "edit_title": "Редактирование псевдонимов моделей {{provider}}",
     "mapping_hint": "Выберите исходную модель и укажите псевдоним для клиентов.",
     "mapping_row": "Сопоставление {{number}}",
-    "remove_mapping": "Удалить сопоставление {{number}}"
+    "remove_mapping": "Удалить сопоставление {{number}}",
+    "model_source_unsupported": "Текущая версия CPA не поддерживает загрузку списка моделей (ручной ввод остаётся доступным).",
+    "upgrade_required": "Эта функция требует более новой версии CLI Proxy API (CPA). Обновите систему.",
+    "upgrade_required_title": "Пожалуйста, обновите CLI Proxy API",
+    "upgrade_required_desc": "Текущая версия сервера не поддерживает API псевдонимов моделей OAuth. Обновите CLI Proxy API (CPA) до последней версии."
   },
   "auth_login": {
     "codex_oauth_title": "Codex OAuth",
@@ -933,7 +970,38 @@
     "kimi_ai_oauth_status_success": "Аутентификация успешна!",
     "kimi_ai_oauth_status_error": "Ошибка аутентификации:",
     "kimi_ai_oauth_start_error": "Не удалось запустить Kimi OAuth:",
-    "kimi_ai_oauth_polling_error": "Не удалось проверить статус аутентификации:"
+    "kimi_ai_oauth_polling_error": "Не удалось проверить статус аутентификации:",
+    "oauth_callback_upgrade_hint": "Обновите CLI Proxy API или проверьте подключение.",
+    "iflow_oauth_title": "iFlow OAuth",
+    "iflow_oauth_button": "Начать вход iFlow",
+    "iflow_oauth_hint": "Выполните вход в сервис iFlow через OAuth и автоматически получите/сохраните файлы авторизации.",
+    "iflow_oauth_url_label": "URL авторизации:",
+    "iflow_open_link": "Открыть ссылку",
+    "iflow_copy_link": "Скопировать ссылку",
+    "iflow_oauth_status_waiting": "Ожидание аутентификации...",
+    "iflow_oauth_status_success": "Аутентификация успешна!",
+    "iflow_oauth_status_error": "Ошибка аутентификации:",
+    "iflow_oauth_start_error": "Не удалось запустить iFlow OAuth:",
+    "iflow_oauth_polling_error": "Не удалось проверить статус аутентификации:",
+    "kimi_oauth_name": "Kimi — Китай",
+    "kimi_ai_oauth_name": "Kimi — международный",
+    "method_device": "Код устройства",
+    "method_browser": "Вход через браузер",
+    "method_plugin": "Плагин",
+    "tile_waiting": "Ожидание авторизации",
+    "tile_success": "Учётные данные добавлены",
+    "tile_error": "Ошибка авторизации",
+    "meta_providers": "Провайдеров: {{count}}",
+    "meta_waiting": "Ожидают авторизации: {{count}}",
+    "meta_added": "Добавлено за сеанс: {{count}}",
+    "step_open_auth_page": "Откройте страницу входа и подтвердите доступ",
+    "step_enter_device_code": "Введите этот код на странице входа",
+    "optional_step": "Необязательно",
+    "generating_link": "Создание ссылки для входа…",
+    "waiting_background_hint": "Закрытие окна не прервёт вход",
+    "restart_login": "Начать заново",
+    "success_saved_hint": "Учётные данные сохранены — управляйте ими в файлах аутентификации.",
+    "copied": "Скопировано"
   },
   "stats": {
     "success": "Успех",
@@ -1020,7 +1088,17 @@
     "clear_search": "Очистить поиск",
     "reading_enabled": "Непрерывное чтение",
     "filter_load_more": "Показать больше совпадающих записей",
-    "wrap_lines": "Перенос длинных строк"
+    "wrap_lines": "Перенос длинных строк",
+    "buffer_evicted": "Старые записи удалены из кэша и недоступны для поиска здесь",
+    "title": "Просмотр журналов",
+    "download_button": "Скачать журналы",
+    "request_log_download_title": "Скачать журнал запросов",
+    "request_log_download_confirm": "Скачать журнал запросов с идентификатором {{id}}?",
+    "clear_confirm": "Очистить все журналы? Действие нельзя отменить!",
+    "auto_refresh": "Автообновление",
+    "load_more_hint": "Прокрутите вверх, чтобы загрузить ещё",
+    "filter_panel_expand": "Развернуть структурные фильтры",
+    "filter_panel_collapse": "Свернуть структурные фильтры"
   },
   "config_management": {
     "title": "Панель конфигурации",
@@ -1078,7 +1156,8 @@
       },
       "sections": {
         "common": {
-          "title": "Основные"
+          "title": "Основные",
+          "description": "Самые востребованные настройки — те же данные, что и в полных разделах"
         },
         "connectivity": {
           "title": "Доступ и аутентификация",
@@ -1530,7 +1609,8 @@
     "source_changes_before_visual": "Сохраните или отмените изменения исходника перед переходом в визуальный режим.",
     "precise_save_incomplete": "Точечное сохранение не завершено; часть изменений могла примениться. Черновик сохранён. Повторите сохранение, чтобы проверить оставшиеся отличия от серверной конфигурации.",
     "concurrent_list_conflict": "Список {{path}} на сервере изменился после создания базы черновика. Сохранение заблокировано, чтобы не затереть эти изменения. Черновик сохранён; запишите свои правки, затем перезагрузите конфигурацию и согласуйте изменения.",
-    "precise_save_recovery_required": "Не удалось прочитать результат сохранения. Редактирование приостановлено. Повторите сохранение, чтобы обновить базу черновика, или перезагрузите конфигурацию."
+    "precise_save_recovery_required": "Не удалось прочитать результат сохранения. Редактирование приостановлено. Повторите сохранение, чтобы обновить базу черновика, или перезагрузите конфигурацию.",
+    "save": "Сохранить"
   },
   "quota_management": {
     "title": "Управление квотами",
@@ -1576,7 +1656,8 @@
     "search_placeholder": "Поиск по имени файла или почте",
     "search_empty_title": "Нет подходящих аккаунтов",
     "search_empty_desc": "Попробуйте другое имя файла или почту либо очистите поиск.",
-    "search_clear": "Очистить поиск"
+    "search_clear": "Очистить поиск",
+    "description": "Следите за статусом квот OAuth для учётных данных Antigravity, Codex, Claude, Kimi и xAI."
   },
   "plugin_management": {
     "refresh": "Обновить",
@@ -1637,7 +1718,9 @@
     "invalid_json": "Введите корректный JSON",
     "expected_array": "Введите JSON-массив",
     "expected_object": "Введите JSON-объект",
-    "invalid_enum": "Выберите одно из объявленных значений enum"
+    "invalid_enum": "Выберите одно из объявленных значений enum",
+    "title": "Управление плагинами",
+    "description": "Просматривайте найденные и зарегистрированные плагины, управляйте переключателями экземпляров, полями конфигурации и ссылками на ресурсы."
   },
   "plugin_store": {
     "title": "Магазин плагинов",
@@ -1733,7 +1816,8 @@
     "gate_step2_action": "Я прочитал и понимаю эти риски",
     "gate_step3_prompt": "Для подтверждения введите «{{token}}» в поле ниже",
     "gate_step3_action": "Установить этот плагин",
-    "gate_step3_hint": "Введите точный идентификатор, показанный выше, чтобы включить установку."
+    "gate_step3_hint": "Введите точный идентификатор, показанный выше, чтобы включить установку.",
+    "description": "Просматривайте реестр плагинов, устанавливайте и обновляйте плагины для текущего бэкенда."
   },
   "plugin_resource": {
     "title": "Страница плагина",
@@ -1779,7 +1863,10 @@
     "clear_login_title": "Локальные данные входа",
     "clear_login_desc": "Очистите локально сохранённые данные входа и выполните выход.",
     "clear_login_button": "Очистить данные входа",
-    "clear_login_confirm": "Очистить локальные данные входа и выйти?"
+    "clear_login_confirm": "Очистить локальные данные входа и выйти?",
+    "title": "Информация о центре управления",
+    "about_title": "CLI Proxy API Management Center",
+    "quick_links_desc": "Доступ к репозиториям проекта и документации для помощи и обновлений."
   },
   "notification": {
     "region_label": "Уведомления",
@@ -1802,7 +1889,8 @@
     "commercial_mode_restart_required": "Режим коммерческого использования изменён. Перезапустите сервис, чтобы применить изменения",
     "copy_failed": "Не удалось скопировать",
     "link_copied": "Ссылка скопирована в буфер обмена",
-    "trusted_proxies_restart_required": "Настройки доверенных прокси сохранены. Перезапустите бэкенд для их применения."
+    "trusted_proxies_restart_required": "Настройки доверенных прокси сохранены. Перезапустите бэкенд для их применения.",
+    "add_failed": "Не удалось добавить"
   },
   "language": {
     "switch": "Язык",
@@ -1811,7 +1899,8 @@
     "english": "English",
     "russian": "Русский",
     "vietnamese": "Tiếng Việt",
-    "korean": "한국어"
+    "korean": "한국어",
+    "turkish": "Турецкий"
   },
   "theme": {
     "switch": "Тема",
@@ -1819,13 +1908,16 @@
     "dark": "Тёмная",
     "switch_to_light": "Переключиться на светлую тему",
     "switch_to_dark": "Переключиться на тёмную тему",
-    "auto": "Следовать системе"
+    "auto": "Следовать системе",
+    "white": "Чисто-белая"
   },
   "sidebar": {
     "toggle_expand": "Развернуть боковую панель",
     "toggle_collapse": "Свернуть боковую панель",
     "expand": "Развернуть",
-    "collapse": "Свернуть"
+    "collapse": "Свернуть",
+    "subtitle": "Консоль управления CLI Proxy API",
+    "auth_files_count": "Файлов аутентификации: {{count}}"
   },
   "footer": {
     "api_version": "Версия CLI Proxy API",
@@ -1835,7 +1927,10 @@
   },
   "providersPage": {
     "header": {
-      "title": "AI Провайдеры"
+      "title": "AI Провайдеры",
+      "activeResources": "{{active}}/{{total}} активных",
+      "providerFamilies": "{{count}} семейств",
+      "updatedAt": "Обновлено {{time}}"
     },
     "actions": {
       "refresh": "Обновить",
@@ -1853,7 +1948,8 @@
     },
     "categories": {
       "title": "Провайдеры",
-      "activeCount": "{{active}}/{{total}} активных"
+      "activeCount": "{{active}}/{{total}} активных",
+      "quickFill": "Быстрое заполнение"
     },
     "providerNames": {
       "meta": "Muse (Meta)",
@@ -1863,7 +1959,8 @@
       "xai": "xAI",
       "claude": "Claude",
       "vertex": "Vertex",
-      "openaiCompatibility": "OpenAI"
+      "openaiCompatibility": "OpenAI",
+      "kimi": "Kimi"
     },
     "table": {
       "key": "Ключ",
@@ -1874,11 +1971,17 @@
       "enabled": "Включено",
       "actions": "Действия",
       "metrics": {
-        "models": "Модели"
+        "models": "Модели",
+        "keys": "Ключи",
+        "headers": "Заголовки"
       },
       "empty": "Ресурсов пока нет. Нажмите \"{{action}}\", чтобы начать.",
       "filterPlaceholder": "Поиск по ключам, URL, моделям…",
-      "description": "Управление ресурсами {{route}}"
+      "description": "Управление ресурсами {{route}}",
+      "prefix": "Префикс",
+      "websocketsTag": "WebSockets",
+      "cloakTag": "Cloak",
+      "cliProfileTag": "CLI-профиль"
     },
     "status": {
       "active": "Активен",
@@ -1973,7 +2076,8 @@
         "weightInteger": "Вес планирования должен быть целым числом",
         "weightMax": "Вес планирования не может превышать {{max}}"
       },
-      "testModelHint": "Используется только для проверки соединения; не сохраняется"
+      "testModelHint": "Используется только для проверки соединения; не сохраняется",
+      "disableCoolingHint": "Отключает окна охлаждения после ошибок только для этой записи"
     },
     "delete": {
       "title": "Удалить ресурс",
@@ -2011,12 +2115,14 @@
       "loading": "Загрузка моделей…",
       "empty": "Конечная точка не вернула моделей",
       "notLoaded": "Нажмите Обновить, чтобы загрузить модели",
-      "selectAll": "Выбрать все",
-      "clearAll": "Снять выбор",
+      "selectAll": "Выбрать результаты поиска",
+      "clearAll": "Снять выбор с результатов поиска",
       "selectedCount": "{{selected}} / {{total}}",
       "alreadyAdded": "Уже добавлено",
       "close": "Закрыть",
-      "apply": "Применить ({{count}})"
+      "apply": "Применить ({{count}})",
+      "applyChanges": "Применить (+{{added}} / −{{removed}})",
+      "syncHint": "Отметьте нужные загруженные модели или снимите отметки, затем примените изменения. Модели вне этих результатов и настройки сохранённых моделей останутся без изменений. Пустой список в конфигурации использует настройки бэкенда по умолчанию и не обязательно отключает все модели."
     },
     "toolbar": {
       "sortBy": "Сортировка",
@@ -2118,6 +2224,9 @@
         "continue": "Продолжить",
         "continue-and-cooldown": "Продолжить и охладить"
       }
+    },
+    "modelCatalog": {
+      "notLoaded": "Не загружено"
     }
   },
   "claude_reset": {
@@ -2153,5 +2262,146 @@
     "unavailable": "Сбросы временно недоступны.",
     "rate_limited": "Слишком много запросов.",
     "auth_error": "Авторизация отклонена."
+  },
+  "plugin_quota": {
+    "empty_title": "Нет файлов плагинов",
+    "empty_desc": "Подключите аккаунт плагина, чтобы просмотреть оставшуюся квоту.",
+    "idle": "Нажмите, чтобы обновить квоту",
+    "loading": "Загрузка квоты…",
+    "load_failed": "Не удалось загрузить квоту: {{message}}",
+    "missing_auth_index": "В файле авторизации отсутствует auth_index",
+    "probe_unsupported": "Декларативные проверки квоты недоступны через API управления v8",
+    "plugin_not_found": "Не найден активный плагин, предоставляющий квоту для {{provider}}",
+    "empty_data": "Нет доступных данных о квоте",
+    "plan_label": "План",
+    "remaining_percent": "Осталось {{percent}}%"
+  },
+  "routing": {
+    "title": "Маршрутизация",
+    "refresh": "Обновить",
+    "refresh_discards": "Обновление отменит несохранённую расстановку.",
+    "loading": "Загрузка маршрутизации…",
+    "load_failed": "Не удалось загрузить маршрутизацию: {{message}}",
+    "retry": "Повторить",
+    "empty_title": "Пока нечего маршрутизировать",
+    "empty_desc": "Сначала добавьте API-ключ или OAuth-учётные данные в разделах «AI-провайдеры» или «Файлы авторизации».",
+    "entry": "Входящий запрос",
+    "model_placeholder": "Все модели (введите модель для предпросмотра маршрута)",
+    "models_loading": "Загрузка моделей {{done}}/{{total}}",
+    "tier_primary": "Основной",
+    "tier_backup": "Резерв {{index}}",
+    "tier_priority": "Приоритет {{priority}}",
+    "tier_priority_changed": "Приоритет {{from}} → {{to}}",
+    "tier_state_active": "Обслуживает запросы",
+    "tier_state_standby": "Ожидание: используется, когда все уровни выше недоступны",
+    "tier_state_skipped_model": "Не предоставляет эту модель; запросы пропускают уровень",
+    "tier_state_skipped": "Нет доступных участников; запросы пропускают уровень",
+    "tier_state_cooling": "Охлаждение или недоступен; запросы пропускают уровень",
+    "tier_state_unknown": "Модели некоторых участников неизвестны; уровень может обслуживать",
+    "connector": "Если весь уровень недоступен — переход к следующему",
+    "drop_new_tier": "Отпустите здесь, чтобы создать новый уровень",
+    "exhausted": "Всё недоступно",
+    "exhausted_retry": "Ошибка после ещё {{count}} раундов повторов",
+    "exhausted_no_retry": "Сразу возвращается ошибка",
+    "footnote": "Предпросмотр не учитывает привязку сессий, текущее охлаждение API-ключей и приоритет WebSocket. Модели API-ключей выводятся из конфигурации; модели плагинов показаны как неизвестные.",
+    "kind_api_key": "API-ключ",
+    "kind_oauth": "OAuth",
+    "kind_compat_keys": "Ключей: {{count}}",
+    "state_disabled": "Отключён",
+    "state_cooling": "Охлаждение {{time}}",
+    "state_blocked": "Недоступен",
+    "state_unknown": "Модели неизвестны",
+    "state_ineligible": "Не предоставляет эту модель",
+    "state_excluded": "Вес 0",
+    "no_runtime_state": "Нет данных об охлаждении",
+    "weight_badge": "Вес {{weight}}",
+    "share": "{{share}}%",
+    "locked_priority_conflict": "Между заблокированными учётными данными нет свободного приоритета. Добавьте в существующий уровень.",
+    "locked": "Учётные данные только в памяти: нет файла для хранения приоритета, перемещение невозможно",
+    "member_actions": "Действия для {{name}}",
+    "drag_handle": "Перетащите {{name}} или используйте стрелки вверх и вниз, чтобы сменить уровень",
+    "move_up": "На уровень выше",
+    "move_down": "На уровень ниже",
+    "edit_weight": "Задать вес…",
+    "weight_title": "Вес: {{name}}",
+    "weight_hint": "Используется только во взвешенном циклическом режиме. Пусто — 1; 0 — без доли.",
+    "weight_placeholder": "1",
+    "weight_apply": "Применить",
+    "weight_inactive": "Текущая стратегия не взвешенная, веса пока не действуют.",
+    "policy_title": "Политика шлюза",
+    "policy_subtitle": "Действует на всех уровнях.",
+    "strategy_label": "Внутри уровня",
+    "strategy_round_robin": "По кругу",
+    "strategy_weighted_round_robin": "Взвешенно по кругу",
+    "strategy_fill_first": "Сначала заполнять",
+    "strategy_round_robin_desc": "Учётные данные уровня принимают запросы по очереди.",
+    "strategy_weighted_round_robin_desc": "Запросы распределяются по уровню пропорционально весам.",
+    "strategy_fill_first_desc": "Одни учётные данные принимают всё, пока не станут недоступны, затем следующие.",
+    "affinity_label": "Привязка сессий",
+    "affinity_desc": "Запросы одной сессии идут на одни учётные данные, с переключением при их недоступности.",
+    "retry_label": "Переключение при сбоях",
+    "request_retry": "Раунды повторов",
+    "request_retry_desc": "Дополнительные раунды после сбоя всех учётных данных в первом раунде.",
+    "max_retry_credentials": "Учётных данных за раунд",
+    "max_retry_credentials_desc": "Максимум попыток за раунд; 0 — все.",
+    "unlimited": "Без ограничений",
+    "dirty_region": "Несохранённые изменения маршрутизации",
+    "dirty_count": "Несохранённых изменений: {{count}}",
+    "discard": "Отменить",
+    "save": "Сохранить",
+    "review_title": "Сохранить изменения маршрутизации",
+    "review_hint": "OAuth-учётные данные записываются по одному, остальное — в конфигурацию одной записью.",
+    "confirm_save": "Сохранить",
+    "change_priority": "{{name}}: приоритет {{from}} → {{to}}",
+    "change_weight": "{{name}}: вес {{from}} → {{to}}",
+    "change_setting": "{{name}}: {{from}} → {{to}}",
+    "value_default": "По умолчанию",
+    "value_on": "Вкл.",
+    "value_off": "Выкл.",
+    "save_success": "Сохранено изменений: {{count}}",
+    "save_partial": "Сохранение прервано: не удалось записать {{name}} ({{message}}). Применено: {{applied}}; не выполнено: {{skipped}}.",
+    "save_conflict": "Конфигурация изменилась после загрузки, её часть не записана. Данные обновлены — настройте заново и сохраните.",
+    "config_target": "конфигурация",
+    "unsaved_title": "Отменить несохранённые изменения?",
+    "unsaved_message": "При уходе со страницы несохранённая расстановка будет потеряна.",
+    "unsaved_confirm": "Уйти",
+    "unsaved_cancel": "Остаться",
+    "duration_seconds": "{{count}} с",
+    "duration_minutes": "{{count}} мин",
+    "duration_hours": "{{count}} ч"
+  },
+  "siwc": {
+    "title": "Привязка SIWC",
+    "bind": "Привязать SIWC",
+    "tile_caption": "Привязать SIWC к учётным данным Codex",
+    "intro": "Выберите учётные данные Codex. После авторизации в браузере SIWC будет привязан к ним.",
+    "target": "Учётные данные",
+    "active": "Активен",
+    "bound": "Привязан · неактивен",
+    "unbound": "Не привязан",
+    "expires": "Истекает {{date}}",
+    "loading": "Загрузка учётных данных…",
+    "no_targets": "Нет учётных данных Codex, к которым можно привязать SIWC.",
+    "load_failed": "Не удалось загрузить учётные данные. Закройте и повторите попытку.",
+    "start": "Начать авторизацию",
+    "starting": "Создание ссылки авторизации…",
+    "wait": "Ожидание авторизации…",
+    "cancel": "Отменить привязку",
+    "retry": "Начать заново",
+    "step_open": "Откройте страницу авторизации и войдите",
+    "open": "Открыть страницу авторизации",
+    "copy": "Копировать ссылку",
+    "callback": "Вставьте URL обратного вызова",
+    "hint": "После авторизации браузер перейдёт на http://127.0.0.1:1455/auth/callback. Даже если страница не загрузится, скопируйте полный URL из адресной строки и вставьте его сюда.",
+    "submit": "Отправить",
+    "submitted": "Обратный вызов отправлен. Ожидание подтверждения…",
+    "invalid_callback": "Неполный URL: нужны совпадающий state, а также code и client_id (или ошибка OAuth).",
+    "callback_failed": "Не удалось отправить обратный вызов. Проверьте URL и повторите попытку.",
+    "ok": "SIWC привязан",
+    "ok_hint": "SIWC привязан к {{name}}.",
+    "done": "Готово",
+    "error": "Привязка не удалась. Начните заново.",
+    "unsupported": "Этот сервер не поддерживает привязку SIWC.",
+    "expired": "Сеанс привязки истёк. Начните заново."
   }
 }

@@ -7,7 +7,7 @@ export type ThemeColors = { bg: string; text: string; border?: string };
 export type TypeColorSet = { light: ThemeColors; dark?: ThemeColors };
 export type ResolvedTheme = 'light' | 'dark';
 export type QuotaProviderType =
-  'antigravity' | 'claude' | 'codex' | 'devin' | 'kimi' | 'xai' | 'meta';
+  'antigravity' | 'claude' | 'codex' | 'devin' | 'kimi' | 'xai' | 'meta' | 'plugin';
 
 // API payload types
 interface AntigravityQuotaSummaryBucketPayload {
@@ -268,6 +268,20 @@ export interface AntigravityQuotaState {
   errorStatus?: number;
 }
 
+/** A provider-defined numeric/currency value rendered above generic quota windows. */
+export interface PluginQuotaMetric {
+  key: string;
+  label: string;
+  value: number;
+  unit?: string;
+  format?: 'number' | 'currency';
+  currency?: string;
+}
+
+export interface PluginQuotaState extends AntigravityQuotaState {
+  summary: PluginQuotaMetric[];
+}
+
 export interface CodexQuotaWindow {
   id: string;
   label: string;
@@ -412,6 +426,8 @@ export interface KimiQuotaRow {
 export interface KimiQuotaState {
   status: 'idle' | 'loading' | 'success' | 'error';
   rows: KimiQuotaRow[];
+  /** Official user_level_name from /me; absent for unavailable account information. */
+  planName?: string | null;
   error?: string;
   errorStatus?: number;
 }

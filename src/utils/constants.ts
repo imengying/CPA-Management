@@ -34,6 +34,7 @@ export const LANGUAGE_ORDER = defineLanguageOrder([
   'ru',
   'vi',
   'ko',
+  'tr',
 ] as const);
 export const LANGUAGE_LABEL_KEYS: Record<Language, string> = {
   'zh-CN': 'language.chinese',
@@ -42,6 +43,7 @@ export const LANGUAGE_LABEL_KEYS: Record<Language, string> = {
   ru: 'language.russian',
   vi: 'language.vietnamese',
   ko: 'language.korean',
+  tr: 'language.turkish',
 };
 // 通知持续时间
 export const NOTIFICATION_DURATION_MS = 3000;

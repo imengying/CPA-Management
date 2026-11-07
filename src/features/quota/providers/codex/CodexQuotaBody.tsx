@@ -1,17 +1,19 @@
 /**
- * Codex 额度渲染体：套餐 chip 行（elite=Pro 20x 铂金 / premium=金卡）、
- * 重置积分明细、用量窗口水位条。
+ * Codex 额度渲染体：套餐 chip 行（档位见 cardTier.ts）、重置积分明细、用量窗口水位条。
  */
 
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { CodexQuotaState } from '@/types';
 import {
+  normalizePlanType,
+  BUSINESS_PREMIUM_CODEX_PLAN_TYPE,
+  PRO_CODEX_PLAN_TYPE,
+  PRO_LITE_CODEX_PLAN_TYPES,
+  PRO_MAX_CODEX_PLAN_TYPES,
   buildResetDisplay,
   formatInstantShort,
-  normalizePlanType,
   parseIsoToMs,
-  resolvePlanTier,
   resolveResetMs,
 } from '@/utils/quota';
 import { resolveTimeZoneLabel } from '@/utils/time/timezone';
@@ -20,21 +22,16 @@ import { useNow } from '@/hooks/useNow';
 import { QuotaMeter } from '../../components/QuotaMeter';
 import { QuotaResetLabel } from '../../components/QuotaResetLabel';
 import { collectQuotaRowInstants, pickUrgentRowId, resetCreditRowId } from '../../resetSchedule';
-import type { QuotaBodyProps, QuotaClassMap } from '../../types';
-
-const getPlanValueClass = (planType: string | null, classes: QuotaClassMap): string => {
-  // elite/premium 顺序契约由 resolvePlanTier 承载（tests/quotaPlanTier.test.ts 守护）。
-  const tier = resolvePlanTier(planType);
-  if (tier === 'elite') return classes.elitePlanValue;
-  if (tier === 'premium') return classes.premiumPlanValue;
-  return classes.codexPlanValue;
-};
+import { planValueClassForTier, resolveCodexCardTier } from '../../cardTier';
+import type { QuotaBodyProps } from '../../types';
 
 export function CodexQuotaBody({ quota, classes }: QuotaBodyProps<CodexQuotaState>) {
   const { t, i18n } = useTranslation();
   const now = useNow();
   const locale = i18n.resolvedLanguage;
-  const urgentRowId = useMemo(
+  // Windows and reset credits compete for the same emphasis, but only during
+  // the final hour before the reset or expiry.
+  const soonestRowId = useMemo(
     () => pickUrgentRowId(collectQuotaRowInstants('codex', quota), now),
     [quota, now]
   );
@@ -50,13 +47,12 @@ export function CodexQuotaBody({ quota, classes }: QuotaBodyProps<CodexQuotaStat
   const getPlanLabel = (pt?: string | null): string | null => {
     const normalized = normalizePlanType(pt);
     if (!normalized) return null;
-    if (normalized === 'pro') return t('codex_quota.plan_pro');
-    if (normalized === 'self_serve_business_prolite') {
+    if (normalized === BUSINESS_PREMIUM_CODEX_PLAN_TYPE) {
       return t('codex_quota.plan_business_premium');
     }
-    if (resolvePlanTier(normalized) === 'premium') {
-      return t('codex_quota.plan_prolite');
-    }
+    if (PRO_MAX_CODEX_PLAN_TYPES.has(normalized)) return t('codex_quota.plan_promax');
+    if (normalized === PRO_CODEX_PLAN_TYPE) return t('codex_quota.plan_pro');
+    if (PRO_LITE_CODEX_PLAN_TYPES.has(normalized)) return t('codex_quota.plan_prolite');
     if (normalized === 'plus') return t('codex_quota.plan_plus');
     if (normalized === 'team') return t('codex_quota.plan_team');
     if (normalized === 'free') return t('codex_quota.plan_free');
@@ -64,6 +60,11 @@ export function CodexQuotaBody({ quota, classes }: QuotaBodyProps<CodexQuotaStat
   };
 
   const planLabel = getPlanLabel(planType);
+  const planValueClass = planValueClassForTier(resolveCodexCardTier(planType), classes);
+
+  // Renewal was the one date on this card in a different shape (a full
+  // toLocaleString). Reformatted from the instant so it reads like the rest,
+  // falling back to the old rendering when the payload isn't parseable.
   const subscriptionMs = resolveResetMs([subscriptionActiveUntil]);
   const expiryDisplay = subscriptionActiveUntil
     ? buildResetDisplay(
@@ -73,7 +74,6 @@ export function CodexQuotaBody({ quota, classes }: QuotaBodyProps<CodexQuotaStat
         locale
       )
     : null;
-  const planValueClass = getPlanValueClass(planType, classes);
 
   return (
     <>
@@ -131,24 +131,26 @@ export function CodexQuotaBody({ quota, classes }: QuotaBodyProps<CodexQuotaStat
               now,
               locale
             );
+            // One expression for both the key and the highlight — two copies
+            // that drift would emphasize the wrong row.
             const rowId = resetCreditRowId(credit, index);
-            const urgent = rowId === urgentRowId;
+            const soon = rowId === soonestRowId;
             return (
               <div
                 key={rowId}
                 className={
-                  urgent
+                  soon
                     ? `${classes.codexResetCreditRow} ${classes.codexResetCreditRowSoon}`
                     : classes.codexResetCreditRow
                 }
-                title={urgent ? t('quota_management.soonest_row_hint') : undefined}
+                title={soon ? t('quota_management.soonest_row_hint') : undefined}
               >
                 <span className={classes.codexResetCreditLabel}>
                   {t('codex_quota.reset_credit_number', { index: index + 1 })}
                 </span>
                 <span className={classes.codexResetCreditTime}>
                   {expiresDisplay && (
-                    <QuotaResetLabel display={expiresDisplay} classes={classes} soon={urgent} />
+                    <QuotaResetLabel display={expiresDisplay} classes={classes} soon={soon} />
                   )}
                 </span>
               </div>
@@ -175,20 +177,21 @@ export function CodexQuotaBody({ quota, classes }: QuotaBodyProps<CodexQuotaStat
             ? t(window.labelKey, window.labelParams as Record<string, string | number>)
             : window.label;
           const resetDisplay = buildResetDisplay(window.resetLabel, window.resetAtMs, now, locale);
-          const urgent = window.id === urgentRowId;
+
+          const soon = window.id === soonestRowId;
 
           return (
             <div
               key={window.id}
               className={classes.quotaRow}
-              title={urgent ? t('quota_management.soonest_row_hint') : undefined}
+              title={soon ? t('quota_management.soonest_row_hint') : undefined}
             >
               <div className={classes.quotaRowHeader}>
                 <span className={classes.quotaModel}>{windowLabel}</span>
                 <div className={classes.quotaMeta}>
                   <span className={classes.quotaPercent}>{percentLabel}</span>
                   {resetDisplay && (
-                    <QuotaResetLabel display={resetDisplay} classes={classes} soon={urgent} />
+                    <QuotaResetLabel display={resetDisplay} classes={classes} soon={soon} />
                   )}
                 </div>
               </div>

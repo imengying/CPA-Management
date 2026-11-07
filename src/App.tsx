@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Outlet, createHashRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
+import { LoginRevealVeil } from '@/components/common/LoginRevealVeil';
 import { LoginPage } from '@/pages/LoginPage';
 import { NotificationContainer } from '@/components/common/NotificationContainer';
 import { ConfirmationModal } from '@/components/common/ConfirmationModal';
@@ -15,6 +16,7 @@ function RootShell() {
       <NotificationContainer />
       <ConfirmationModal />
       <Outlet />
+      <LoginRevealVeil />
     </>
   );
 }

@@ -95,8 +95,12 @@ export function QuotaCard(props: QuotaCardProps) {
       )}
     </>
   ) : undefined;
-  const iconSrc = getAuthFileIcon(entry.type, resolvedTheme);
-  const typeLabel = getTypeLabel(t, entry.type);
+  const providerLabelType =
+    entry.type === 'plugin'
+      ? String(file.quotaProvider ?? file.provider ?? file.type ?? 'plugin')
+      : entry.type;
+  const iconSrc = getAuthFileIcon(providerLabelType, resolvedTheme);
+  const typeLabel = getTypeLabel(t, providerLabelType);
   const errorMessage = resolveQuotaErrorMessage(
     t,
     quota?.errorStatus,
@@ -169,20 +173,20 @@ export function QuotaCard(props: QuotaCardProps) {
         ) : !retainedClaudeUsage ? (
           <div className={styles.idleHint}>{t(`${adapter.i18nPrefix}.idle`)}</div>
         ) : null}
-          {loading && retainedClaudeUsage && (
-            <div role="status" aria-busy="true" className={quotaClasses.quotaMessage}>
-              {t(`${adapter.i18nPrefix}.loading`)}
-            </div>
-          )}
-          {retainedClaudeUsage && quota && (
-            <adapter.Body
-              quota={quota}
-              classes={quotaClasses}
-              planItems={claudePlanItems}
-              afterPlan={claudeAfterPlan}
-            />
-          )}
-        </div>
+        {loading && retainedClaudeUsage && (
+          <div role="status" aria-busy="true" className={quotaClasses.quotaMessage}>
+            {t(`${adapter.i18nPrefix}.loading`)}
+          </div>
+        )}
+        {retainedClaudeUsage && quota && (
+          <adapter.Body
+            quota={quota}
+            classes={quotaClasses}
+            planItems={claudePlanItems}
+            afterPlan={claudeAfterPlan}
+          />
+        )}
+      </div>
 
       {status !== 'idle' && (
         <footer className={styles.actionRow}>

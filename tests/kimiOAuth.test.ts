@@ -7,7 +7,7 @@ import { createOAuthAttempts } from '@/pages/oauthAttempts';
 const LOCALES = ['en', 'zh-CN', 'zh-TW', 'ru'] as const;
 
 const OAuthPageSource = readFileSync(
-  new URL('../src/pages/OAuthPage.tsx', import.meta.url),
+  new URL('../src/features/oauth/providers.ts', import.meta.url),
   'utf8'
 );
 

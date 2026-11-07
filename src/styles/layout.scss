@@ -1091,3 +1091,51 @@
     transition: none;
   }
 }
+
+@keyframes shellSidebarIn {
+  from {
+    opacity: 0;
+    transform: translate3d(-16px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes shellChromeIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -6px, 0) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes shellFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (min-width: #{$breakpoint-mobile + 1}) and (prefers-reduced-motion: no-preference) {
+  .app-shell--arriving {
+    .sidebar {
+      animation: shellSidebarIn 560ms var(--ease-out-strong) 60ms both;
+    }
+
+    .main-header .header-actions {
+      transform-origin: top right;
+      animation: shellChromeIn 460ms var(--ease-out-strong) 160ms both;
+    }
+
+    .main-header .sidebar-toggle-floating {
+      animation: shellFadeIn 360ms ease 260ms both;
+    }
+  }
+}

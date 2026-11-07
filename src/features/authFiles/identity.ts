@@ -33,7 +33,7 @@ const readIdentityText = (value: unknown): string =>
   typeof value === 'string' ? value.trim() : '';
 
 /** 去掉 .json 后缀（大小写不敏感），仅在剥完仍有内容时生效。 */
-const stripJsonExtension = (name: string): string => {
+export const stripJsonExtension = (name: string): string => {
   const trimmed = name.trim();
   if (trimmed.length <= 5) return trimmed;
   return trimmed.toLowerCase().endsWith('.json') ? trimmed.slice(0, -5) : trimmed;

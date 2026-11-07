@@ -6,7 +6,7 @@ A single-file Web UI (React + TypeScript) for operating and troubleshooting the 
 
 **Main Project**: https://github.com/router-for-me/CLIProxyAPI<br>
 **Original WebUI Repository**: https://github.com/router-for-me/Cli-Proxy-API-Management-Center<br>
-**Upstream Sync Version**: [v1.25.6](https://github.com/router-for-me/Cli-Proxy-API-Management-Center/releases/tag/v1.25.6)<br>
+**Upstream Feature Sync (excluding ads and promotions)**: [v1.27.3](https://github.com/router-for-me/Cli-Proxy-API-Management-Center/releases/tag/v1.27.3)<br>
 **Supported Version**: CLIProxyAPI 8.0.0 or later
 
 After the service starts, access the Web UI via `/management.html` on the API port.
@@ -88,9 +88,13 @@ Check the CLI Proxy API server documentation/config comments for the full authen
 - **Logs**: cursor-based incremental polling, auto-refresh, search and structured filters, hide management traffic, line wrapping and fullscreen, clear logs; download request error log files.
 - **System**: quick links, update check, local login data cleanup, and fetch `/v1/models` (grouped view). Requires at least one proxy API key to query models.
 
+This synchronization adds the routing board, Codex SIWC binding and toggle, generic plugin quotas, multiple plugin OAuth entries, refreshed login/OAuth screens, plan display, and synchronized model selection. Advertising and referral integrations are excluded.
+
+Saved login credentials from the old storage format are cleared on upgrade, following upstream behavior. Sign in again with the management key. The new format no longer depends on the browser version and remains reversible obfuscation.
+
 ## Tech Stack
 
-- React 19 + TypeScript 6.0
+- React 19 + TypeScript 7.0
 - Vite 8 (single-file build)
 - Zustand (state management)
 - Axios (HTTP client)
@@ -102,7 +106,7 @@ Check the CLI Proxy API server documentation/config comments for the full authen
 
 ## Internationalization
 
-Currently supports six languages:
+Currently supports seven languages:
 
 - English (en)
 - Simplified Chinese (zh-CN)
@@ -110,6 +114,7 @@ Currently supports six languages:
 - Russian (ru)
 - Vietnamese (vi)
 - Korean (ko)
+- Turkish (tr)
 
 The UI language is automatically detected from browser settings and can be manually switched from the login page or header language menu.
 
@@ -156,11 +161,10 @@ bun run type-check # tsc --noEmit
 
 The project runs TypeScript 7 as its only TypeScript (type-checking ~1.2s, down
 from ~11.5s on TS 6). TS 7 dropped the compiler's JS API, while
-`typescript-eslint` still requires TS 6 (`peerDependencies.typescript:
->=4.8.4 <6.1.0`, with no TS 7-compatible release published), so a second TS 6
-copy used to be necessary just to run lint. To let TS 7 stand alone, linting now
-uses [oxlint](https://oxlint.rs) (Rust, ships its own parser, needs no
-TypeScript):
+`typescript-eslint` still requires TS 6 (`peerDependencies.typescript: >=4.8.4 <6.1.0`,
+with no TS 7-compatible release published), so a second TS 6 copy used to be necessary
+just to run lint. To let TS 7 stand alone, linting now uses [oxlint](https://oxlint.rs)
+(Rust, ships its own parser, needs no TypeScript):
 
 - Verified rule by rule: of the 70 rules the previous ESLint config enabled, 69
   have an oxlint equivalent. Only `no-octal` has none, and `tsc` already covers

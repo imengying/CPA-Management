@@ -14,6 +14,7 @@ import type {
   DevinQuotaState,
   KimiQuotaState,
   MetaQuotaState,
+  PluginQuotaState,
   QuotaProviderType,
   XaiQuotaState,
 } from '@/types';
@@ -29,7 +30,8 @@ export type QuotaStoreSetter =
   | 'setDevinQuota'
   | 'setKimiQuota'
   | 'setMetaQuota'
-  | 'setXaiQuota';
+  | 'setXaiQuota'
+  | 'setPluginQuota';
 
 /** useQuotaStore 的结构契约（storeSelector/storeSetter 依赖）。 */
 export interface QuotaStore {
@@ -40,6 +42,7 @@ export interface QuotaStore {
   kimiQuota: Record<string, KimiQuotaState>;
   metaQuota: Record<string, MetaQuotaState>;
   xaiQuota: Record<string, XaiQuotaState>;
+  pluginQuota: Record<string, PluginQuotaState>;
   setAntigravityQuota: (updater: QuotaUpdater<Record<string, AntigravityQuotaState>>) => void;
   setClaudeQuota: (updater: QuotaUpdater<Record<string, ClaudeQuotaState>>) => void;
   setCodexQuota: (updater: QuotaUpdater<Record<string, CodexQuotaState>>) => void;
@@ -47,6 +50,7 @@ export interface QuotaStore {
   setKimiQuota: (updater: QuotaUpdater<Record<string, KimiQuotaState>>) => void;
   setMetaQuota: (updater: QuotaUpdater<Record<string, MetaQuotaState>>) => void;
   setXaiQuota: (updater: QuotaUpdater<Record<string, XaiQuotaState>>) => void;
+  setPluginQuota: (updater: QuotaUpdater<Record<string, PluginQuotaState>>) => void;
 }
 
 export interface QuotaProviderData<TState, TData> {
