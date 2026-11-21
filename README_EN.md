@@ -6,7 +6,7 @@ A single-file Web UI (React + TypeScript) for operating and troubleshooting the 
 
 **Main Project**: https://github.com/router-for-me/CLIProxyAPI<br>
 **Original WebUI Repository**: https://github.com/router-for-me/Cli-Proxy-API-Management-Center<br>
-**Upstream Feature Sync (excluding ads and promotions)**: [v1.27.3](https://github.com/router-for-me/Cli-Proxy-API-Management-Center/releases/tag/v1.27.3)<br>
+**Upstream Feature Sync (excluding ads and promotions)**: [v1.28.3](https://github.com/router-for-me/Cli-Proxy-API-Management-Center/releases/tag/v1.28.3)<br>
 **Supported Version**: CLIProxyAPI 8.0.0 or later
 
 After the service starts, access the Web UI via `/management.html` on the API port.
@@ -88,7 +88,20 @@ Check the CLI Proxy API server documentation/config comments for the full authen
 - **Logs**: cursor-based incremental polling, auto-refresh, search and structured filters, hide management traffic, line wrapping and fullscreen, clear logs; download request error log files.
 - **System**: quick links, update check, local login data cleanup, and fetch `/v1/models` (grouped view). Requires at least one proxy API key to query models.
 
-This synchronization adds the routing board, Codex SIWC binding and toggle, generic plugin quotas, multiple plugin OAuth entries, refreshed login/OAuth screens, plan display, and synchronized model selection. Advertising and referral integrations are excluded.
+New in the v1.28.3 sync:
+
+- **Model rules workspace**: aliases and disabled models move to a dedicated workspace with graph and list views, a provider rail, draft validation and unsaved-change guards.
+- **Payload text replacement**: new `payload.replace` rule editor (role/position/JSON-path targeting, literal and RE2 regex replacements).
+- **Sensitive text replacement**: literal and regex replacements for Antigravity, Devin and API-key providers, applied before requests leave the proxy.
+- **Codex credit overage**: set "use credits after the usage limit" per account, with shared-credential notices and recovery for unresolved writes.
+- **Claude reset grants**: pick a specific grant in a confirmation dialog, with Fable / weekly / 5-hour / full kinds.
+- **Card layouts**: even rows, stacked and compact layouts across auth files, quota and the plugin store.
+- **Explanations in InfoTips**: field descriptions move into a tooltip after the label (hover/focus/tap), while safety and destructive warnings stay on the page.
+- **Plugin page consolidation**: the store becomes a view of the plugins page, with installed/store views and localized store entries.
+- **Login proxy**: built-in and plugin OAuth logins accept an http/https/socks5 proxy for the current session only.
+- **Model catalog sync**: refresh the backend's shared model catalog from the auth files page or system page.
+
+This sync also excludes upstream sponsor cards, referral links and campaign advertising.
 
 Saved login credentials from the old storage format are cleared on upgrade, following upstream behavior. Sign in again with the management key. The new format no longer depends on the browser version and remains reversible obfuscation.
 

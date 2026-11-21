@@ -1,6 +1,10 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Collapsible } from '@/components/ui/Collapsible';
+import {
+  LiteralReplacementEditor,
+  PatternReplacementEditor,
+} from '@/components/providers/SensitiveReplacementEditor';
 import { Input } from '@/components/ui/Input';
 import type { PluginStoreAuthRule } from '@/types/visualConfig';
 import { CONFIG_TAB_ICONS, SECTION_INDEX_LABELS } from '../../constants';
@@ -12,7 +16,6 @@ import {
   FieldGrid,
   FieldGroup,
   FieldGroupHeading,
-  FieldHint,
   FieldShell,
   FieldStack,
   ToggleRow,
@@ -112,11 +115,10 @@ export function SectionAdvanced({
             <FieldAnchor fieldId="pluginStoreAuth">
               <FieldGroup
                 title={t('config_management.visual.sections.system.plugin_store_auth')}
-                description={t('config_management.visual.sections.system.plugin_store_auth_desc')}
+                // 凭据处理：只填环境变量名、不填真实 token——常驻在组标题下。
+                description={t('config_management.visual.sections.system.plugin_store_auth_hint')}
+                keepDescriptionVisible
               >
-                <FieldHint>
-                  {t('config_management.visual.sections.system.plugin_store_auth_hint')}
-                </FieldHint>
                 <PluginStoreAuthEditor
                   value={values.pluginStoreAuth}
                   disabled={disabled}
@@ -160,6 +162,34 @@ export function SectionAdvanced({
                   />
                 </FieldShell>
               </FieldGroup>
+            </FieldAnchor>
+            <FieldAnchor fieldId="antigravitySensitiveWordsReplace">
+              <FieldShell
+                label={t('sensitive_replacements.literal_title')}
+                hint={t('sensitive_replacements.literal_hint')}
+              >
+                <LiteralReplacementEditor
+                  value={values.antigravitySensitiveWordsReplace}
+                  onChange={(antigravitySensitiveWordsReplace) =>
+                    onChange({ antigravitySensitiveWordsReplace })
+                  }
+                  disabled={disabled}
+                />
+              </FieldShell>
+            </FieldAnchor>
+            <FieldAnchor fieldId="antigravitySensitivePatternsReplace">
+              <FieldShell
+                label={t('sensitive_replacements.pattern_title')}
+                hint={t('sensitive_replacements.pattern_hint')}
+              >
+                <PatternReplacementEditor
+                  value={values.antigravitySensitivePatternsReplace}
+                  onChange={(antigravitySensitivePatternsReplace) =>
+                    onChange({ antigravitySensitivePatternsReplace })
+                  }
+                  disabled={disabled}
+                />
+              </FieldShell>
             </FieldAnchor>
 
             <FieldAnchor fieldId="quotaAntigravityCredits">
@@ -235,6 +265,34 @@ export function SectionAdvanced({
                   />
                 </FieldShell>
               </FieldGroup>
+            </FieldAnchor>
+            <FieldAnchor fieldId="devinSensitiveWordsReplace">
+              <FieldShell
+                label={t('sensitive_replacements.literal_title')}
+                hint={t('sensitive_replacements.literal_hint')}
+              >
+                <LiteralReplacementEditor
+                  value={values.devinSensitiveWordsReplace}
+                  onChange={(devinSensitiveWordsReplace) =>
+                    onChange({ devinSensitiveWordsReplace })
+                  }
+                  disabled={disabled}
+                />
+              </FieldShell>
+            </FieldAnchor>
+            <FieldAnchor fieldId="devinSensitivePatternsReplace">
+              <FieldShell
+                label={t('sensitive_replacements.pattern_title')}
+                hint={t('sensitive_replacements.pattern_hint')}
+              >
+                <PatternReplacementEditor
+                  value={values.devinSensitivePatternsReplace}
+                  onChange={(devinSensitivePatternsReplace) =>
+                    onChange({ devinSensitivePatternsReplace })
+                  }
+                  disabled={disabled}
+                />
+              </FieldShell>
             </FieldAnchor>
           </FieldStack>
         </Collapsible>

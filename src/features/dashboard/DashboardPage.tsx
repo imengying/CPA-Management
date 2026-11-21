@@ -213,7 +213,7 @@ export function DashboardPage() {
       key: 'success',
       label: t('dashboard.success_rate'),
       value: traffic.successRate === null ? DASH : formatPercent(traffic.successRate),
-      hint: t('dashboard.stat_success_hint', { total: traffic.total.toLocaleString() }),
+      info: null,
       meter: traffic.successRate,
       tone: successRateTone,
     },
@@ -221,12 +221,7 @@ export function DashboardPage() {
       key: 'credentials',
       label: t('dashboard.stat_credentials'),
       value: credentials ? credentials.total.toLocaleString() : DASH,
-      hint: credentials
-        ? t('dashboard.stat_credentials_hint', {
-            active: credentials.active,
-            disabled: credentials.disabled + credentials.unavailable,
-          })
-        : t('dashboard.stat_credentials_empty'),
+      info: null,
       meter:
         credentials && credentials.total > 0
           ? (credentials.active / credentials.total) * 100
@@ -237,7 +232,7 @@ export function DashboardPage() {
       key: 'providerKeys',
       label: t('dashboard.stat_provider_keys'),
       value: counts.providerKeys === null ? DASH : counts.providerKeys.toLocaleString(),
-      hint: t('dashboard.stat_provider_keys_hint'),
+      info: t('dashboard.stat_provider_keys_hint'),
       meter: null,
       tone: undefined,
     },
@@ -245,7 +240,7 @@ export function DashboardPage() {
       key: 'models',
       label: t('dashboard.stat_models'),
       value: counts.models === null ? DASH : counts.models.toLocaleString(),
-      hint: t('dashboard.stat_models_hint'),
+      info: t('dashboard.stat_models_hint'),
       meter: null,
       tone: undefined,
     },
@@ -384,7 +379,6 @@ export function DashboardPage() {
                 className={styles.statMeter}
               />
             )}
-            <span className={styles.statHint}>{tile.hint}</span>
           </article>
         ))}
       </section>
@@ -394,9 +388,6 @@ export function DashboardPage() {
         <header className={styles.sectionHead}>
           <span className={styles.eyebrow}>{t('dashboard.traffic_eyebrow')}</span>
           <h2 className={styles.sectionTitle}>{t('dashboard.traffic_title')}</h2>
-          <p className={styles.sectionDescription}>
-            {t('dashboard.traffic_description', { window: windowLabel })}
-          </p>
         </header>
         <div className={styles.panel}>
           <ThroughputChart traffic={traffic} />
@@ -408,7 +399,6 @@ export function DashboardPage() {
         <header className={styles.sectionHead}>
           <span className={styles.eyebrow}>{t('dashboard.fleet_eyebrow')}</span>
           <h2 className={styles.sectionTitle}>{t('dashboard.fleet_title')}</h2>
-          <p className={styles.sectionDescription}>{t('dashboard.fleet_description')}</p>
         </header>
         <div className={styles.panel}>
           {providers.length === 0 ? (

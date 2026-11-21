@@ -6,6 +6,7 @@ import { useAuthStore, useThemeStore } from '@/stores';
 import iconVertex from '@/assets/icons/vertex.svg';
 import iconCodex from '@/assets/icons/codex.svg';
 import { OAuthHeader } from './components/OAuthHeader';
+import { LoginProxyField } from './components/LoginProxyField';
 import { ProviderTile } from './components/ProviderTile';
 import { OAuthFlowDialog, type DialogHeading } from './components/OAuthFlowDialog';
 import { VertexImportDialog } from './components/VertexImportDialog';
@@ -132,6 +133,10 @@ export function OAuthPage() {
   const dialogCard =
     dialog?.kind === 'oauth' ? providerCards.find((card) => card.id === dialog.id) : undefined;
   const providerCount = providerCards.length;
+  /** 提供商专属的登录注意事项（账号类型、站点不互通等），挂在授权步骤标题后。 */
+  const signInNoteOf = (card: OAuthProviderCard) =>
+    card.kind === 'builtin' && card.signInNoteKey ? t(card.signInNoteKey) : undefined;
+
   const renderTile = (card: OAuthProviderCard, index: number) => {
     const status = flows.states[card.id]?.status;
     return (
@@ -157,6 +162,13 @@ export function OAuthPage() {
         providerCount={providerCount}
         waitingCount={waitingCount}
         addedCount={flows.addedCount}
+      />
+
+      {/* 可选登录代理：在点磁贴之前设好，不改变一键登录的快路径 */}
+      <LoginProxyField
+        value={flows.loginProxy}
+        rejectedValue={flows.loginProxyRejected}
+        onChange={flows.setLoginProxy}
       />
 
       <div className={styles.grid}>{providerCards.map(renderTile)}</div>
@@ -191,6 +203,7 @@ export function OAuthPage() {
           state={flows.states[dialogCard.id] ?? {}}
           text={(suffix) => flows.providerText(dialogCard.id, suffix)}
           supportsCallback={supportsManualCallback(dialogCard)}
+          signInNote={signInNoteOf(dialogCard)}
           onStart={() => void flows.startAuth(dialogCard.id)}
           onCancel={() => void flows.cancelAuth(dialogCard.id)}
           onCallbackChange={(value) => flows.setCallbackInput(dialogCard.id, value)}

@@ -9,6 +9,7 @@ import {
   type KeyboardEvent,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { filterAutocompleteOptions, normalizeAutocompleteOptions } from './autocompleteOptions';
 import { IconChevronDown } from './icons';
 import styles from './AutocompleteInput.module.scss';
 
@@ -38,6 +39,7 @@ export function AutocompleteInput({
   id,
 }: AutocompleteInputProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputWrapRef = useRef<HTMLDivElement>(null);
@@ -47,19 +49,25 @@ export function AutocompleteInput({
   const inputId = id ?? generatedId;
   const listboxId = `${inputId}-listbox`;
 
-  const normalizedOptions = options.map((opt) =>
-    typeof opt === 'string'
-      ? { value: opt, label: opt }
-      : { value: opt.value, label: opt.label || opt.value }
-  );
-
-  const searchValue = value.toLowerCase();
-  const filteredOptions = normalizedOptions.filter((opt) => {
-    return (
-      opt.value.toLowerCase().includes(searchValue) || opt.label.toLowerCase().includes(searchValue)
-    );
-  });
+  const normalizedOptions = normalizeAutocompleteOptions(options);
+  // 只在用户打字时收窄列表；仅展开下拉时保留全部选项，换选不必先清空输入。
+  const filteredOptions = filterAutocompleteOptions(normalizedOptions, value, isTyping);
   const dropdownOpen = isOpen && filteredOptions.length > 0 && !disabled;
+  const dropdownReady = dropdownOpen && dropdownStyle !== null;
+
+  const openDropdown = () => {
+    setIsTyping(false);
+    setHighlightedIndex(normalizedOptions.findIndex((opt) => opt.value === value));
+    setIsOpen(true);
+  };
+
+  // 展开后把当前选中项滚进视野，长列表不会从顶部开始。
+  useEffect(() => {
+    if (!dropdownReady) return;
+    dropdownRef.current
+      ?.querySelector('[aria-selected="true"]')
+      ?.scrollIntoView({ block: 'nearest' });
+  }, [dropdownReady]);
   const activeDescendant =
     dropdownOpen && highlightedIndex >= 0 ? `${inputId}-option-${highlightedIndex}` : undefined;
 
@@ -100,6 +108,7 @@ export function AutocompleteInput({
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
+    setIsTyping(true);
     setIsOpen(true);
     setHighlightedIndex(-1);
   };
@@ -154,7 +163,7 @@ export function AutocompleteInput({
           className={`input ${styles.input} ${className ?? ''}`.trim()}
           value={value}
           onChange={handleInputChange}
-          onFocus={() => setIsOpen(true)}
+          onFocus={openDropdown}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={disabled}
@@ -175,7 +184,11 @@ export function AutocompleteInput({
           aria-haspopup="listbox"
           aria-expanded={dropdownOpen}
           aria-controls={dropdownOpen ? listboxId : undefined}
-          onClick={() => !disabled && setIsOpen(!isOpen)}
+          onClick={() => {
+            if (disabled) return;
+            if (isOpen) setIsOpen(false);
+            else openDropdown();
+          }}
         >
           <IconChevronDown
             size={16}

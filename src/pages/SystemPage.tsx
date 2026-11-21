@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { IconGithub, IconBookOpen, IconExternalLink, IconCode } from '@/components/ui/icons';
 import { useAuthStore, useNotificationStore, useModelsStore, useThemeStore } from '@/stores';
+import { apiClient, modelsApi } from '@/services/api';
 import { useApiKeysForModels } from '@/hooks/useApiKeysForModels';
 import { classifyModels } from '@/utils/models';
 import { STORAGE_KEY_AUTH } from '@/utils/constants';
@@ -54,6 +55,9 @@ export function SystemPage() {
   const modelsLoading = useModelsStore((state) => state.loading);
   const modelsError = useModelsStore((state) => state.error);
   const fetchModelsFromStore = useModelsStore((state) => state.fetchModels);
+
+  const [syncingModelCatalog, setSyncingModelCatalog] = useState(false);
+  const catalogRequestId = useRef(0);
 
   const [modelStatus, setModelStatus] = useState<{
     type: 'success' | 'warning' | 'error' | 'muted';
@@ -118,6 +122,32 @@ export function SystemPage() {
       t,
     ]
   );
+
+  /** 刷新后端共享的模型目录（跨用户）；与「刷新列表」是两条不同的数据路径。 */
+  const handleCatalogRefresh = async () => {
+    if (syncingModelCatalog || modelsLoading || auth.connectionStatus !== 'connected') return;
+    const requestId = ++catalogRequestId.current;
+    const revision = apiClient.getConnectionRevision();
+    const isCurrent = () =>
+      requestId === catalogRequestId.current && revision === apiClient.getConnectionRevision();
+    setSyncingModelCatalog(true);
+    try {
+      await modelsApi.refreshCatalog(isCurrent);
+      if (!isCurrent()) return;
+      await fetchModels({ forceRefresh: true });
+      if (!isCurrent()) return;
+      showNotification(t('system_info.models_catalog_refresh_success'), 'success');
+    } catch (error: unknown) {
+      if (!isCurrent()) return;
+      const message = error instanceof Error ? error.message : '';
+      showNotification(
+        `${t('system_info.models_catalog_refresh_failed')}${message ? `: ${message}` : ''}`,
+        'error'
+      );
+    } finally {
+      if (isCurrent()) setSyncingModelCatalog(false);
+    }
+  };
 
   const handleClearLoginStorage = () => {
     showConfirmation({
@@ -212,14 +242,25 @@ export function SystemPage() {
           className={styles.systemCard}
           title={t('system_info.models_title')}
           extra={
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => fetchModels({ forceRefresh: true })}
-              loading={modelsLoading}
-            >
-              {t('common.refresh')}
-            </Button>
+            <div className={styles.modelsActions}>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => void handleCatalogRefresh()}
+                loading={syncingModelCatalog}
+                disabled={modelsLoading || auth.connectionStatus !== 'connected'}
+              >
+                {t('system_info.models_catalog_refresh_button')}
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => fetchModels({ forceRefresh: true })}
+                loading={modelsLoading}
+              >
+                {t('common.refresh')}
+              </Button>
+            </div>
           }
         >
           <p className={styles.sectionDescription}>{t('system_info.models_desc')}</p>

@@ -21,6 +21,9 @@ export interface QuotaClassMap {
   quotaResetRelativeSoon: string;
   quotaAmount: string;
   quotaMessage: string;
+  // Claude 额外用量：两种宿主下状态都紧跟标签。
+  claudeExtraUsageTitle: string;
+  claudeExtraUsageStatus: string;
   // 套餐 chip 行（codex 命名，claude/antigravity/kimi/xai 复用；
   // premium=金卡、elite=旗舰玉石徽章；两个宿主复用相同的套餐样式
   codexPlan: string;
@@ -41,7 +44,6 @@ export interface QuotaClassMap {
   antigravityQuotaGroup: string;
   antigravityQuotaGroupHeader: string;
   antigravityQuotaGroupTitle: string;
-  antigravityQuotaGroupDescription: string;
   // 水位条（QuotaMeter）
   quotaBar: string;
   quotaBarFill: string;
@@ -61,6 +63,8 @@ export const QUOTA_CLASS_KEYS: readonly (keyof QuotaClassMap)[] = [
   'quotaResetRelativeSoon',
   'quotaAmount',
   'quotaMessage',
+  'claudeExtraUsageTitle',
+  'claudeExtraUsageStatus',
   'codexPlan',
   'codexPlanItem',
   'codexPlanLabel',
@@ -77,7 +81,6 @@ export const QUOTA_CLASS_KEYS: readonly (keyof QuotaClassMap)[] = [
   'antigravityQuotaGroup',
   'antigravityQuotaGroupHeader',
   'antigravityQuotaGroupTitle',
-  'antigravityQuotaGroupDescription',
   'quotaBar',
   'quotaBarFill',
   'quotaBarFillHigh',

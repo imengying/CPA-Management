@@ -9,7 +9,7 @@ import { OAuthPage } from '@/pages/OAuthPage';
 import { QuotaPage } from '@/features/quota/QuotaPage';
 import { PluginResourcePage } from '@/features/plugins/PluginResourcePage';
 import { PluginsPage } from '@/features/plugins/PluginsPage';
-import { PluginStorePage } from '@/features/plugins/PluginStorePage';
+import { PLUGINS_STORE_PATH } from '@/features/plugins/pluginsView';
 import { ConfigPage } from '@/features/config/ConfigPage';
 import { LogsPage } from '@/features/logs/LogsPage';
 import { SystemPage } from '@/pages/SystemPage';
@@ -35,7 +35,8 @@ export function MainRoutes({ location }: { location?: Location }) {
       ? [
           { path: '/plugin-pages/:pluginId/:menuIndex', element: <PluginResourcePage /> },
           { path: '/plugins', element: <PluginsPage /> },
-          { path: '/plugin-store', element: <PluginStorePage /> },
+          // 商店现在是插件页的 Store 视图，保留旧链接可用。
+          { path: '/plugin-store', element: <Navigate to={PLUGINS_STORE_PATH} replace /> },
           { path: '/plugins/*', element: <Navigate to="/plugins" replace /> },
         ]
       : [

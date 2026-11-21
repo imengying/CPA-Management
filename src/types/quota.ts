@@ -134,12 +134,14 @@ export interface ClaudeExtraUsagePayload {
 
 /** Amounts are in minor currency units, unlike the separate dollar windows. */
 export interface ClaudeExtraUsage {
+  /** Anthropic 的额外用量开关，与 CPA 凭证自身的启用状态无关。 */
   isEnabled: boolean | null;
   monthlyLimit: number | null;
   usedCredits: number | null;
   utilization: number | null;
   currency: string | null;
   disabledReason: string | null;
+  /** 原始 extra_usage.user_disabled 标记；永远不是 AuthFileItem.disabled。 */
   userDisabled: boolean | null;
   spendLimitReached: boolean | null;
 }
@@ -267,6 +269,20 @@ export interface AntigravityQuotaState {
   error?: string;
   errorStatus?: number;
 }
+
+/**
+ * 账号级「额度用尽后使用 Credit」设置的会话内认知。
+ * 本功能只记录**已确认**的写入；没有记录的条目表示值未知。
+ */
+export type CodexCreditOverageEntry =
+  | { status: 'writing'; target: boolean }
+  | { status: 'known'; value: boolean; at: number }
+  | { status: 'unconfirmed'; target: boolean; at: number };
+
+/** 账号级互斥与未决写入日志，与用户快照分开维护。 */
+export type CodexCreditOverageOperation =
+  | { status: 'writing'; target: boolean; unconfirmed: boolean }
+  | { status: 'unconfirmed'; target: boolean; at: number };
 
 /** A provider-defined numeric/currency value rendered above generic quota windows. */
 export interface PluginQuotaMetric {

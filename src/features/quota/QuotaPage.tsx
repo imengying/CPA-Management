@@ -12,6 +12,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { authFilesApi } from '@/services/api';
 import { Button } from '@/components/ui/Button';
+import { CardLayoutSwitch } from '@/components/ui/CardLayoutSwitch';
+import { StackedColumns } from '@/components/ui/StackedColumns';
+import { readCardLayout, writeCardLayout, type CardLayout } from '@/components/ui/cardLayout';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { IconSearch, IconX } from '@/components/ui/icons';
 import { Select } from '@/components/ui/Select';
@@ -28,7 +31,10 @@ import { QuotaCard } from './components/QuotaCard';
 import { QuotaTimeline } from './components/QuotaTimeline';
 import {
   CARD_ENTRANCE_BUDGET_MS,
+  QUOTA_CARD_LAYOUT_KEY,
+  QUOTA_COMPACT_COLUMNS,
   QUOTA_PAGE_SIZE,
+  QUOTA_STACKED_COLUMNS,
   QUOTA_SORT_MODES,
   QUOTA_TAB_ORDER,
   type QuotaSortMode,
@@ -46,6 +52,10 @@ import {
 } from './logic';
 import { nextRecoveryMs } from './resetSchedule';
 import { QUOTA_ADAPTERS, getQuotaSetter, type QuotaCardState } from './providers';
+import {
+  codexCreditOverageKey,
+  countCodexCreditOverageKeys,
+} from './providers/codex/creditOverage';
 import type { QuotaProviderType } from './providers/types';
 import { useDevinQuotaAutoLoad } from './providers/devin/useDevinQuotaAutoLoad';
 import { useQuotaActions } from './hooks/useQuotaActions';
@@ -76,6 +86,22 @@ export function QuotaPage() {
   );
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [layout, setLayout] = useState<CardLayout>(() => readCardLayout(QUOTA_CARD_LAYOUT_KEY));
+  // 用户从紧凑放大的卡片；不持久化。
+  const [expandedCards, setExpandedCards] = useState<ReadonlySet<string>>(() => new Set());
+  const handleLayoutChange = useCallback((next: CardLayout) => {
+    setLayout(next);
+    writeCardLayout(QUOTA_CARD_LAYOUT_KEY, next);
+  }, []);
+
+  const toggleExpandedCard = useCallback((key: string) => {
+    setExpandedCards((previous) => {
+      const next = new Set(previous);
+      if (!next.delete(key)) next.add(key);
+      return next;
+    });
+  }, []);
+
   const searchInputRef = useRef<HTMLInputElement>(null);
   // 页头 + tabs 的入场级联（标题 → meta → 动作 → tabs，级差 70ms）
   const revealRef = useRevealGroup<HTMLDivElement>();
@@ -176,6 +202,15 @@ export function QuotaPage() {
   const entries = useMemo(() => classifyQuotaFiles(files), [files]);
   const tabCounts = useMemo(() => buildTabCounts(entries), [entries]);
   // 搜索先于分页生效：刷新目标集合必须与用户看到的卡片一致。
+  // 账号级设置跨越分页与 tab，因此在全部条目上统计。
+  const codexCreditOverageCounts = useMemo(
+    () =>
+      countCodexCreditOverageKeys(
+        entries.filter((entry) => entry.type === 'codex').map((entry) => entry.file)
+      ),
+    [entries]
+  );
+
   const filteredEntries = useMemo(
     () => filterEntriesBySearch(filterEntriesByTab(entries, tab), search),
     [entries, tab, search]
@@ -381,6 +416,7 @@ export function QuotaPage() {
                 size="sm"
               />
             </div>
+            <CardLayoutSwitch value={layout} onChange={handleLayoutChange} />
           </div>
         </div>
 
@@ -425,21 +461,38 @@ export function QuotaPage() {
             }
           />
         ) : (
-          <div className={styles.grid}>
-            {pageItems.map((entry, index) => (
-              <QuotaCard
-                key={`${entry.type}:${getQuotaCacheKey(entry.file)}`}
-                entry={entry}
-                quota={getQuota(entry)}
-                resolvedTheme={resolvedTheme}
-                canRefresh={canUseActions && !entry.file.disabled}
-                resetting={resettingQuotaName === getQuotaCacheKey(entry.file)}
-                entranceDelayMs={cardEntranceDelay(index)}
-                onRefresh={() => void refreshQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
-                onReset={() => resetQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
-              />
-            ))}
-          </div>
+          // 所有布局共用一个容器，切换布局不会重挂载卡片。
+          <StackedColumns
+            stacked={layout !== 'even'}
+            className={layout === 'even' ? styles.grid : undefined}
+            {...(layout === 'compact' ? QUOTA_COMPACT_COLUMNS : QUOTA_STACKED_COLUMNS)}
+            items={pageItems.map((entry, index) => {
+              const key = `${entry.type}:${getQuotaCacheKey(entry.file)}`;
+              return {
+                key,
+                node: (
+                  <QuotaCard
+                    entry={entry}
+                    quota={getQuota(entry)}
+                    resolvedTheme={resolvedTheme}
+                    canRefresh={canUseActions && !entry.file.disabled}
+                    resetting={resettingQuotaName === getQuotaCacheKey(entry.file)}
+                    entranceDelayMs={cardEntranceDelay(index)}
+                    creditOverageSharedCount={
+                      entry.type === 'codex'
+                        ? codexCreditOverageCounts.get(codexCreditOverageKey(entry.file) ?? '')
+                        : undefined
+                    }
+                    glance={layout === 'compact' ? !expandedCards.has(key) : undefined}
+                    onToggleGlance={() => toggleExpandedCard(key)}
+                    onRefresh={() => void refreshQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
+                    onReset={() => resetQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
+                  />
+                ),
+                settled: getQuota(entry)?.status !== 'loading',
+              };
+            })}
+          />
         )}
 
         {!loading && filteredEntries.length > QUOTA_PAGE_SIZE && (

@@ -105,6 +105,7 @@ export const useAuthStore = create<AuthStoreState>()(
           useConfigStore.getState().clearCache();
           useModelsStore.getState().clearCache();
           useQuotaStore.getState().clearQuotaCache();
+          useQuotaStore.getState().clearCodexCreditOverageOperations();
 
           // 配置 API 客户端
           apiClient.setConfig({
@@ -136,6 +137,7 @@ export const useAuthStore = create<AuthStoreState>()(
         useConfigStore.getState().clearCache();
         useModelsStore.getState().clearCache();
         useQuotaStore.getState().clearQuotaCache();
+        useQuotaStore.getState().clearCodexCreditOverageOperations();
         set({
           isAuthenticated: false,
           apiBase: '',

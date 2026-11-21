@@ -1,10 +1,5 @@
 const AUTH_FILES_SORT_MODES = ['default', 'az', 'priority'] as const;
-const AUTH_FILES_STATUS_FILTER_MODES = [
-  'all',
-  'enabled',
-  'disabled',
-  'problem',
-] as const;
+const AUTH_FILES_STATUS_FILTER_MODES = ['all', 'enabled', 'disabled', 'problem'] as const;
 
 export type AuthFilesSortMode = (typeof AUTH_FILES_SORT_MODES)[number];
 export type AuthFilesStatusFilterMode = (typeof AUTH_FILES_STATUS_FILTER_MODES)[number];
@@ -21,6 +16,8 @@ export type AuthFilesUiState = {
 };
 
 const AUTH_FILES_UI_STATE_KEY = 'authFilesPage.uiState';
+/** 卡片布局（等高行 / 堆叠 / 紧凑）。compactMode 仍写入旧键，供旧版本读取。 */
+export const AUTH_FILES_CARD_LAYOUT_KEY = 'authFilesPage.cardLayout';
 const AUTH_FILES_SORT_MODE_SET = new Set<AuthFilesSortMode>(AUTH_FILES_SORT_MODES);
 const AUTH_FILES_STATUS_FILTER_MODE_SET = new Set<AuthFilesStatusFilterMode>(
   AUTH_FILES_STATUS_FILTER_MODES

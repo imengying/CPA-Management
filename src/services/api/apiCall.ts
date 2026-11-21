@@ -76,9 +76,9 @@ export const getApiCallErrorMessage = (result: ApiCallResult): string => {
   return message || 'Request failed';
 };
 
-export const apiCallApi = {
+const createApiCallApi = (client: Pick<typeof apiClient, 'post'>) => ({
   request: async (payload: ApiCallRequest, config?: AxiosRequestConfig): Promise<ApiCallResult> => {
-    const response = await apiClient.post<Record<string, unknown>>(
+    const response = await client.post<Record<string, unknown>>(
       '/requests/api-call',
       payload,
       config
@@ -94,4 +94,10 @@ export const apiCallApi = {
       body,
     };
   },
-};
+});
+
+export const apiCallApi = createApiCallApi(apiClient);
+
+/** 把写操作钉在发起它的连接上，连接变化后连响应归属一起丢弃。 */
+export const captureApiCallApi = (isCurrent?: () => boolean) =>
+  createApiCallApi(apiClient.captureConnection(isCurrent));

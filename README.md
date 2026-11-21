@@ -6,7 +6,7 @@
 
 **主项目**: https://github.com/router-for-me/CLIProxyAPI<br>
 **原版WebUI 仓库**: https://github.com/router-for-me/Cli-Proxy-API-Management-Center<br>
-**上游功能同步版本（不含广告与推广）**: [v1.27.3](https://github.com/router-for-me/Cli-Proxy-API-Management-Center/releases/tag/v1.27.3)<br>
+**上游功能同步版本（不含广告与推广）**: [v1.28.3](https://github.com/router-for-me/Cli-Proxy-API-Management-Center/releases/tag/v1.28.3)<br>
 **支持版本**: CLIProxyAPI 8.0.0 及以上
 
 服务运行后，通过 API 端口上的 `/management.html` 访问 Web UI。
@@ -88,7 +88,20 @@ bun run build
 - **日志**：游标增量拉取、自动刷新、搜索与多条件筛选、隐藏管理端流量、换行与全屏、清空日志；下载请求错误日志文件。
 - **系统信息**：快捷链接、版本检查、本地登录信息清理，以及拉取 `/v1/models` 并分组展示（需要至少一个代理 API Key 才能查询模型）。
 
-本次同步新增路由管理（优先级、权重与策略）、Codex SIWC 绑定及开关、通用插件配额和多入口 OAuth；更新登录/OAuth 界面、套餐显示及模型发现的同步选择操作。
+同步到 v1.28.3 后新增：
+
+- **模型规则工作台**：模型别名与禁用模型改为独立工作台，支持图谱/清单双视图、提供商侧栏、草稿校验与未保存提示。
+- **Payload 文本替换**：配置面板新增 `payload.replace` 规则编辑（角色/位置/JSON 路径定位，字面量与 RE2 正则替换）。
+- **敏感内容替换**：Antigravity / Devin 及 API Key 提供商支持字面量与正则替换，凭据中的敏感文本可在转发前脱敏。
+- **Codex 智能额度**：额度页可为账号设置「额度用尽后使用 Credit」，含跨凭证共享提示与未决写入恢复。
+- **Claude 重置券**：重置前弹窗选择具体券，区分 Fable / 每周 / 5 小时 / 全量类型。
+- **卡片布局**：认证文件、额度、插件商店支持等高行 / 堆叠 / 紧凑三档切换。
+- **说明收进提示**：字段说明默认收进标题后的 InfoTip（悬停/聚焦/点按可见），安全与破坏性提示仍常驻页面。
+- **插件页整合**：商店并入插件页，提供「已安装 / 商店」双视图与商店本地化。
+- **登录代理**：OAuth 登录可指定 http/https/socks5 代理，仅存于本次会话。
+- **模型目录同步**：认证文件页与系统页可刷新后端共享的模型目录。
+
+本次同步也排除了上游的赞助商卡片、推广注册链接与活动广告等内容。
 
 升级到此版本后，旧版保存的登录凭据会按上游策略清除，需要重新输入管理密钥。新的本地存储格式不再依赖浏览器版本；它仍是可逆混淆。
 

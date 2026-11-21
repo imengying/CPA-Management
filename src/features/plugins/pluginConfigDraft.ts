@@ -1,7 +1,8 @@
+import type { TFunction } from 'i18next';
 import type { PluginConfigField, PluginConfigObject, PluginListEntry } from '@/types';
 import { isRecord } from '@/utils/helpers';
 
-type PluginDraftValue = string | boolean;
+export type PluginDraftValue = string | boolean;
 
 export interface PluginConfigDraft {
   enabled: boolean;
@@ -13,7 +14,11 @@ export interface PluginConfigDraft {
   touchedFields: Record<string, boolean>;
 }
 
-type Translate = (key: string, options?: Record<string, unknown>) => string;
+/**
+ * 只用到 key + 插值的翻译入口。直接取 i18next 的 TFunction：
+ * 它自己就是可调用联合类型，手写签名会与它的重载/元组参数对不上。
+ */
+type Translate = TFunction;
 
 export const normalizePluginConfigFieldType = (field: PluginConfigField): string =>
   field.type.trim().toLowerCase();

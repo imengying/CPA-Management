@@ -210,14 +210,20 @@ describe('provider model options', () => {
     const controls =
       render('openaiCompatibility', true).match(/<(?:input|select|button)\b[^>]*>/g) ?? [];
     expect(controls.length).toBeGreaterThan(10);
-    for (const control of controls) expect(control).toContain('disabled=""');
+    for (const control of controls) {
+      // 说明文字的 InfoTip 按钮是可访问性辅助，不是设置控件，不该被禁用。
+      if (control.includes('data-info-tip=""')) continue;
+      expect(control).toContain('disabled=""');
+    }
     const defaultThinking = render('gemini', false, false).split('<fieldset')[1];
     const inputs = defaultThinking.match(/<(?:input|button)\b[^>]*>/g) ?? [];
     expect(inputs.length).toBeGreaterThan(4);
     const mode = inputs.filter((input) => input.includes('aria-haspopup="listbox"'));
     expect(mode).toHaveLength(1);
     expect(mode[0]).not.toContain('disabled=""');
-    for (const input of inputs.filter((input) => !input.includes('aria-haspopup="listbox"'))) {
+    for (const input of inputs.filter(
+      (input) => !input.includes('aria-haspopup="listbox"') && !input.includes('data-info-tip=""')
+    )) {
       expect(input).toContain('disabled=""');
     }
   });

@@ -3,6 +3,7 @@
  */
 
 import axios from 'axios';
+import { apiClient } from './client';
 import { normalizeModelList } from '@/utils/models';
 import { normalizeApiBase } from '@/utils/connection';
 import { apiCallApi, getApiCallErrorMessage } from './apiCall';
@@ -113,6 +114,13 @@ const fetchBearerModelsViaApiCall = async (
 };
 
 export const modelsApi = {
+  /** Refresh the global backend catalogs, not auth-file credentials. */
+  async refreshCatalog(isCurrent?: () => boolean): Promise<{ changedProviders: string[] }> {
+    const client = isCurrent ? apiClient.captureConnection(isCurrent) : apiClient;
+    const response = await client.post<{ changed_providers: string[] | null }>('/models/refresh');
+    return { changedProviders: response.changed_providers ?? [] };
+  },
+
   /**
    * Fetch available models from /v1/models endpoint (for system info page)
    */
@@ -302,6 +310,9 @@ export const modelsApi = {
           const resolved = { ...model, name };
           if (resolved.alias && resolved.alias.trim() === name) {
             resolved.alias = undefined;
+          }
+          if (resolved.displayName?.trim() === name) {
+            resolved.displayName = undefined;
           }
           collected.push(resolved);
         });

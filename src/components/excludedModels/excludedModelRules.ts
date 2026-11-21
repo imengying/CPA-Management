@@ -16,7 +16,7 @@ export const DISABLE_ALL_RULE = '*';
 
 const ruleKey = (value: string): string => value.trim().toLowerCase();
 
-const isWildcardRule = (rule: string): boolean => rule.includes('*');
+export const isWildcardRule = (rule: string): boolean => rule.includes('*');
 
 export function normalizeExcludedRules(values: Iterable<string>): string[] {
   const seen = new Set<string>();
@@ -59,6 +59,17 @@ export function matchesExcludedRule(rule: string, modelId: string): boolean {
  * 通配符规则，那是因为调用点有两个互不知情的写入面（列表管精确、textarea 管通配符）需要
  * 互不践踏。统一组件里两个面同属一个组件，该守卫属于组件而非纯函数。
  */
+/** 该模型是否被某条**通配符**规则命中（精确规则不算）。 */
+export const isMatchedByWildcardRule = (rules: Iterable<string>, modelId: string): boolean =>
+  Array.from(rules).some((rule) => isWildcardRule(rule) && matchesExcludedRule(rule, modelId));
+
+/** 规则列表里是否存在与 candidate 字面相等（忽略大小写）的一条。不做通配符展开。 */
+export function hasExcludedRule(rules: Iterable<string>, candidate: string): boolean {
+  const candidateKey = ruleKey(candidate);
+  if (!candidateKey) return false;
+  return Array.from(rules).some((rule) => ruleKey(rule) === candidateKey);
+}
+
 export function toggleExcludedRule(
   rules: Iterable<string>,
   candidate: string,

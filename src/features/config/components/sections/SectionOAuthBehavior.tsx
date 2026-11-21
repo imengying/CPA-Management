@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Collapsible } from '@/components/ui/Collapsible';
 import { Input } from '@/components/ui/Input';
@@ -8,6 +9,7 @@ import {
   FieldAnchor,
   FieldGrid,
   FieldGroup,
+  FieldHint,
   FieldStack,
   ToggleRow,
 } from '../fields/FieldPrimitives';
@@ -20,12 +22,17 @@ export function SectionOAuthBehavior({
   onChange,
 }: ConfigSectionProps) {
   const { t } = useTranslation();
+  const scopeId = useId();
   return (
+    // 作用域说明（不影响 API Key 凭据）管着下面每一项，却挂不进 <summary>（不嵌可交互元素）：
+    // 放在展开后的正文开头一行，并用 aria-describedby 关联到折叠组。
     <Collapsible
       label={t('config_management.visual.additions.oauthTitle')}
-      hint={t('config_management.visual.additions.oauthHint')}
+      aria-describedby={scopeId}
     >
       <FieldStack>
+        <FieldHint id={scopeId}>{t('config_management.visual.additions.oauthHint')}</FieldHint>
+
         <FieldGroup title={t('config_management.visual.additions.claudeTitle')}>
           <FieldGrid>
             <FieldAnchor fieldId="claudeModelLevelCooling">
@@ -212,10 +219,7 @@ export function SectionOAuthBehavior({
             </FieldAnchor>
           </FieldGrid>
         </FieldGroup>
-        <FieldGroup
-          title={t('config_management.visual.additions.liveRelayTitle')}
-          description={t('config_management.visual.additions.liveRelayHint')}
-        >
+        <FieldGroup title={t('config_management.visual.additions.liveRelayTitle')}>
           <FieldGrid>
             <FieldAnchor fieldId="codexLiveMediaRelayEnabled">
               <ToggleRow

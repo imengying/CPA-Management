@@ -275,6 +275,12 @@
   }
 }
 
+.statLabelRow {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
 .statLabel {
   color: var(--text-secondary);
   font-size: 12px;
@@ -756,4 +762,36 @@
   .statTile {
     transition: none;
   }
+}
+
+/* 上游新增：说明收进 InfoTip 后配套的排版类 */
+.ctaIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-md;
+  border: 1px solid var(--border-color);
+  background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+  color: var(--text-primary);
+}
+
+.ctaTitle {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--text-primary);
+}
+
+.ctaArrow {
+  flex-shrink: 0;
+  font-size: 15px;
+  color: var(--text-tertiary);
+  opacity: 0.55;
+  transition:
+    transform var(--dur-hover) var(--ease-out-strong),
+    opacity var(--dur-hover) var(--ease-out-strong);
 }

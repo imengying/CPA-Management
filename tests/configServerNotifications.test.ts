@@ -73,6 +73,8 @@ describe('server configuration localization', () => {
         const entry = findConfigFieldById(id);
         expect(entry?.sectionId).toBe('connectivity');
         expect(entry?.labelKey).toBe(`config_management.visual.serverExtras.${id}.label`);
+        // 服务类型没有说明（占位符即默认值），其余每项都有可搜索的 hint。
+        if (id === 'discoveryServiceType') continue;
         expect(entry?.hintKey).toBe(`config_management.visual.serverExtras.${id}.hint`);
         expect(resolve(entry!.labelKey)).toBeString();
         expect(resolve(entry!.hintKey!)).toBeString();

@@ -152,6 +152,8 @@ const buildProviderKeyConfig = (
       mode: input.cloak.mode.trim() || undefined,
       strictMode: input.cloak.strictMode,
       sensitiveWords: parseTextList(input.cloak.sensitiveWordsText),
+      sensitiveWordsReplace: input.cloak.sensitiveWordsReplace,
+      sensitivePatternsReplace: input.cloak.sensitivePatternsReplace,
       cacheUserId: input.cloak.cacheUserId === true,
     };
   }

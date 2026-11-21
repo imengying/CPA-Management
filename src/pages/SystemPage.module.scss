@@ -169,3 +169,11 @@
     overflow-wrap: anywhere;
   }
 }
+
+/* 模型卡片右上角的两条动作并列（目录更新 + 刷新列表）。 */
+.modelsActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}

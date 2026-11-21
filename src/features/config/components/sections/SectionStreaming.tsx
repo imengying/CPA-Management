@@ -50,7 +50,6 @@ export function SectionStreaming({
       indexLabel={SECTION_INDEX_LABELS.streaming}
       icon={<Icon size={16} />}
       title={t('config_management.visual.sections.streaming.title')}
-      description={t('config_management.visual.sections.streaming.description')}
       animateIn={animateIn}
     >
       <FieldStack>

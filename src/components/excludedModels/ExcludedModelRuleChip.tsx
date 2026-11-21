@@ -12,9 +12,9 @@ import styles from './ExcludedModelRuleChip.module.scss';
  *              直接给个 ✕ 会承诺一件它做不到的事。
  * - `unknown`  虚线弱化：精确规则但目录里没有（如已下线的模型 id），可移除。
  */
-type ExcludedModelChipVariant = 'exact' | 'wildcard' | 'unknown';
+export type ExcludedModelChipVariant = 'exact' | 'wildcard' | 'unknown';
 
-interface ExcludedModelRuleChipProps {
+export interface ExcludedModelRuleChipProps {
   label: string;
   variant?: ExcludedModelChipVariant;
   /** 次要说明，例如派生该 chip 的规则。 */

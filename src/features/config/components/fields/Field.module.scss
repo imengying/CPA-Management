@@ -11,7 +11,11 @@
     margin-bottom: 0;
   }
 
-  :global(.form-group > label) {
+  /* Input 把 hint 收进 InfoTip 时，标签包在 .form-label-row 里：行本身也取同一副字号，
+     InfoTip 按行的字号对齐。 */
+  :global(.form-group > label),
+  :global(.form-group > .form-label-row),
+  :global(.form-group > .form-label-row > label) {
     color: var(--text-secondary);
     font-size: 12px;
     font-weight: 700;
@@ -220,6 +224,12 @@
   min-width: 0;
 }
 
+.fieldLabelLine {
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .fieldLabel {
   color: var(--text-secondary);
   font-size: 12px;
@@ -282,4 +292,50 @@
     animation: none;
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--text-primary) 32%, transparent);
   }
+}
+
+/* 上游新增：说明收进 InfoTip 后配套的排版类 */
+.groupHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 2px;
+}
+
+.groupTitleLine {
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.groupTitle {
+  display: inline;
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.size_sm {
+  --setting-control: min(136px, 42%);
+}
+
+.size_md {
+  --setting-control: min(280px, 50%);
+}
+
+.size_lg {
+  --setting-control: min(420px, 58%);
+}
+
+.rowWide {
+  grid-column: 1 / -1;
+}
+
+.rowLabelLine {
+  min-width: 0;
+  font-size: 13.5px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
 }

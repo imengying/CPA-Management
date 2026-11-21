@@ -40,7 +40,7 @@ describe('server configuration UI', () => {
       expect(FIELD_VALUE_KEYS[entry.fieldId]).toEqual([entry.fieldId]);
       expect(markup.split(`id="cfg-field-${entry.fieldId}"`)).toHaveLength(2);
       expect(markup).toContain(escapeText(translations.t(entry.labelKey)));
-      expect(markup).toContain(escapeText(translations.t(entry.hintKey!)));
+      if (entry.hintKey) expect(markup).toContain(escapeText(translations.t(entry.hintKey)));
       const path = entry.yamlKeys!.join('.');
       expect(path).toMatch(/^server\.(trusted-proxies|discovery\.)/);
       expect(
@@ -104,6 +104,11 @@ describe('server configuration UI', () => {
     for (const input of inputs) {
       const id = input.match(/\bid="([^"]+)"/)?.[1];
       expect(discovery).toContain(`for="${id}"`);
+      // 服务类型没有说明文字（占位符即默认值），因此没有可关联的描述。
+      if (input.includes('placeholder="_ai-gateway._tcp"')) {
+        expect(input).not.toContain('aria-describedby');
+        continue;
+      }
       const hint = input.match(/aria-describedby="([^"]+)"/)?.[1];
       expect(discovery).toContain(`id="${hint}"`);
     }
@@ -115,7 +120,11 @@ describe('server configuration UI', () => {
     );
     const controls = markup.match(/<(?:input|textarea|button)\b[^>]*>/g) ?? [];
     expect(controls.length).toBeGreaterThan(10);
-    for (const control of controls) expect(control).toContain('disabled=""');
+    for (const control of controls) {
+      // 说明文字的 InfoTip 按钮是可访问性辅助，不是设置控件，不该被禁用。
+      if (control.includes('data-info-tip=""')) continue;
+      expect(control).toContain('disabled=""');
+    }
   });
 
   test('renders and associates both validation errors', () => {

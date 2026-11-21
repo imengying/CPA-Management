@@ -39,7 +39,6 @@ export function SectionConnectivity({
       indexLabel={SECTION_INDEX_LABELS.connectivity}
       icon={<Icon size={16} />}
       title={t('config_management.visual.sections.connectivity.title')}
-      description={t('config_management.visual.sections.connectivity.description')}
       animateIn={animateIn}
     >
       <FieldStack>
@@ -78,6 +77,8 @@ export function SectionConnectivity({
             label={t('config_management.visual.serverExtras.trustedProxies.label')}
             labelId={`${id}-trustedProxies-label`}
             hint={t('config_management.visual.serverExtras.trustedProxies.hint')}
+            // 安全提示（信任全地址段可伪造客户端 IP）且需重启：常驻可见。
+            keepHintVisible
             hintId={`${id}-trustedProxies-hint`}
             error={trustedProxiesError}
             errorId={`${id}-trustedProxies-error`}
@@ -108,7 +109,6 @@ export function SectionConnectivity({
             <FieldAnchor fieldId="tlsEnable">
               <ToggleRow
                 title={t('config_management.visual.sections.tls.enable')}
-                description={t('config_management.visual.sections.tls.enable_desc')}
                 checked={values.tlsEnable}
                 disabled={disabled}
                 onChange={(tlsEnable) => onChange({ tlsEnable })}
@@ -154,6 +154,8 @@ export function SectionConnectivity({
                 <ToggleRow
                   title={t('config_management.visual.sections.remote.allow_remote')}
                   description={t('config_management.visual.sections.remote.allow_remote_desc')}
+                  // 对其他主机开放管理接口：安全相关，常驻可见。
+                  keepDescriptionVisible
                   checked={values.rmAllowRemote}
                   disabled={disabled}
                   onChange={(rmAllowRemote) => onChange({ rmAllowRemote })}
@@ -162,7 +164,6 @@ export function SectionConnectivity({
               <FieldAnchor fieldId="rmDisableControlPanel">
                 <ToggleRow
                   title={t('config_management.visual.sections.remote.disable_panel')}
-                  description={t('config_management.visual.sections.remote.disable_panel_desc')}
                   checked={values.rmDisableControlPanel}
                   disabled={disabled}
                   onChange={(rmDisableControlPanel) => onChange({ rmDisableControlPanel })}

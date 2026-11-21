@@ -14,6 +14,13 @@ export const QUOTA_TAB_ORDER: readonly QuotaProviderType[] = [
 
 export type QuotaTabId = 'all' | QuotaProviderType;
 
+/** 卡片布局（等高行 / 堆叠 / 紧凑），跨会话保存在 localStorage。 */
+export const QUOTA_CARD_LAYOUT_KEY = 'quotaPage.cardLayout';
+
+/** 堆叠与紧凑布局的列宽下限与间距；等高行沿用 `.grid`。 */
+export const QUOTA_STACKED_COLUMNS = { minColumnWidth: 340, gap: 16 } as const;
+export const QUOTA_COMPACT_COLUMNS = { minColumnWidth: 260, gap: 10 } as const;
+
 /** 页级分页固定 20/页，同时把「刷新全部」的上游并发限制在 20。 */
 export const QUOTA_PAGE_SIZE = 20;
 

@@ -434,9 +434,9 @@ describe('Claude usage snapshot rendering and retention', () => {
 
   test('extra usage and balances share the window-row typography', () => {
     const markup = render({ ...quota, planType: 'plan_max' });
-    // Same anatomy as plan windows: label + mono telemetry header, never bare reset text.
+    // 状态与标签同处左侧一组，右侧只放数字遥测（上游合并后的解剖）。
     expect(markup).toContain(
-      '<div class="quotaRowHeader"><span class="quotaModel">Extra Usage</span><div class="quotaMeta"><span class="quotaPercent">Enabled</span><span class="quotaResetRelative">25% used</span>'
+      '<div class="quotaRowHeader"><div class="claudeExtraUsageTitle"><span class="quotaModel">Extra Usage</span><span class="claudeExtraUsageStatus">Enabled</span></div><div class="quotaMeta"><span class="quotaPercent">25% used</span>'
     );
     expect(markup).toContain(
       '<span class="quotaModel" title="iguana_necktie">iguana_necktie</span><div class="quotaMeta"><span class="quotaPercent">$94.96 remaining</span>'
@@ -445,7 +445,7 @@ describe('Claude usage snapshot rendering and retention', () => {
     expect(markup).not.toMatch(/<div class="quotaRow"><span class="quotaReset">/);
     expect(markup).not.toContain('codexResetCreditLabel');
     expect(markup).toContain(
-      '<span class="codexPlanItem"><span class="codexPlanLabel">Plan</span>'
+      '<span class="codexPlanItem" data-quota-plan=""><span class="codexPlanLabel">Plan</span>'
     );
   });
 
@@ -499,11 +499,12 @@ describe('Claude usage snapshot rendering and retention', () => {
         disabledReason: 'user_disabled',
       },
     });
-    expect(markup).toContain('Disabled');
+    // 用户禁用已并入标签旁的状态（上游把该状态措辞改为「未开启」），不再重复成一条原因说明。
+    expect(markup).toContain('Not enabled');
     expect(markup).toContain('Spent $0.00 / Limit $0.00');
-    expect(markup).toContain('Disabled by user');
     expect(markup).toContain('Spending limit reached');
-    expect(markup).toContain('Reason: user_disabled');
+    expect(markup).not.toContain('Disabled by user');
+    expect(markup).not.toContain('Reason: user_disabled');
   });
 
   test('shows the last observation time when a retained snapshot is stale', () => {

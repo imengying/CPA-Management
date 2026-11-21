@@ -5,6 +5,9 @@ import { useRevealGroup } from '@/hooks/motion';
 import styles from './VaultHeader.module.scss';
 
 export type VaultHeaderProps = {
+  syncingModelCatalog?: boolean;
+  onSyncModelCatalog?: () => void;
+  modelCatalogSyncDisabled?: boolean;
   totalCount: number;
   activeCount: number;
   problemCount: number;
@@ -21,6 +24,9 @@ export type VaultHeaderProps = {
 
 export function VaultHeader(props: VaultHeaderProps) {
   const {
+    syncingModelCatalog = false,
+    onSyncModelCatalog,
+    modelCatalogSyncDisabled = false,
     totalCount,
     activeCount,
     problemCount,
@@ -61,6 +67,18 @@ export function VaultHeader(props: VaultHeaderProps) {
         </p>
       </div>
       <div className={styles.actions} data-reveal>
+        {onSyncModelCatalog && (
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={onSyncModelCatalog}
+            disabled={modelCatalogSyncDisabled || syncingModelCatalog}
+            loading={syncingModelCatalog}
+          >
+            {!syncingModelCatalog && <IconRefreshCw size={14} />}
+            {t('auth_files.sync_catalog_button')}
+          </Button>
+        )}
         {onRefreshCredentials && (
           <Button
             variant="secondary"

@@ -59,7 +59,11 @@ describe('error-rule editor UI', () => {
       ...renderRows(rows, true).matchAll(/<(?:input|textarea|select|button)\b[^>]*>/g),
     ];
     expect(controls.length).toBeGreaterThan(10);
-    for (const control of controls) expect(control[0]).toContain('disabled=""');
+    for (const control of controls) {
+      // 说明文字的 InfoTip 按钮是可访问性辅助，不是设置控件，不该被禁用。
+      if (control[0].includes('data-info-tip=""')) continue;
+      expect(control[0]).toContain('disabled=""');
+    }
   });
   test('an empty override retains its add action and inherited mode hides rows', () => {
     expect(renderRows([])).toContain('No rules.');

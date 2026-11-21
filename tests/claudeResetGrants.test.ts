@@ -1,4 +1,7 @@
-import { selectResetGrant } from '../src/features/quota/providers/claude/selectResetGrant';
+import {
+  canChooseResetGrant,
+  resetGrantKind,
+} from '../src/features/quota/providers/claude/resetGrantChoice';
 
 import { afterEach, describe, expect, spyOn, test } from 'bun:test';
 import { apiClient } from '../src/services/api/client';
@@ -646,40 +649,66 @@ test('all grant messages and confirmation are translated in six locales', async 
   }
 });
 
-test('card selection prefers usable recommendation and has deterministic fallback', () => {
+test('an explicit grant choice is validated instead of silently substituted', () => {
   const base = status();
   const a = { ...base.grants[0], id: 'a' };
   const b = { ...a, id: 'b' };
   const multiple = { ...base, grants: [b, a], nextGrantId: 'b' };
-  expect(selectResetGrant(multiple, 0)?.id).toBe('b');
-  expect(selectResetGrant({ ...multiple, nextGrantId: null }, 0)?.id).toBe('a');
-  expect(selectResetGrant({ ...multiple, grants: [a, { ...b, paused: true }] }, 0)?.id).toBe('a');
-  expect(selectResetGrant({ ...multiple, eligible: false }, 0)).toBeUndefined();
-  expect(selectResetGrant({ ...multiple, atLimit: false }, 0)).toBeUndefined();
+  const now = Date.parse('2026-01-01T00:00:00Z');
+
+  // 显式选择永远不被推荐值或其它券替换。
+  expect(canChooseResetGrant(multiple, undefined, 'a', now)).toBe(true);
+  expect(canChooseResetGrant(multiple, undefined, 'missing', now)).toBe(false);
+  expect(canChooseResetGrant(multiple, undefined, '', now)).toBe(false);
+  // 未决认领必须重试原来的身份，即使发现列表里已经没有它。
+  expect(canChooseResetGrant(multiple, 'gone', 'gone', now)).toBe(true);
+  expect(canChooseResetGrant(multiple, 'gone', 'a', now)).toBe(false);
+  // 不可用/条件不满足时不接受选择。
+  expect(canChooseResetGrant({ ...multiple, eligible: false }, undefined, 'a', now)).toBe(false);
+  expect(canChooseResetGrant({ ...multiple, atLimit: false }, undefined, 'a', now)).toBe(false);
   expect(
-    selectResetGrant({ ...multiple, cooldownUntil: new Date(1000).toISOString() }, 0)
-  ).toBeUndefined();
+    canChooseResetGrant(
+      { ...multiple, cooldownUntil: new Date(now + 60_000).toISOString() },
+      undefined,
+      'a',
+      now
+    )
+  ).toBe(false);
   for (const changed of [
     { resetsLeft: 0 },
     { usableNow: false },
     { paused: true },
-    { startsAt: new Date(1000).toISOString() },
-    { endsAt: new Date(0).toISOString() },
+    { startsAt: new Date(now + 1000).toISOString() },
+    { endsAt: new Date(now - 1000).toISOString() },
   ]) {
-    expect(selectResetGrant({ ...base, grants: [{ ...a, ...changed }] }, 0)).toBeUndefined();
+    expect(
+      canChooseResetGrant({ ...base, grants: [{ ...a, ...changed }] }, undefined, 'a', now)
+    ).toBe(false);
   }
 });
 
-test('Claude card uses Codex count and action styles and shared confirmation, not a grant dialog', async () => {
+test('grant kind distinguishes Fable refills from the plan reset windows', () => {
+  const base = status().grants[0];
+  expect(resetGrantKind({ ...base, givesBackWeekly: true })).toBe('fable');
+  expect(resetGrantKind({ ...base, resetType: 'weekly' })).toBe('weekly');
+  expect(resetGrantKind({ ...base, resetType: 'session' })).toBe('session');
+  expect(resetGrantKind({ ...base, resetType: 'full' })).toBe('full');
+  expect(resetGrantKind({ ...base, resetType: null })).toBe('unknown');
+});
+
+test('Claude reset is chosen in a confirmation dialog, not a shared confirmation', async () => {
   const card = await Bun.file('src/features/quota/components/QuotaCard.tsx').text();
   const hook = await Bun.file('src/features/quota/providers/claude/ClaudeResetGrants.tsx').text();
-  expect(card).toContain('quotaClasses.codexPlanValue}>{claudeReset.count');
-  expect(card).toContain('disabled={claudeReset.blocked}');
-  expect(card).toContain('onClick={claudeReset.confirm}');
-  expect(hook).toContain('showConfirmation({');
-  expect(hook).toContain("pending ? 'claude_reset.retry_confirm'");
-  expect(hook).not.toContain('<Modal');
-  expect(hook).not.toContain('status.grants.map');
+  const dialog = await Bun.file(
+    'src/features/quota/providers/claude/ClaudeResetGrantDialog.tsx'
+  ).text();
+  // 卡片打开对话框，由对话框展示每张券并确认。
+  expect(card).toContain('<ClaudeResetGrantDialog');
+  expect(card).toContain('onClick={claudeReset.openDialog}');
+  expect(hook).not.toContain('showConfirmation(');
+  expect(dialog).toContain('claude_reset.choose_grant');
+  expect(dialog).toContain('claude_reset.selected_grant');
+  expect(dialog).toContain('claude_reset.confirm');
 });
 
 test('cooldown clear failures reuse existing messages without new locale keys', async () => {

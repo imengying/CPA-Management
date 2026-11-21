@@ -1,22 +1,51 @@
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { ToggleSwitch } from '@/components/ui/ToggleSwitch';
+import { InfoTip } from '@/components/ui/Tooltip';
 import { configFieldDomId } from '../../searchIndex';
 import styles from './Field.module.scss';
 
 export type ToggleRowProps = {
   title: string;
-  description?: string;
+  /** 行说明：默认收进标题后的 InfoTip，同时以视觉隐藏副本留给读屏。 */
+  description?: ReactNode;
+  /** 让说明作为可见的一行留在标题下方，只给「不读就会出错」的说明用。 */
+  keepDescriptionVisible?: boolean;
   checked: boolean;
   disabled?: boolean;
   onChange: (value: boolean) => void;
 };
 
-export function ToggleRow({ title, description, checked, disabled, onChange }: ToggleRowProps) {
+export function ToggleRow({
+  title,
+  description,
+  keepDescriptionVisible = false,
+  checked,
+  disabled,
+  onChange,
+}: ToggleRowProps) {
+  const visible = Boolean(description) && keepDescriptionVisible;
+  const descriptionId = useId();
   return (
     <div className={styles.toggleRow}>
       <div className={styles.toggleCopy}>
-        <div className={styles.toggleTitle}>{title}</div>
-        {description ? <div className={styles.toggleDescription}>{description}</div> : null}
+        <div className={styles.toggleTitle}>
+          {title}
+          {description && !keepDescriptionVisible ? (
+            <InfoTip content={description} label={title} descriptionId={descriptionId} />
+          ) : null}
+        </div>
+        {description ? (
+          <div
+            id={descriptionId}
+            className={
+              visible
+                ? styles.toggleDescription
+                : `${styles.toggleDescription} visually-hidden-focusable`
+            }
+          >
+            {description}
+          </div>
+        ) : null}
       </div>
       <ToggleSwitch checked={checked} onChange={onChange} disabled={disabled} ariaLabel={title} />
     </div>
@@ -60,18 +89,28 @@ export function FieldAnchor({
 export function FieldGroup({
   title,
   description,
+  keepDescriptionVisible = false,
   children,
 }: {
   title?: string;
-  description?: string;
+  description?: ReactNode;
+  /** 组说明默认收进组标题后的 InfoTip；需要常驻页面时置 true。 */
+  keepDescriptionVisible?: boolean;
   children: ReactNode;
 }) {
   return (
     <div className={styles.group}>
       {title ? (
         <div className={styles.groupHeader}>
-          <h3 className={styles.groupTitle}>{title}</h3>
-          {description ? <p className={styles.groupDescription}>{description}</p> : null}
+          <h3 className={styles.groupTitle}>
+            {title}
+            {description && !keepDescriptionVisible ? (
+              <InfoTip content={description} label={title} />
+            ) : null}
+          </h3>
+          {description && keepDescriptionVisible ? (
+            <p className={styles.groupDescription}>{description}</p>
+          ) : null}
         </div>
       ) : null}
       {children}
@@ -94,6 +133,7 @@ export function FieldShell({
   htmlFor,
   hint,
   hintId,
+  keepHintVisible = false,
   error,
   errorId,
   children,
@@ -101,17 +141,22 @@ export function FieldShell({
   label: string;
   labelId?: string;
   htmlFor?: string;
-  hint?: string;
+  hint?: ReactNode;
   hintId?: string;
+  keepHintVisible?: boolean;
   error?: string;
   errorId?: string;
   children: ReactNode;
 }) {
   return (
     <div className={styles.fieldShell}>
+      {/* InfoTip 必须与 label 同级：放进 <label> 内会被拼进控件的可访问名称 */}
       <label id={labelId} htmlFor={htmlFor} className={styles.fieldLabel}>
         {label}
       </label>
+      {hint && !keepHintVisible ? (
+        <InfoTip content={hint} label={label} descriptionId={hintId} />
+      ) : null}
       {children}
       {error ? (
         <div id={errorId} className="error-box">
@@ -119,7 +164,12 @@ export function FieldShell({
         </div>
       ) : null}
       {hint ? (
-        <div id={hintId} className={styles.fieldHint}>
+        <div
+          id={hintId}
+          className={
+            keepHintVisible ? styles.fieldHint : `${styles.fieldHint} visually-hidden-focusable`
+          }
+        >
           {hint}
         </div>
       ) : null}

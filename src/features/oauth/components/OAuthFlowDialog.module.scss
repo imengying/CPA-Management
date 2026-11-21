@@ -631,3 +631,24 @@
   gap: 8px;
   margin-top: 14px;
 }
+
+/* 本次登录走了哪个代理；值必须已脱敏（见 loginProxy.maskProxyUrl）。 */
+.proxyNote {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-tertiary);
+}
+
+.proxyValue {
+  min-width: 0;
+  font-family: $font-mono;
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}

@@ -2,6 +2,15 @@
  * SCSS 变量定义
  */
 
+// 颜色（供少量需要原始色值的卡片/边框使用）
+$primary-color: #8b8680;
+$success-color: #10b981;
+$warning-color: #c65746;
+$error-color: #c65746;
+
+// 灰阶
+$gray-400: #9ca3af;
+
 // 间距
 $spacing-xs: 4px;
 $spacing-sm: 8px;

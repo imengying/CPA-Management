@@ -24,7 +24,7 @@ export type AuthFileModelItem = {
   owned_by?: string;
 };
 type AuthFileIconAsset = string | { light: string; dark: string };
-export type OAuthConfigLoadError = 'loading' | 'load' | null;
+export type OAuthConfigLoadError = 'loading' | 'unsupported' | 'load' | null;
 
 export type { QuotaProviderType } from '@/types';
 export type AuthFileQuotaFilter = string | null;

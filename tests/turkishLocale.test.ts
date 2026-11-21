@@ -51,11 +51,14 @@ describe('Turkish locale', () => {
     expect(translator.t(key, { [part]: 0, total: 3 })).toMatch(/^0\s*\/\s*3(?:\s|$)/);
   });
 
-  test('preserves a valid object in the raw JSON configuration example', () => {
-    const hint = tr.config_management.visual.sections.payload.default_raw_rules_desc;
-    const example = hint.match(/\{"type":"object"\}/)?.[0];
-    expect(example).toBeDefined();
-    expect(JSON.parse(example!)).toEqual({ type: 'object' });
+  test('keeps the payload replacement copy translated and complete', () => {
+    // 原来的「原始 JSON 示例」说明已随 payload 分组改版移除，改为替换规则新文案的完整性。
+    for (const key of ['title', 'description', 'from', 'to', 'add_replacement'] as const) {
+      expect(tr.config_management.visual.payload_replace[key].trim().length).toBeGreaterThan(0);
+    }
+    expect(tr.config_management.visual.payload_replace.target).not.toBe(
+      en.config_management.visual.payload_replace.target
+    );
   });
 
   test('uses the current global default for Vertex import', () => {

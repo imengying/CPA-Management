@@ -28,6 +28,11 @@ export interface BuiltInOAuthProviderCard {
   flow: OAuthFlowKind;
   /** 区分同品牌的不同站点，磁贴副行展示。 */
   domain?: string;
+  /**
+   * 登录时才需要知道的注意事项（账号类型、站点不互通、时限），以 InfoTip 挂在
+   * 「打开授权页」步骤标题后。只说「通过 OAuth 登录并保存认证文件」的提供商不设。
+   */
+  signInNoteKey?: string;
 }
 
 export interface PluginOAuthProviderCard {
@@ -49,6 +54,7 @@ export const OAUTH_PROVIDERS: BuiltInOAuthProviderCard[] = [
     icon: { light: iconKimiTileBlack, dark: iconKimiTileWhite },
     flow: 'device',
     domain: 'kimi.com',
+    signInNoteKey: 'auth_login.kimi_oauth_hint',
   },
   {
     kind: 'builtin',
@@ -58,6 +64,7 @@ export const OAUTH_PROVIDERS: BuiltInOAuthProviderCard[] = [
     icon: { light: iconKimiTileBlack, dark: iconKimiTileWhite },
     flow: 'device',
     domain: 'kimi.ai',
+    signInNoteKey: 'auth_login.kimi_ai_oauth_hint',
   },
   {
     kind: 'builtin',
@@ -90,6 +97,7 @@ export const OAUTH_PROVIDERS: BuiltInOAuthProviderCard[] = [
     titleKey: 'auth_login.antigravity_oauth_title',
     icon: iconAntigravity,
     flow: 'browser',
+    signInNoteKey: 'auth_login.antigravity_oauth_hint',
   },
   {
     kind: 'builtin',
@@ -106,6 +114,7 @@ export const OAUTH_PROVIDERS: BuiltInOAuthProviderCard[] = [
     titleKey: 'auth_login.devin_oauth_title',
     icon: { light: iconDevin, dark: iconDevinDark },
     flow: 'browser',
+    signInNoteKey: 'auth_login.devin_oauth_hint',
   },
 ];
 

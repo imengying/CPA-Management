@@ -30,6 +30,8 @@ export function CodexLiveICEServersEditor({
         label={t('config_management.visual.additions.codexLiveMediaRelayICEServers.label')}
         labelId={`${id}-label`}
         hint={t('config_management.visual.additions.codexLiveMediaRelayICEServers.hint')}
+        // TURN 凭据与「别把密钥写进截图」是需要照做的安全提示，常驻可见。
+        keepHintVisible
         hintId={hintId}
         error={error}
         errorId={errorId}

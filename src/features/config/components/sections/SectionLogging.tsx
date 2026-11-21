@@ -30,7 +30,6 @@ export function SectionLogging({
       indexLabel={SECTION_INDEX_LABELS.logging}
       icon={<Icon size={16} />}
       title={t('config_management.visual.sections.logging.title')}
-      description={t('config_management.visual.sections.logging.description')}
       animateIn={animateIn}
     >
       <FieldStack>
@@ -91,9 +90,6 @@ export function SectionLogging({
           <FieldAnchor fieldId="usageStatisticsEnabled">
             <ToggleRow
               title={t('config_management.visual.sections.system.usage_statistics_enabled')}
-              description={t(
-                'config_management.visual.sections.system.usage_statistics_enabled_desc'
-              )}
               checked={values.usageStatisticsEnabled}
               disabled={disabled}
               onChange={(usageStatisticsEnabled) => onChange({ usageStatisticsEnabled })}

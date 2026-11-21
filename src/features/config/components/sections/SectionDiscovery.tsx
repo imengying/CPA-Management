@@ -21,14 +21,21 @@ export function SectionDiscovery({
   return (
     <Collapsible
       label={t('config_management.visual.serverExtras.discoveryTitle')}
-      hint={t('config_management.visual.serverExtras.discoveryHint')}
       defaultOpen={false}
     >
       <FieldStack>
         <FieldAnchor fieldId="discoveryEnabled">
           <ToggleRow
             title={t('config_management.visual.serverExtras.discoveryEnabled.label')}
-            description={t('config_management.visual.serverExtras.discoveryEnabled.hint')}
+            // 折叠组标题里放不下 InfoTip（<summary> 内不嵌可交互元素），
+            // 整组的前提条件并入总开关的说明。
+            description={
+              <>
+                {t('config_management.visual.serverExtras.discoveryEnabled.hint')}
+                <br />
+                {t('config_management.visual.serverExtras.discoveryHint')}
+              </>
+            }
             checked={values.discoveryEnabled}
             disabled={disabled}
             onChange={(discoveryEnabled) => onChange({ discoveryEnabled })}
@@ -48,7 +55,6 @@ export function SectionDiscovery({
           <Input
             type="text"
             label={t('config_management.visual.serverExtras.discoveryServiceType.label')}
-            hint={t('config_management.visual.serverExtras.discoveryServiceType.hint')}
             placeholder="_ai-gateway._tcp"
             error={serviceTypeError}
             value={values.discoveryServiceType}

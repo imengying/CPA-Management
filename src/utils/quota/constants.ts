@@ -127,6 +127,12 @@ export const CODEX_RATE_LIMIT_RESET_CREDITS_URL =
 export const CODEX_RATE_LIMIT_RESET_CREDITS_CONSUME_URL =
   'https://chatgpt.com/backend-api/wham/rate-limit-reset-credits/consume';
 
+/** 账号用户设置写入端点（见上游 issue #551）；从不用它做读探测。 */
+export const CODEX_ACCOUNT_USER_SETTING_URL =
+  'https://chatgpt.com/backend-api/settings/account_user_setting';
+/** 允许已授权该 ChatGPT 套餐的应用在额度用尽后消耗 Credit。 */
+export const CODEX_CREDIT_OVERAGE_FEATURE = 'can_consume_personal_credits_chatpass';
+
 export const CODEX_REQUEST_HEADERS = {
   Authorization: 'Bearer $TOKEN$',
   'Content-Type': 'application/json',

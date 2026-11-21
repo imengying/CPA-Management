@@ -85,6 +85,8 @@ export interface PluginStoreEntry {
   homepage: string;
   license: string;
   tags: string[];
+  /** 后端已把键归一化为 BCP-47 形式（如 `zh-CN`），无匹配语言时为空。 */
+  locales?: Record<string, PluginStoreLocale>;
   installed: boolean;
   installedVersion: string;
   path: string;
@@ -104,6 +106,16 @@ export interface PluginStoreSource {
   id: string;
   name: string;
   url: string;
+}
+
+/** 插件商店条目的单语言展示信息；字段均可缺省，缺失时逐字段回退到根字段。 */
+export interface PluginStoreLocale {
+  name?: string;
+  description?: string;
+  author?: string;
+  homepage?: string;
+  license?: string;
+  tags?: string[];
 }
 
 export interface PluginStoreSourceError {

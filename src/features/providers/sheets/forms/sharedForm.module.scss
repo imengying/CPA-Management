@@ -126,6 +126,13 @@
   }
 }
 
+.checkboxLine {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  font-size: 13px;
+}
+
 .fieldRow {
   display: grid;
   grid-template-columns: 1fr 1fr;

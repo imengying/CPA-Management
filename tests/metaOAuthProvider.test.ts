@@ -82,7 +82,6 @@ describe('Muse (Meta) provider and device OAuth', () => {
       for (const suffix of [
         'oauth_title',
         'oauth_button',
-        'oauth_hint',
         'oauth_url_label',
         'open_link',
         'copy_link',

@@ -64,7 +64,6 @@ export function SectionNetwork({
       indexLabel={SECTION_INDEX_LABELS.network}
       icon={<Icon size={16} />}
       title={t('config_management.visual.sections.network.title')}
-      description={t('config_management.visual.sections.network.description')}
       animateIn={animateIn}
     >
       <FieldStack>
@@ -255,7 +254,6 @@ export function SectionNetwork({
           <FieldAnchor fieldId="passthroughHeaders">
             <ToggleRow
               title={t('config_management.visual.sections.network.passthrough_headers')}
-              description={t('config_management.visual.sections.network.passthrough_headers_desc')}
               checked={values.passthroughHeaders}
               disabled={disabled}
               onChange={(passthroughHeaders) => onChange({ passthroughHeaders })}

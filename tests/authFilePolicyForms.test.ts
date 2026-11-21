@@ -90,7 +90,11 @@ describe('credential policy structured forms', () => {
       ...render(original, true).matchAll(/<(?:input|textarea|select|button)\b[^>]*>/g),
     ];
     expect(controls.length).toBeGreaterThan(12);
-    for (const control of controls) expect(control[0]).toContain('disabled=""');
+    for (const control of controls) {
+      // 说明文字的 InfoTip 按钮是可访问性辅助，不是设置控件，不该被禁用。
+      if (control[0].includes('data-info-tip=""')) continue;
+      expect(control[0]).toContain('disabled=""');
+    }
   });
 
   test('provides unique label targets and accessible action buttons', () => {

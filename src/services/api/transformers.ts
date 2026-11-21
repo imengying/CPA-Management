@@ -192,6 +192,23 @@ const normalizeProviderKeyConfig = (item: unknown): ProviderKeyConfig | null => 
     if (sensitiveWords.length) {
       cloak.sensitiveWords = sensitiveWords;
     }
+    const wordsReplace = cloakRaw['sensitive-words-replace'];
+    if (isRecord(wordsReplace)) {
+      cloak.sensitiveWordsReplace = Object.fromEntries(
+        Object.entries(wordsReplace).filter(
+          (entry): entry is [string, string] => typeof entry[1] === 'string'
+        )
+      );
+    }
+    const patternsReplace = cloakRaw['sensitive-patterns-replace'];
+    if (Array.isArray(patternsReplace)) {
+      // Go RE2 语法由后端校验；这里保序并逐字保留内容。
+      cloak.sensitivePatternsReplace = patternsReplace.flatMap((rule) =>
+        isRecord(rule) && typeof rule.pattern === 'string' && typeof rule.replacement === 'string'
+          ? [{ pattern: rule.pattern, replacement: rule.replacement }]
+          : []
+      );
+    }
     const cacheUserId = normalizeBoolean(cloakRaw['cache-user-id']);
     if (cacheUserId !== undefined) {
       cloak.cacheUserId = cacheUserId;
